@@ -1,0 +1,7 @@
+# To be used with optimism.yml
+version: "3.9"
+services:
+  op-geth:
+    ports:
+      - ${RPC_PORT}:${RPC_PORT:-8545}/tcp
+      - ${WS_PORT}:${WS_PORT:-8546}/tcp

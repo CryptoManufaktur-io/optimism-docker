@@ -1,0 +1,42 @@
+version: "3.9"
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: "3"
+      tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
+
+services:
+  l2geth:
+    restart: "unless-stopped"
+    build:
+      context: ./l2geth
+      dockerfile: Dockerfile.binary
+      args:
+        - DOCKER_TAG=${L2GETH_DOCKER_TAG}
+    image: l2geth:local
+    stop_signal: SIGINT
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LEGACY_TAR=${LEGACY_TAR}
+      - USING_OVM=true
+      - ETH1_SYNC_SERVICE_ENABLE=false
+      - RPC_API=eth,rollup,net,web3
+      - RPC_ADDR=0.0.0.0
+      - RPC_CORS_DOMAIN=*
+      - RPC_ENABLE=true
+      - RPC_PORT=8545
+      - RPC_VHOSTS=*
+    volumes:
+      - l2geth-data:/var/lib/l2geth
+      - /etc/localtime:/etc/localtime:ro
+    <<: *logging
+    entrypoint:
+      - docker-entrypoint.sh
+      - geth
+      - --nousb
+      - --datadir
+      - /var/lib/l2geth
+volumes:
+  l2geth-data:

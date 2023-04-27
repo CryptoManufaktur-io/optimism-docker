@@ -1,0 +1,14 @@
+ARG DOCKER_TAG
+
+FROM us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:${DOCKER_TAG}
+
+RUN apk update && apk add --no-cache ca-certificates tzdata bash su-exec
+
+RUN mkdir -p /var/lib/op-node/ee-secret
+
+# Cannot assume buildkit, hence no chmod
+COPY ./docker-entrypoint.sh /usr/local/bin/
+# Belt and suspenders
+RUN chmod -R 755 /usr/local/bin/*
+
+ENTRYPOINT ["op-node"]
