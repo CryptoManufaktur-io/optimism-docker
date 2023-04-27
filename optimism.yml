@@ -31,7 +31,6 @@ services:
       - geth
       - --datadir
       - /var/lib/op-geth
-      - --${NETWORK}
       - --rollup.sequencerhttp
       - ${SEQUENCER}
       - --rollup.disabletxpoolgossip
