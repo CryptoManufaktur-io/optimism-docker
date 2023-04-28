@@ -128,8 +128,7 @@ check_for_snap() {
     if [[ "$__distro" = "ubuntu" && -n "$(which snap)" ]] && snap list 2>/dev/null | grep -qw 'docker'; then
         echo
         echo "WARNING! Snap docker package detected. This WILL result in issues."
-        echo "Removing the package will delete volumes and require a resync,"
-        echo "as well as re-import of all validator keys."
+        echo "Removing the package will delete volumes and require a resync."
         echo
         echo "Doing so is still highly recommended however."
         echo
