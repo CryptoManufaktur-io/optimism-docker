@@ -190,6 +190,11 @@ install() {
         if [ -z "$(which docker)" ]; then
             ${__auto_sudo} apt-get update
             ${__auto_sudo} apt-get -y install ca-certificates curl gnupg lsb-release whiptail bc chrony
+            __major_version=$(lsb_release -r | cut -f2)
+            if [ "${__major_version}" -lt 10 ]; then
+                echo "This script cannot install docker on Debian ${__major_version}. Consider upgrading to 11 or 12."
+                exit 0
+            fi
             ${__auto_sudo} mkdir -p /etc/apt/keyrings
             ${__auto_sudo} curl -fsSL https://download.docker.com/linux/debian/gpg | ${__auto_sudo} gpg --dearmor -o /etc/apt/keyrings/docker.gpg
             ${__auto_sudo} echo \
@@ -290,12 +295,6 @@ update() {
     fi
 
     if [ -z "${ETHDSECUNDO-}" ]; then
-        if ${__as_owner} git branch | grep -q master; then
-            ${__as_owner} git branch -m master main
-            ${__as_owner} git fetch origin
-            ${__as_owner} git branch -u origin/main main
-            ${__as_owner} git remote set-head origin -a
-        fi
         # Do not track changes to ext-network.yml
         ${__as_owner} git update-index --assume-unchanged ext-network.yml
         ${__as_owner} git config pull.rebase false
