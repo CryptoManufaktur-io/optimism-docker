@@ -16,4 +16,4 @@ __public_ip="--p2p.advertise.ip $(wget -qO- https://ifconfig.me/ip)"
 
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__public_ip}
+exec "$@" ${__public_ip} ${CL_EXTRAS}

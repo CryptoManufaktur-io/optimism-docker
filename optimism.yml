@@ -21,6 +21,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - SNAPSHOT=${SNAPSHOT}
       - LEGACY=${LEGACY:-false}
+      - EL_EXTRAS=${EL_EXTRAS}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
@@ -97,6 +98,8 @@ services:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
     image: op-node:local
     stop_grace_period: 5m
+    environment:
+      - CL_EXTRAS=${CL_EXTRAS}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - /etc/localtime:/etc/localtime:ro

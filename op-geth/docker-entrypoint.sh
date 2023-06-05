@@ -54,5 +54,5 @@ if [ -f /var/lib/op-geth/prune-marker ]; then
 else
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-  exec "$@" ${__verbosity} ${__legacy}
+  exec "$@" ${__verbosity} ${__legacy} ${EL_EXTRAS}
 fi
