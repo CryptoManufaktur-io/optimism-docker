@@ -42,6 +42,7 @@ if [ ! -d "/var/lib/op-geth/geth/" ]; then
   aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true
   filename=`echo ${SNAPSHOT} | awk -F/ '{print $NF}'`
   tar xvf ${filename} -C /var/lib/op-geth
+  rm -f ${filename}
 fi
 
 # Run with legacy l2geth?
