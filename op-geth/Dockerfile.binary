@@ -2,7 +2,7 @@ ARG DOCKER_TAG
 
 FROM us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:${DOCKER_TAG}
 
-RUN apk update && apk add --no-cache ca-certificates tzdata bash su-exec
+RUN apk update && apk add --no-cache ca-certificates tzdata bash su-exec aria2
 
 RUN mkdir -p /var/lib/op-geth/ee-secret
 

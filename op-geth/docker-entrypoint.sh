@@ -38,7 +38,10 @@ esac
 
 # Prep datadir
 if [ ! -d "/var/lib/op-geth/geth/" ]; then
-  wget -q -O - "${SNAPSHOT}" | tar xvf - -C /var/lib/op-geth
+#  wget -q -O - "${SNAPSHOT}" | tar xvf - -C /var/lib/op-geth
+  aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true
+  filename=`echo ${SNAPSHOT} | awk -F/ '{print $NF}'`
+  tar xvf ${filename} -C /var/lib/op-geth
 fi
 
 # Run with legacy l2geth?
