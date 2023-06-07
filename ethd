@@ -462,7 +462,7 @@ version() {
         *optimism.yml* )
             docompose exec op-geth geth version
             echo
-            docompose exec op-node op-node version
+            docompose exec op-node op-node --version
             ;;&
     esac
 }
