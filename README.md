@@ -13,7 +13,7 @@ If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPO
 
 The `./ethd` script can be used as a quick-start:
 
-`./ethd install`
+`./ethd install` brings in docker-ce, if you don't have a Docker install already.
 
 `cp default.env .env`
 
