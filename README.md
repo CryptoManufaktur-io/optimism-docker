@@ -23,4 +23,4 @@ Adjust variables as needed, particularly `NETWORK` and `SNAPSHOT`
 
 To update the software, run `./ethd update` and then `./ethd up`
 
-This is optimism-docker v1.0.1
+This is optimism-docker v1.0.2
