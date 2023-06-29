@@ -120,6 +120,8 @@ services:
       - ${NETWORK}
       - --l1
       - ${L1_RPC}
+      - --l1.rpckind
+      - ${L1_RPC_KIND:-basic}
       - --rpc.addr
       - 0.0.0.0
       - --rpc.port
