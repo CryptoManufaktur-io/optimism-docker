@@ -27,7 +27,7 @@ esac
 
 # Prep datadir
 if [ ! -d "/var/lib/l2geth/geth/" ]; then
-  wget -q -O - "${LEGACY_TAR}" | tar xvf - -C /var/lib/l2geth
+  wget -q -O - "${LEGACY_TAR}" | pzstd -c -d | tar xvf - -C /var/lib/l2geth
 fi
 
 # Word splitting is desired for the command line parameters

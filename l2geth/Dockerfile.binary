@@ -2,7 +2,7 @@ ARG DOCKER_TAG
 
 FROM ethereumoptimism/l2geth:${DOCKER_TAG}
 
-RUN apk update && apk add --no-cache ca-certificates tzdata bash su-exec
+RUN apk update && apk add --no-cache ca-certificates tzdata bash su-exec zstd
 
 RUN mkdir -p /var/lib/l2geth
 
