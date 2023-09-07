@@ -125,11 +125,21 @@ services:
       - --rpc.addr
       - 0.0.0.0
       - --rpc.port
-      - "9545" 
+      - ${OPNODE_RPC_PORT:-9545}
       - --metrics.enabled
       - --p2p.listen.tcp
       - ${OPNODE_P2P_PORT:-9222}
     labels:
+      - traefik.enable=true
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.service=${OPNODE_HOST:-opnode}
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.entrypoints=websecure
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.rule=Host(`${OPNODE_HOST:-opnode}.${DOMAIN}`)
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.service=${OPNODE_HOST:-opnode}
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.entrypoints=websecure
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.rule=Host(`${OPNODE_LB:-opnode-lb}.${DOMAIN}`)
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${OPNODE_HOST:-opnode}.loadbalancer.server.port=${OPNODE_RPC_PORT:-9545}
       - metrics.scrape=true
       - metrics.path=/metrics
       - metrics.port=7300
