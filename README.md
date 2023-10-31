@@ -1,6 +1,6 @@
 # Overview
 
-docker compose for Bedrock Optimism.
+docker compose for Optimism.
 
 Copy `default.env` to `.env`, adjust values for the right network, particularly the snapshot.
 
@@ -23,4 +23,4 @@ Adjust variables as needed, particularly `NETWORK` and `SNAPSHOT`
 
 To update the software, run `./ethd update` and then `./ethd up`
 
-This is optimism-docker v1.1
+This is optimism-docker v1.2

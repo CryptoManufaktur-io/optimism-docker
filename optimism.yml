@@ -19,9 +19,9 @@ services:
     stop_grace_period: 5m
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
-      - SNAPSHOT=${SNAPSHOT}
+      - SNAPSHOT=${SNAPSHOT:-}
       - LEGACY=${LEGACY:-false}
-      - EL_EXTRAS=${EL_EXTRAS}
+      - EL_EXTRAS=${EL_EXTRAS:-}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
@@ -30,6 +30,8 @@ services:
     entrypoint:
       - docker-entrypoint.sh
       - geth
+      - --op-network
+      - ${OP_NETWORK:-op-${NETWORK}}
       - --datadir
       - /var/lib/op-geth
       - --rollup.sequencerhttp
