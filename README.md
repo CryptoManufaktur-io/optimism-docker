@@ -16,7 +16,7 @@ If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPO
 Multiple Optimism Docker stacks all connected to the same central traefik will work, as long as they all use a
 different `NETWORK`. See the `alias` in `optimism.yml`.
 
-The `./optdd` script can be used as a quick-start:
+The `./optd` script can be used as a quick-start:
 
 `./optd install` brings in docker-ce, if you don't have a Docker install already.
 
