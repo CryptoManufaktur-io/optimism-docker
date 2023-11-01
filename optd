@@ -50,7 +50,7 @@ determine_sudo() {
             echo "The Docker daemon is not running. Please check Docker installation."
             echo "\"sudo systemctl status docker\" and \"sudo journalctl -fu docker\" will be helpful."
             echo "Aborting."
-            exit 1
+            exit 130
         fi
     fi
 
@@ -185,7 +185,7 @@ check_for_snap() {
         echo "Do join us on EthStaker Discord to work through this issue."
         echo
         echo "Aborting, this is not safe"
-        exit 1
+        exit 130
     fi
 }
 
@@ -344,7 +344,7 @@ update() {
     elif [ "$(df -P "$(pwd)" | awk '/[0-9]%/{print $(NF-2)}')" -lt 1024 ]; then
         echo "You have less than 1 MiB of space left on $(pwd)."
         echo "Aborting, as an update is not safe."
-        exit 1
+        exit 130
     fi
 
     __docker_dir=$(dodocker system info --format '{{.DockerRootDir}}')
@@ -357,7 +357,7 @@ update() {
     elif [ "${__free_space}" -lt 1048576 ]; then
         echo "You have less than 1 GiB of space left on ${__docker_dir}."
         echo "Aborting, as an update is not safe."
-        exit 1
+        exit 130
     fi
 
     if [ -z "${ETHDSECUNDO-}" ]; then
@@ -514,7 +514,7 @@ terminate() {
         read -rp "WARNING - this action will destroy all data stores for this ${__app_name}. Do you wish to continue? (No/Yes) " yn
         case $yn in
             [Yy]es ) break;;
-            * ) echo "Aborting, no changes made"; exit 1;;
+            * ) echo "Aborting, no changes made"; exit 130;;
         esac
     done
 
@@ -585,19 +585,26 @@ prune-geth() {
                 ;;
             *)
                 echo "Error: Unknown option: $1" >&2
-                exit 1
+                exit 130
                 ;;
         esac
     done
 
     if [ ! -f "./${ENV_FILE}" ]; then
         echo "${ENV_FILE} configuration file not found, aborting."
-        exit 1
+        exit 130
     fi
 
-    if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "${ENV_FILE}" 2>/dev/null ; then
+    if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "./${ENV_FILE}" 2>/dev/null ; then
         echo "You do not appear to be using Geth, aborting."
-        exit 1
+        exit 130
+    fi
+
+    var=NETWORK
+    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "./${ENV_FILE}" || true)
+    if [[ ! ( "${value}" = "op-goerli" || "${value}" = "op-mainnet" ) ]]; then
+        echo "Pruning Geth is not needed on ${value}, it uses PBSS."
+        exit 0
     fi
 
     __docker_dir=$(docker system info --format '{{.DockerRootDir}}')
@@ -607,14 +614,14 @@ prune-geth() {
         df -h "${__docker_dir}"
         echo ""
         echo "Aborting."
-        exit 1
+        exit 130
     fi
 
     rpc_line=$(grep '^RPC_PORT=' "${ENV_FILE}")
     regex='^RPC_PORT=([0-9]+)'
     if [[ ! "${rpc_line}" =~ ${regex} ]]; then
         echo "Unable to determine RPC_PORT, aborting."
-        exit 1
+        exit 130
     else
         rpc_port="${BASH_REMATCH[1]}"
     fi
@@ -625,7 +632,7 @@ prune-geth() {
         echo "Unable to connect to Geth: Is it running?"
         echo "Output: ${sync_status}"
         echo "Aborting."
-        exit 1
+        exit 130
     fi
 
     if [[ ! "${sync_status}" =~ "false" ]]; then
@@ -633,13 +640,13 @@ prune-geth() {
         echo "${sync_status}"
         echo ""
         echo "Aborting."
-        exit 1
+        exit 130
     fi
 
     node_logs=$(docompose logs --no-color --tail 1000 op-geth)
     if [[ "${node_logs}" =~ "snapshot generation" && ! "${node_logs}" =~ "Generated state" ]]; then
         echo "Geth has not finished generating a state snapshot yet, aborting."
-        exit 1
+        exit 130
     fi
 
     regex='\[([0-9][0-9]-[0-9][0-9])\|([0-9][0-9]:[0-9][0-9]):[0-9.]*\][[:space:]]*Generated state'
@@ -648,7 +655,7 @@ prune-geth() {
         now_time=$(date +"%s")
         if [ $((snap_time+2100)) -gt "$now_time" ]; then
             echo "Please wait 35 minutes after snapshot generation finished. Aborting."
-            exit 1
+            exit 130
         fi
     fi
 
@@ -657,7 +664,7 @@ prune-geth() {
           read -rp "WARNING - this will stop Geth and prune its database. Do you wish to continue? (No/Yes) " yn
           case $yn in
               [Yy][Ee][Ss] ) break;;
-              * ) echo "Aborting, no changes made"; exit 1;;
+              * ) echo "Aborting, no changes made"; exit 130;;
           esac
       done
     fi
@@ -742,7 +749,7 @@ fi
 
 if [ "${OWNER}" == "root" ]; then
     echo "Please install ${__project_name} as a non-root user."
-    exit 1
+    exit 130
 fi
 
 ENV_FILE=.env
@@ -765,20 +772,15 @@ determine_compose
 
 if ! dodocker images >/dev/null 2>&1; then
     echo "Please ensure you can call $__docker_exe before running this script."
-    exit 1
+    exit 130
 fi
 
 if ! docompose --help >/dev/null 2>&1; then
     echo "Please ensure you can call $__compose_exe before running this script"
-    exit 1
+    exit 130
 fi
 
 $command "$@"
-
-__result=$?
-if [ "$__result" -eq 127 ]; then
-    printhelp
-fi
 
 check_disk_space
 
