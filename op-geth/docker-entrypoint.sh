@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 if [[ ! -f /var/lib/op-geth/ee-secret/jwtsecret ]]; then
   echo "Generating JWT secret"
@@ -46,6 +46,22 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   rm -f ${filename}
 fi
 
+if [[ -z "${SNAPSHOT}" && ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
+  echo "WARNING: Optimism Goerli and Optimism Mainnet should be using a SNAPSHOT in .env"
+fi
+
+if [[ -n "${SNAPSHOT}" && ! ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
+  echo "WARNING: Only Optimism Goerli and Optimism Mainnet should be using a SNAPSHOT in .env"
+fi
+
+# Detect existing DB; use PBSS if fresh
+if [ -d "/var/lib/op-geth/geth/chaindata/" ]; then
+  __pbss=""
+else
+  echo "Choosing PBSS for fresh sync"
+  __pbss="--state.scheme path"
+fi
+
 # Run with legacy l2geth?
 if [ "${LEGACY}" = true ]; then
   __legacy="--rollup.historicalrpc http://l2geth:8545"
@@ -59,5 +75,5 @@ if [ -f /var/lib/op-geth/prune-marker ]; then
 else
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-  exec "$@" ${__verbosity} ${__legacy} ${EL_EXTRAS}
+  exec "$@" ${__verbosity} ${__pbss} ${__legacy} ${EL_EXTRAS}
 fi

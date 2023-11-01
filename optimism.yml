@@ -20,18 +20,23 @@ services:
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - SNAPSHOT=${SNAPSHOT:-}
+      - NETWORK=${NETWORK:-}
       - LEGACY=${LEGACY:-false}
       - EL_EXTRAS=${EL_EXTRAS:-}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - ${NETWORK}-geth # This allows multiple Optimism Docker stacks all connected to the same central traefik
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
       - geth
       - --op-network
-      - ${OP_NETWORK:-op-${NETWORK}}
+      - ${NETWORK}
       - --datadir
       - /var/lib/op-geth
       - --rollup.sequencerhttp
@@ -99,7 +104,7 @@ services:
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
     image: op-node:local
-    stop_grace_period: 5m
+    stop_grace_period: 1m
     environment:
       - CL_EXTRAS=${CL_EXTRAS}
     volumes:
@@ -115,7 +120,7 @@ services:
       - --log.level
       - ${LOG_LEVEL}
       - --l2
-      - ${L2_CONNECTION_KIND:-http}://op-geth:8551
+      - ${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551
       - --l2.jwt-secret
       - /var/lib/op-node/ee-secret/jwtsecret
       - --network
