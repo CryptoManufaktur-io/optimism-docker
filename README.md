@@ -1,26 +1,31 @@
 # Overview
 
-docker compose for Optimism.
+Docker Compose for OP Stack chains: Optimism, Base, PGN, Zora.
 
-Copy `default.env` to `.env`, adjust values for the right network, particularly the snapshot.
+`cp default.env .env`, then `nano .env` and adjust values for the right network including sequencer. On op-mainnet and
+op-goerli, set a snapshot.
 
-Meant to be used with https://github.com/CryptoManufaktur-io/base-docker-environment for traefik and Prometheus remote write;
-use `ext-network.yml` in that case
+Meant to be used with https://github.com/CryptoManufaktur-io/base-docker-environment for traefik and Prometheus remote
+write; use `ext-network.yml` in that case.
 
-If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPOSE_FILE` inside `.env`
+If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPOSE_FILE` inside `.env`.
 
-`legacy.yml` runs the legacy l2geth, set `LEGACY=true` in `.env` for that. You probably [don't need it](https://community.optimism.io/docs/developers/bedrock/node-operator-guide/#historical-execution-vs-historical-data-routing).
+`legacy.yml` runs the legacy l2geth on Optimism, set `LEGACY=true` in `.env` for that. You probably
+[don't need it](https://community.optimism.io/docs/developers/bedrock/node-operator-guide/#historical-execution-vs-historical-data-routing).
 
-The `./ethd` script can be used as a quick-start:
+Multiple Optimism Docker stacks all connected to the same central traefik will work, as long as they all use a
+different `NETWORK`. See the `alias` in `optimism.yml`.
 
-`./ethd install` brings in docker-ce, if you don't have a Docker install already.
+The `./optdd` script can be used as a quick-start:
+
+`./optd install` brings in docker-ce, if you don't have a Docker install already.
 
 `cp default.env .env`
 
 Adjust variables as needed, particularly `NETWORK` and `SNAPSHOT`
 
-`./ethd up`
+`./optd up`
 
-To update the software, run `./ethd update` and then `./ethd up`
+To update the software, run `./optd update` and then `./optd up`
 
-This is optimism-docker v1.2
+This is optimism-docker v1.3
