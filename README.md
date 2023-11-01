@@ -18,11 +18,11 @@ different `NETWORK`. See the `alias` in `optimism.yml`.
 
 The `./optd` script can be used as a quick-start:
 
-`./optd install` brings in docker-ce, if you don't have a Docker install already.
+`./optd install` brings in docker-ce, if you don't have Docker installed already.
 
 `cp default.env .env`
 
-Adjust variables as needed, particularly `NETWORK` and `SNAPSHOT`
+`nano .env` and adjust variables as needed, particularly `NETWORK` and `SNAPSHOT` and `SEQUENCER`
 
 `./optd up`
 
