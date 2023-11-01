@@ -14,7 +14,7 @@ If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPO
 [don't need it](https://community.optimism.io/docs/developers/bedrock/node-operator-guide/#historical-execution-vs-historical-data-routing).
 
 Multiple Optimism Docker stacks all connected to the same central traefik will work, as long as they all use a
-different `NETWORK`. See the `alias` in `optimism.yml`.
+different `NETWORK`. See the `aliases` in `optimism.yml`.
 
 The `./optd` script can be used as a quick-start:
 
