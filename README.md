@@ -28,4 +28,4 @@ The `./optd` script can be used as a quick-start:
 
 To update the software, run `./optd update` and then `./optd up`
 
-This is optimism-docker v1.3
+This is Optimism Docker v1.3
