@@ -727,7 +727,7 @@ help() {
     echo "  restart [service-name]"
     echo "     restarts the ${__app_name}, or a specific service by name, a combination of down and up"
     echo "  version"
-    echo "     prints the version\(s\) of currently running client\(s\)"
+    echo "     prints the version(s) of currently running client(s)"
     echo "  logs"
     echo "     shows logs"
     echo "  cmd <command>"
@@ -740,7 +740,7 @@ help() {
     echo "      print this help screen"
     echo
     echo
-    echo "The logs subcommand can be appended by flags and specify the container\(s\). example: "
+    echo "The logs subcommand can be appended by flags and specify the container(s). example: "
     echo
     echo "  $__me logs -f --tail 50 ${__sample_service}"
     echo "    shows logs only for ${__sample_service} service"
@@ -761,7 +761,7 @@ __me="./$(basename "${BASH_SOURCE[0]}")"
 trap 'handle_error $? $LINENO' ERR
 
 if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    printhelp
+    help
     exit 0
 fi
 
