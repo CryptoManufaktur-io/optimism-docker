@@ -78,7 +78,7 @@ determine_compose() {
     __compose_exe="docker-compose"
     __old_compose=1
     __compose_version=$($__maybe_sudo docker-compose --version | sed -n -E -e "s/.*version [v]?([0-9.-]*).*/\1/ip")
-    if [ -n "${ETHDSECUNDO-}" ]  || [ ! "${command}" = "update" ]; then # Don't run this twice
+    if [ -n "${ETHDSECUNDO-}" ]  || [ ! "${__command}" = "update" ]; then # Don't run this twice
       echo
       echo "You are using docker-compose ${__compose_version}, which is unsupported by Docker, Inc."
       echo "${__project_name} will stop supporting it sometime early 2024."
@@ -179,7 +179,7 @@ check_for_snap() {
         echo "Doing so is still highly recommended however."
         echo
         echo "The exact steps depend a little on whether there already is an apt version of Docker installed as well,"
-        echo "but in a nutshell \"./$me stop\" followed by \"sudo snap remove --purge docker\" followed by a reboot,"
+        echo "but in a nutshell \"$__me stop\" followed by \"sudo snap remove --purge docker\" followed by a reboot,"
         echo "and as needed install docker-ce or docker.io with apt."
         echo
         echo "Do join us on EthStaker Discord to work through this issue."
@@ -278,14 +278,14 @@ check_disk_space() {
     fi
 
     var="COMPOSE_FILE"
-    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" ".env" || true)
+    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
 
 # Literal match intended
 # shellcheck disable=SC2076
     if [[ "${value}" =~ "optimism.yml" ]] && [[ "${__free_space}" -lt 104857600 ]]; then
         echo ""
         echo "You are running op-geth and have less than 100 GiB of free disk space."
-        echo "If Avail reads 40 GiB or more, prune with ./$me prune-geth:"
+        echo "If Avail reads 40 GiB or more, prune with $__me prune-geth:"
         echo ""
         df -h "${__docker_dir}"
         echo ""
@@ -329,6 +329,7 @@ nag_os_version() {
 # Arguments are passed, but shellcheck doesn't recognize that
 # shellcheck disable=SC2120
 update() {
+    __during_update=1
     if [[ $(${__as_owner} git status --porcelain) ]]; then
         __dirty=1
     else
@@ -381,7 +382,7 @@ update() {
     fi
     docompose --profile tools build --pull
 
-    if ! cmp -s "${ENV_FILE}" "${ENV_FILE}".source; then
+    if [ "${__migrated}" -eq 1 ] && ! cmp -s "${ENV_FILE}" "${ENV_FILE}".source; then
         cp "${ENV_FILE}".source "${ENV_FILE}".bak
         rm "${ENV_FILE}".source
         echo "Your ${ENV_FILE} configuration settings have been migrated to a fresh copy. You can \
@@ -392,11 +393,13 @@ find the original contents in ${ENV_FILE}.bak."
         diff -y --suppress-common-lines "${ENV_FILE}" "${ENV_FILE}".bak || true
     else
         echo "No changes made to ${ENV_FILE} during update"
-        rm "${ENV_FILE}".source
+        if [ -f "${ENV_FILE}".source ]; then
+            ${__as_owner} rm "${ENV_FILE}".source || true
+        fi
     fi
 
     echo
-    echo "An ./$me up command will start using the new images and configuration."
+    echo "An $__me up command will start using the new images and configuration."
     nag_os_version
 
     unset ETHDSECUNDO
@@ -411,32 +414,37 @@ find the original contents in ${ENV_FILE}.bak."
         echo
         ${__as_owner} git status --porcelain
     fi
+    __during_update=0
 }
 
-
 envmigrate() {
-    if [ ! -f "./${ENV_FILE}" ]; then
+    if [ ! -f "${ENV_FILE}" ]; then
         return
     fi
 
-    ALL_VARS=( COMPOSE_FILE NETWORK SNAPSHOT L1_RPC L1_RPC_KIND SEQUENCER LEGACY_TAR \
-            LEGACY EL_EXTRAS CL_EXTRAS LOG_LEVEL OPNODE_DOCKER_TAG \
-            OPGETH_DOCKER_TAG L2GETH_DOCKER_TAG DOMAIN RPC_HOST RPC_LB OPNODE_HOST OPNODE_LB \
-            WS_HOST WS_LB RPC_PORT WS_PORT OPNODE_RPC_PORT OPNODE_P2P_PORT L2_CONNECTION_KIND )
+    ALL_VARS=( COMPOSE_FILE NETWORK SNAPSHOT L1_RPC L1_RPC_KIND SEQUENCER LEGACY_TAR LEGACY EL_EXTRAS CL_EXTRAS \
+            LOG_LEVEL OPNODE_DOCKER_TAG OPGETH_DOCKER_TAG L2GETH_DOCKER_TAG DOMAIN RPC_HOST RPC_LB OPNODE_HOST \
+            OPNODE_LB WS_HOST WS_LB RPC_PORT WS_PORT OPNODE_RPC_PORT OPNODE_P2P_PORT L2_CONNECTION_KIND )
     OLD_VARS=( )
     NEW_VARS=( )
 
-    if [ "${EUID}" -eq 0 ]; then
-      sudo -u "${OWNER}" cp "${ENV_FILE}" "${ENV_FILE}".source
-      sudo -u "${OWNER}" cp default.env "${ENV_FILE}"
-    else
-      cp "${ENV_FILE}" "${ENV_FILE}".source
-      cp default.env "${ENV_FILE}"
+    var=ENV_VERSION
+    __target_ver=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "default.env" || true)
+    __source_ver=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
+
+    if [[ "${__target_ver}" = "${__source_ver}" ]]; then # No changes in template, do nothing
+      return 0
     fi
+
+    echo "Migrating ${ENV_FILE} to version ${__target_ver}"
+    ${__as_owner} cp "${ENV_FILE}" "${ENV_FILE}".source
+    __during_migrate=1
+    __migrated=1
+    ${__as_owner} cp default.env "${ENV_FILE}"
     # Migrate over user settings
     __adjust_NETWORK=""
     for var in "${ALL_VARS[@]}"; do
-        value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" ".env.source" || true)
+        value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}.source" || true)
         if [ -n "${value}" ] || [ "${var}" = "EXTRA_STATIC_NODES" ] || [ "${var}" = "SNAPSHOT" ]; then
             # For goerli and mainnet, we mean op-goerli and op-mainnet
             if [[ "${var}" = "NETWORK" && ( "${value}" = "goerli" || "${value}" = "mainnet" ) ]]; then
@@ -454,14 +462,14 @@ envmigrate() {
     # Move value from old variable name(s) to new one(s)
     for index in "${!OLD_VARS[@]}"; do
         var=${OLD_VARS[index]}
-        value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" ".env.source" || true)
+        value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}.source" || true)
         if [ -n "${value}" ]; then
             sed -i'.original' -e "s~^\(${NEW_VARS[index]}\s*=\s*\).*$~\1${value}~" "${ENV_FILE}"
         fi
     done
-    rm .env.original
+    rm "${ENV_FILE}".original
+    __during_migrate=0
 }
-
 
 upgrade() {
   update
@@ -488,6 +496,8 @@ stop() {
 }
 
 
+# Passed by user
+# shellcheck disable=SC2120
 down() {
     stop "$@"
 }
@@ -508,7 +518,6 @@ cmd() {
     docompose "$@"
 }
 
-
 terminate() {
     while true; do
         read -rp "WARNING - this action will destroy all data stores for this ${__app_name}. Do you wish to continue? (No/Yes) " yn
@@ -519,7 +528,7 @@ terminate() {
     done
 
     down
-    dodocker volume rm $(dodocker volume ls -q -f "name=^$(basename "$(realpath .)")_[^_]+")
+    dodocker volume rm "$(dodocker volume ls -q -f "name=^$(basename "$(realpath .)")_[^_]+")"
     echo ""
     echo "All containers stopped and all volumes deleted"
     echo ""
@@ -545,21 +554,36 @@ handle_error() {
     fi
 
     local exit_code=$1
-    if [ "$exit_code" -eq 127 ]; then
-        printhelp
-    elif [ "$exit_code" -eq 130 ]; then
-        echo "${me} terminated"
+    if [ "$exit_code" -eq 130 ]; then
+        echo "$__me terminated"
     else
-        echo "${me} failed with error $exit_code"
+        echo "$__me failed with error $exit_code on line $2"
+        if [ "$__during_update" -eq 1 ]; then
+            echo
+            echo "This happened during $__me update, which is a bug."
+            echo "Please come to Ethstaker Discord with logs to help me track this down."
+            if [ "$__during_migrate" -eq 1 ]; then
+                cp "${ENV_FILE}".source "${ENV_FILE}"
+                echo
+                echo "Restored your ${ENV_FILE} file, to undo partial migration. Please verify it looks correct."
+            fi
+        fi
+        if [ -n "${__command}" ]; then
+            echo "This happened during $__me ${__command} ${__params}"
+        fi
+        echo
+        echo "If this was an unexpected failure, please save the logs and come to Ethstaker Discord to troubleshoot this."
+        echo
     fi
 }
+
 
 version() {
     # script version
     grep "^This is" README.md
     echo ""
     var="COMPOSE_FILE"
-    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" ".env" || true)
+    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
     # Client versions
     case "${value}" in
         *optimism.yml* )
@@ -590,18 +614,18 @@ prune-geth() {
         esac
     done
 
-    if [ ! -f "./${ENV_FILE}" ]; then
+    if [ ! -f "${ENV_FILE}" ]; then
         echo "${ENV_FILE} configuration file not found, aborting."
         exit 130
     fi
 
-    if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "./${ENV_FILE}" 2>/dev/null ; then
+    if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "${ENV_FILE}" 2>/dev/null ; then
         echo "You do not appear to be using Geth, aborting."
         exit 130
     fi
 
     var=NETWORK
-    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "./${ENV_FILE}" || true)
+    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
     if [[ ! ( "${value}" = "op-goerli" || "${value}" = "op-mainnet" ) ]]; then
         echo "Pruning Geth is not needed on ${value}, it uses PBSS."
         exit 0
@@ -609,7 +633,7 @@ prune-geth() {
 
     __docker_dir=$(docker system info --format '{{.DockerRootDir}}')
 
-    if [ "$(df -P ${__docker_dir} | awk '/[0-9]%/{print $(NF-2)}')" -lt 41943040 ]; then
+    if [ "$(df -P "${__docker_dir}" | awk '/[0-9]%/{print $(NF-2)}')" -lt 41943040 ]; then
         echo "You do not have enough free disk space. Make sure this reads at least 40G free (Avail):"
         df -h "${__docker_dir}"
         echo ""
@@ -669,31 +693,26 @@ prune-geth() {
       done
     fi
 
-    echo ""
+    echo
     echo "Starting Geth prune"
-    echo ""
+    echo
     docompose run --rm set-prune-marker "touch /var/lib/op-geth/prune-marker"
     docompose stop op-geth && docompose rm -f op-geth
     start
-    echo ""
-    echo "Prune is running, you can observe it with \"$me logs -f op-geth\""
-    echo ""
-    echo "There should be three stages: \"Iterating state snapshot\", \"Pruning state data\", and \"Compacting database\". During \
-the \"Compacting database\" stage it may not output logs for an hour or so, that is normal."
-    echo ""
+    echo
+    echo "Prune is running, you can observe it with \"$__me logs -f op-geth\""
+    echo
+    echo "There should be three stages: \"Iterating state snapshot\", \"Pruning state data\", and \"Compacting database\". During"
+    echo "the \"Compacting database\" stage it may not output logs for an hour or so, that is normal."
+    echo
     echo "When prune is done, which takes 4-5 hours, Geth will automatically start again."
-    echo ""
+    echo
 }
 
-
-printhelp() {
-    echo "usage: ${me} [help|-h|--help] <subcommand>"
-    echo ""
-    echo "optional arguments:"
-    echo "  help | -h | --help"
-    echo "    print this message and exit"
-    echo ""
-    echo "subcommands:"
+help() {
+    echo "usage: ${__me} [-h|--help] <command>"
+    echo
+    echo "commands:"
     echo "  install"
     echo "     attempts to install Docker and Docker Compose for you"
     echo "  update "
@@ -706,7 +725,7 @@ printhelp() {
     echo "  restart [service-name]"
     echo "     restarts the ${__app_name}, or a specific service by name, a combination of down and up"
     echo "  version"
-    echo "     prints the version(s) of currently running client(s)"
+    echo "     prints the version\(s\) of currently running client\(s\)"
     echo "  logs"
     echo "     shows logs"
     echo "  cmd <command>"
@@ -715,24 +734,31 @@ printhelp() {
     echo "     stops the ${__app_name} and destroys all data stores"
     echo "  prune-geth"
     echo "     stops the op-geth execution client and prunes its DB. This takes about 4-5 hours"
-    echo ""
-    echo ""
-    echo "The logs subcommand can be appended by flags and specify the container(s). example: "
-    echo ""
-    echo "  $me logs -f --tail 50 ${__sample_service}"
+    echo "  help"
+    echo "      print this help screen"
+    echo
+    echo
+    echo "The logs subcommand can be appended by flags and specify the container\(s\). example: "
+    echo
+    echo "  $__me logs -f --tail 50 ${__sample_service}"
     echo "    shows logs only for ${__sample_service} service"
-    echo ""
-    echo ""
-    echo "$me will attempt to use sudo as needed for Docker commands"
-    echo ""
+    echo
+    echo
+    echo "$__me will attempt to use sudo as needed for Docker commands"
+    echo
 }
 
-
 # Main body from here
-me=$(basename "${BASH_SOURCE[0]}")
-trap 'handle_error $?' ERR
+ENV_FILE=.env
+__during_update=0
+__during_migrate=0
+__migrated=0
+__command=""
+__me="./$(basename "${BASH_SOURCE[0]}")"
 
-if [[ "$#" -eq 0 || "$1" == "help" || "$1" == "-h" || "$1" == "--help" ]]; then
+trap 'handle_error $? $LINENO' ERR
+
+if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     printhelp
     exit 0
 fi
@@ -752,17 +778,15 @@ if [ "${OWNER}" == "root" ]; then
     exit 130
 fi
 
-ENV_FILE=.env
-__during_update=0
-
-command="$1"
+__command="$1"
 shift
+__params=$*
 
 determine_distro
 handle_root
 
-if [ "$command" = "install" ]; then
-    $command "$@"
+if [ "$__command" = "install" ]; then
+    $__command "$@"
     exit "$?"
 fi
 
@@ -780,7 +804,14 @@ if ! docompose --help >/dev/null 2>&1; then
     exit 130
 fi
 
-$command "$@"
+case "$__command" in
+    help|update|up|start|down|stop|restart|version|logs|cmd|terminate|prune-geth)
+        $__command "$@";;
+    *)
+        echo "Unrecognized command $__command"
+        help
+        ;;
+esac
 
 check_disk_space
 
