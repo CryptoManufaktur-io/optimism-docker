@@ -5,8 +5,8 @@ Docker Compose for OP Stack chains: Optimism, Base, PGN, Zora.
 `cp default.env .env`, then `nano .env` and adjust values for the right network including sequencer. On op-mainnet and
 op-goerli, set a snapshot.
 
-Meant to be used with https://github.com/CryptoManufaktur-io/base-docker-environment for traefik and Prometheus remote
-write; use `ext-network.yml` in that case.
+Meant to be used with [central-proxy-docker](https://github.com/CryptoManufaktur-io/central-proxy-docker) for traefik
+and Prometheus remote write; use `:ext-network.yml` in `COMPOSE_FILE` inside `.env` in that case.
 
 If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPOSE_FILE` inside `.env`.
 
