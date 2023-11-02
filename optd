@@ -182,7 +182,7 @@ check_for_snap() {
         echo "but in a nutshell \"$__me stop\" followed by \"sudo snap remove --purge docker\" followed by a reboot,"
         echo "and as needed install docker-ce or docker.io with apt."
         echo
-        echo "Do join us on EthStaker Discord to work through this issue."
+        echo "Do join us on CryptoManufaktur Discord to work through this issue."
         echo
         echo "Aborting, this is not safe"
         exit 130
@@ -573,7 +573,7 @@ handle_error() {
             echo "This happened during $__me ${__command} ${__params}"
         fi
         echo
-        echo "If this was an unexpected failure, please save the logs and come to Ethstaker Discord to troubleshoot this."
+        echo "If this was an unexpected failure, please save the logs and come to CryptoManufaktur Discord to troubleshoot this."
         echo
     fi
 }
