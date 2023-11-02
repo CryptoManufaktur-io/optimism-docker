@@ -560,7 +560,7 @@ handle_error() {
         echo "$__me failed with error $exit_code on line $2"
         if [ "$__during_update" -eq 1 ]; then
             echo
-            echo "This happened during $__me update, which is a bug."
+            echo "This happened during $__me update ${__params}, which is a bug."
             echo "Please come to Ethstaker Discord with logs to help me track this down."
             if [ "$__during_migrate" -eq 1 ]; then
                 cp "${ENV_FILE}" "${ENV_FILE}".partial
