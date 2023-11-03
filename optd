@@ -521,6 +521,12 @@ cmd() {
 }
 
 terminate() {
+    if [ -z "$(dodocker volume ls -q -f "name=^$(basename "$(realpath .)")_[^_]+")" ]; then
+        echo "There are no data stores - Docker volumes - left to remove for this Ethereum node."
+        stop
+        return 0
+    fi
+
     while true; do
         read -rp "WARNING - this action will destroy all data stores for this ${__app_name}. Do you wish to continue? (No/Yes) " yn
         case $yn in
