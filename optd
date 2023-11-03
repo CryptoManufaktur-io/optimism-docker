@@ -560,6 +560,9 @@ handle_error() {
         echo "$__me terminated"
     else
         echo "$__me failed with error $exit_code on line $line_no"
+        echo
+        echo "Please save the logs and come to CryptoManufaktur Discord to troubleshoot this."
+        echo
     fi
     if [ -n "${__command}" ]; then
         echo "This happened during $__me ${__command} ${__params}"
@@ -571,9 +574,6 @@ handle_error() {
         echo "Restored your ${ENV_FILE} file, to undo partial migration. Please verify it looks correct."
         echo "The partially migrated file is in ${ENV_FILE}.partial for troubleshooting."
     fi
-    echo
-    echo "If this was an unexpected failure, please save the logs and come to CryptoManufaktur Discord to troubleshoot this."
-    echo
 }
 
 
