@@ -38,20 +38,28 @@ esac
 
 # Prep datadir
 if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
-#  wget -q -O - "${SNAPSHOT}" | tar xvf - -C /var/lib/op-geth
+  __dont_rm=0
   cd /var/lib/op-geth/snapshot
   aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true ${SNAPSHOT}
   filename=`echo ${SNAPSHOT} | awk -F/ '{print $NF}'`
-  pzstd -c -d ${filename} | tar xvf - -C /var/lib/op-geth
-  rm -f ${filename}
+  if [[ "${filename}" =~ \.tar\.zst$ ]]; then
+    pzstd -c -d ${filename} | tar xvf - -C /var/lib/op-geth
+  elif [[ "${filename}" =~ \.tar\.gz$ || "${filename}" =~ \.tgz$ ]]; then
+    tar xzvf "${filename}" -C /var/lib/op-geth
+  elif [[ "${filename}" =~ \.tar$ ]]; then
+    tar xvf "${filename}" -C /var/lib/op-geth
+  else
+    __dont_rm=1
+    echo "The snapshot file has a format that Optimism Docker can't handle."
+    echo "Please come to CryptoManufaktur Discord to work through this."
+  fi
+  if [ "${__dont_rm}" -eq 0 ]; then
+    rm -f ${filename}
+  fi
 fi
 
 if [[ -z "${SNAPSHOT}" && ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
   echo "WARNING: Optimism Goerli and Optimism Mainnet should be using a SNAPSHOT in .env"
-fi
-
-if [[ -n "${SNAPSHOT}" && ! ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
-  echo "WARNING: Only Optimism Goerli and Optimism Mainnet should be using a SNAPSHOT in .env"
 fi
 
 # Detect existing DB; use PBSS if fresh
