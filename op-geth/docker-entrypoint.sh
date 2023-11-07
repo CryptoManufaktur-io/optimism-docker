@@ -64,6 +64,10 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
     mkdir -p /var/lib/op-geth/geth
     mv /var/lib/op-geth/chaindata /var/lib/op-geth/geth/
   fi
+  if [[ ! -d /var/lib/op-geth/geth/chaindata ]]; then
+    echo "Chaindata isn't in the expected location."
+    echo "This snapshot likely won't work until the entrypoint script has been adjusted for it." 
+  fi
 fi
 
 if [[ -z "${SNAPSHOT}" && ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
