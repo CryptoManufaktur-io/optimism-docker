@@ -106,6 +106,7 @@ services:
     image: op-node:local
     pull_policy: build
     stop_grace_period: 1m
+    stop_signal: SIGHUP
     environment:
       - CL_EXTRAS=${CL_EXTRAS}
     volumes:
