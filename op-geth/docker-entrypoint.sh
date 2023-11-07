@@ -40,8 +40,9 @@ esac
 if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   __dont_rm=0
   cd /var/lib/op-geth/snapshot
-  aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true ${SNAPSHOT}
-  filename=`echo ${SNAPSHOT} | awk -F/ '{print $NF}'`
+  eval "__url=${SNAPSHOT}"
+  aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true "${__url}"
+  filename=$(echo "${__url}" | awk -F/ '{print $NF}')
   if [[ "${filename}" =~ \.tar\.zst$ ]]; then
     pzstd -c -d ${filename} | tar xvf - -C /var/lib/op-geth
   elif [[ "${filename}" =~ \.tar\.gz$ || "${filename}" =~ \.tgz$ ]]; then
