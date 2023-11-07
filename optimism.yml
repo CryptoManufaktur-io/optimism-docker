@@ -1,4 +1,3 @@
-version: "3.9"
 x-logging: &logging
   logging:
     driver: json-file
@@ -16,6 +15,7 @@ services:
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
     image: op-geth:local
+    pull_policy: build
     stop_grace_period: 5m
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
@@ -104,6 +104,7 @@ services:
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
     image: op-node:local
+    pull_policy: build
     stop_grace_period: 1m
     environment:
       - CL_EXTRAS=${CL_EXTRAS}
