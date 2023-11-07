@@ -57,6 +57,10 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   if [ "${__dont_rm}" -eq 0 ]; then
     rm -f ${filename}
   fi
+  if [[ "${NETWORK}" = "base-mainnet" or "${NETWORK}" = "base-sepolia" ]]; then
+    mv /var/lib/op-geth/data/geth /var/lib/op-geth/
+    rm -rf /var/lib/op-geth/data
+  fi
 fi
 
 if [[ -z "${SNAPSHOT}" && ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
