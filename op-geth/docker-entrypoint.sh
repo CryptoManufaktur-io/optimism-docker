@@ -44,7 +44,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true "${__url}"
   filename=$(echo "${__url}" | awk -F/ '{print $NF}')
   if [[ "${filename}" =~ \.tar\.zst$ ]]; then
-    pzstd -c -d ${filename} | tar xvf - -C /var/lib/op-geth
+    pzstd -c -d "${filename}" | tar xvf - -C /var/lib/op-geth
   elif [[ "${filename}" =~ \.tar\.gz$ || "${filename}" =~ \.tgz$ ]]; then
     tar xzvf "${filename}" -C /var/lib/op-geth
   elif [[ "${filename}" =~ \.tar$ ]]; then
@@ -55,9 +55,9 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
     echo "Please come to CryptoManufaktur Discord to work through this."
   fi
   if [ "${__dont_rm}" -eq 0 ]; then
-    rm -f ${filename}
+    rm -f "${filename}"
   fi
-  if [[ "${NETWORK}" = "base-mainnet" or "${NETWORK}" = "base-sepolia" ]]; then
+  if [[ "${NETWORK}" = "base-mainnet" || "${NETWORK}" = "base-sepolia" ]]; then
     mv /var/lib/op-geth/data/geth /var/lib/op-geth/
     rm -rf /var/lib/op-geth/data
   fi
