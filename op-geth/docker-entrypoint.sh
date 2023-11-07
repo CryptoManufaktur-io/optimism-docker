@@ -57,9 +57,12 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   if [ "${__dont_rm}" -eq 0 ]; then
     rm -f "${filename}"
   fi
-  if [[ "${NETWORK}" = "base-mainnet" || "${NETWORK}" = "base-sepolia" ]]; then
+  if [[ -d /var/lib/op-geth/data/geth/chaindata ]]; then # Base format
     mv /var/lib/op-geth/data/geth /var/lib/op-geth/
     rm -rf /var/lib/op-geth/data
+  elif [[ -d /var/lib/op-geth/chaindata ]]; then # hypothetical
+    mkdir -p /var/lib/op-geth/geth
+    mv /var/lib/op-geth/chaindata /var/lib/op-geth/geth/
   fi
 fi
 
