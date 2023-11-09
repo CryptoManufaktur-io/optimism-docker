@@ -623,13 +623,6 @@ prune-geth() {
         exit 130
     fi
 
-    var=NETWORK
-    value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
-    if [[ ! ( "${value}" = "op-goerli" || "${value}" = "op-mainnet" ) ]]; then
-        echo "Pruning Geth is not needed on ${value}, it uses PBSS."
-        exit 0
-    fi
-
     __docker_dir=$(docker system info --format '{{.DockerRootDir}}')
 
     if [ "$(df -P "${__docker_dir}" | awk '/[0-9]%/{print $(NF-2)}')" -lt 41943040 ]; then
