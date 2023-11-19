@@ -694,8 +694,9 @@ prune-geth() {
     echo
     echo "Prune is running, you can observe it with \"$__me logs -f op-geth\""
     echo
-    echo "There should be three stages: \"Iterating state snapshot\", \"Pruning state data\", and \"Compacting database\". During"
-    echo "the \"Compacting database\" stage it may not output logs for an hour or so, that is normal."
+    echo "There should be three stages: \"Iterating state snapshot\", \"Pruning state data\", and"
+    echo "\"Compacting database\". There may be a half-hour delay between the first and second stages without logs,"
+    echo "and during the \"Compacting database\" stage it may not output logs for an hour or so. That is normal."
     echo
     echo "When prune is done, which takes 4-5 hours, Geth will automatically start again."
     echo
