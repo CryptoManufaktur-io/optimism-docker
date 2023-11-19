@@ -618,6 +618,9 @@ prune-geth() {
         exit 130
     fi
 
+    echo "In testing, pruning op-geth is not safe. This function has been disabled."
+    exit 0
+
     if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "${ENV_FILE}" 2>/dev/null ; then
         echo "You do not appear to be using Geth, aborting."
         exit 130
