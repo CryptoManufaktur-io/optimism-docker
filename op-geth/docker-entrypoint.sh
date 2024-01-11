@@ -49,6 +49,8 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
     tar xzvf "${filename}" -C /var/lib/op-geth
   elif [[ "${filename}" =~ \.tar$ ]]; then
     tar xvf "${filename}" -C /var/lib/op-geth
+  elif [[ "${filename}" =~ \.lz4$ ]]; then
+    tar -I lz4 xvf "${filename}" -C /var/lib/op-geth
   else
     __dont_rm=1
     echo "The snapshot file has a format that Optimism Docker can't handle."
@@ -60,13 +62,16 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   if [[ -d /var/lib/op-geth/data/geth/chaindata ]]; then # Base format
     mv /var/lib/op-geth/data/geth /var/lib/op-geth/
     rm -rf /var/lib/op-geth/data
+  elif [[ -d /var/lib/op-geth/op-dir/geth/chaindata ]]; then # Fastnode format
+    mv /var/lib/op-geth/op-dir/geth /var/lib/op-geth/
+    rm -rf /var/lib/op-geth/op-dir
   elif [[ -d /var/lib/op-geth/chaindata ]]; then # hypothetical
     mkdir -p /var/lib/op-geth/geth
     mv /var/lib/op-geth/chaindata /var/lib/op-geth/geth/
   fi
   if [[ ! -d /var/lib/op-geth/geth/chaindata ]]; then
     echo "Chaindata isn't in the expected location."
-    echo "This snapshot likely won't work until the entrypoint script has been adjusted for it." 
+    echo "This snapshot likely won't work until the entrypoint script has been adjusted for it."
   fi
 fi
 

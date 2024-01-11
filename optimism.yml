@@ -111,6 +111,7 @@ services:
       - CL_EXTRAS=${CL_EXTRAS}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
+      - opnode-data:/var/lib/op-node
       - /etc/localtime:/etc/localtime:ro
     ports:
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/tcp
@@ -138,6 +139,12 @@ services:
       - --metrics.enabled
       - --p2p.listen.tcp
       - ${OPNODE_P2P_PORT:-9222}
+      - --p2p.discovery.path
+      - /var/lib/op-node/opnode_discovery_db
+      - --p2p.peerstore.path
+      - /var/lib/op-node/opnode_peerstore_db
+      - --p2p.priv.path
+      - /var/lib/op-node/opnode_p2p_priv.txt
     labels:
       - traefik.enable=true
       - traefik.http.routers.${OPNODE_HOST:-opnode}.service=${OPNODE_HOST:-opnode}
@@ -164,4 +171,5 @@ services:
 
 volumes:
   opgeth-data:
+  opnode-data:
   jwtsecret:
