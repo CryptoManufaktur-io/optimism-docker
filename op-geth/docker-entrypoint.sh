@@ -50,7 +50,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   elif [[ "${filename}" =~ \.tar$ ]]; then
     tar xvf "${filename}" -C /var/lib/op-geth
   elif [[ "${filename}" =~ \.lz4$ ]]; then
-    tar -I lz4 xvf "${filename}" -C /var/lib/op-geth
+    lz4 -d "${filename}" | tar xvf - -C /var/lib/op-geth
   else
     __dont_rm=1
     echo "The snapshot file has a format that Optimism Docker can't handle."
