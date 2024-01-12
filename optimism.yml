@@ -42,6 +42,8 @@ services:
       - --rollup.sequencerhttp
       - ${SEQUENCER}
       - --rollup.disabletxpoolgossip
+      - --rollup.halt
+      - major
       - --authrpc.addr
       - 0.0.0.0
       - --authrpc.port
@@ -128,6 +130,10 @@ services:
       - /var/lib/op-node/ee-secret/jwtsecret
       - --network
       - ${NETWORK}
+      - --rollup.halt
+      - major
+      - --rollup.load-protocol-versions
+      - "true"
       - --l1
       - ${L1_RPC}
       - --l1.rpckind
