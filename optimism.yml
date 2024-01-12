@@ -14,7 +14,7 @@ services:
       dockerfile: Dockerfile.binary
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
-    image: op-geth:local
+    image: op-geth:${NETWORK}
     pull_policy: build
     stop_grace_period: 5m
     environment:
@@ -103,7 +103,7 @@ services:
       dockerfile: Dockerfile.binary
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
-    image: op-node:local
+    image: op-node:${NETWORK}
     pull_policy: build
     stop_grace_period: 1m
     stop_signal: SIGHUP
