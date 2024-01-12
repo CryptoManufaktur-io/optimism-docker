@@ -132,8 +132,7 @@ services:
       - ${NETWORK}
       - --rollup.halt
       - major
-      - --rollup.load-protocol-versions
-      - "true"
+      - --rollup.load-protocol-versions=true
       - --l1
       - ${L1_RPC}
       - --l1.rpckind
