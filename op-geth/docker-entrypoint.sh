@@ -68,9 +68,6 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   elif [[ -d /var/lib/op-geth/snapshots/mainnet/download/geth/chaindata ]]; then # Base format
     mv /var/lib/op-geth/snapshots/mainnet/download/geth /var/lib/op-geth/
     rm -rf /var/lib/op-geth/snapshots
-  elif [[ -d /var/lib/op-geth/chaindata ]]; then # hypothetical
-    mkdir -p /var/lib/op-geth/geth
-    mv /var/lib/op-geth/chaindata /var/lib/op-geth/geth/
   else # try to find the directory
     __search_dir="geth/chaindata"
     __base_dir="/var/lib/op-geth/"
