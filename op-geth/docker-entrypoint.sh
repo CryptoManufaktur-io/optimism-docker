@@ -59,15 +59,29 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   if [ "${__dont_rm}" -eq 0 ]; then
     rm -f "${filename}"
   fi
-  if [[ -d /var/lib/op-geth/data/geth/chaindata ]]; then # Base format
+  if [[ -d /var/lib/op-geth/data/geth/chaindata ]]; then # Optimism format
     mv /var/lib/op-geth/data/geth /var/lib/op-geth/
     rm -rf /var/lib/op-geth/data
   elif [[ -d /var/lib/op-geth/op-dir/geth/chaindata ]]; then # Fastnode format
     mv /var/lib/op-geth/op-dir/geth /var/lib/op-geth/
     rm -rf /var/lib/op-geth/op-dir
+  elif [[ -d /var/lib/op-geth/snapshots/mainnet/download/geth/chaindata ]]; then # Base format
+    mv /var/lib/op-geth/snapshots/mainnet/download/geth /var/lib/op-geth/
+    rm -rf /var/lib/op-geth/snapshots
   elif [[ -d /var/lib/op-geth/chaindata ]]; then # hypothetical
     mkdir -p /var/lib/op-geth/geth
     mv /var/lib/op-geth/chaindata /var/lib/op-geth/geth/
+  else # try to find the directory
+    __search_dir="geth/chaindata"
+    __base_dir="/var/lib/op-geth/"
+    __found_path=$(find "$__base_dir" -type d -path "*/$__search_dir" -print -quit)
+    if [ -n "$__found_path" ]; then
+      __geth_dir=$(dirname "$__found_path")
+      __geth_dir=${__geth_dir%/chaindata}
+      echo "Found a geth directory at ${__geth_dir}, moving it."
+      mv "$__geth_dir" "$__base_dir"
+      rm -rf "$__geth_dir"
+    fi
   fi
   if [[ ! -d /var/lib/op-geth/geth/chaindata ]]; then
     echo "Chaindata isn't in the expected location."
