@@ -324,6 +324,26 @@ nag_os_version() {
 }
 
 
+warn_l1() {
+  var="L1_RPC"
+  value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
+# Literal match intended
+# shellcheck disable=SC2076
+  if [[ "${value}" =~ "example.com" ]]; then
+    echo "Warning: Your L1 RPC (EL) is not set to a valid value. Syncing will fail."
+    echo
+  fi
+  var="L1_BEACON"
+  value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
+# Literal match intended
+# shellcheck disable=SC2076
+  if [[ "${value}" =~ "example.com" ]]; then
+    echo "Warning: Your L1 Beacon (CL) is not set to a valid value. Syncing will fail."
+    echo
+  fi
+}
+
+
 # Arguments are passed, but shellcheck doesn't recognize that
 # shellcheck disable=SC2120
 update() {
@@ -410,6 +430,7 @@ find the original contents in ${ENV_FILE}.bak."
         echo
         ${__as_owner} git status --porcelain
     fi
+    warn_l1
     __during_update=0
 }
 
@@ -580,7 +601,7 @@ handle_error() {
 version() {
     # script version
     grep "^This is" README.md
-    echo ""
+    echo
     var="COMPOSE_FILE"
     value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
     # Client versions
@@ -619,7 +640,9 @@ prune-geth() {
     fi
 
     echo "In testing, pruning op-geth is not safe. This function has been disabled."
-    exit 0
+    if true; then
+      exit 0
+    fi
 
     if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "${ENV_FILE}" 2>/dev/null ; then
         echo "You do not appear to be using Geth, aborting."
