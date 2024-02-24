@@ -278,18 +278,7 @@ check_disk_space() {
     var="COMPOSE_FILE"
     value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
 
-# Literal match intended
-# shellcheck disable=SC2076
-    if [[ "${value}" =~ "optimism.yml" ]] && [[ "${__free_space}" -lt 104857600 ]]; then
-        echo ""
-        echo "You are running op-geth and have less than 100 GiB of free disk space."
-        echo "If Avail reads 40 GiB or more, prune with $__me prune-geth:"
-        echo ""
-        df -h "${__docker_dir}"
-        echo ""
-        echo "If it's less than 40 GiB, you may need to resync Geth from scratch."
-        echo ""
-    elif [[ "${__free_space}" -lt 52428800 ]]; then
+    if [[ "${__free_space}" -lt 52428800 ]]; then
         echo ""
         echo "You have less than 50 GiB of free disk space:"
         echo ""
@@ -615,119 +604,6 @@ version() {
 }
 
 
-prune-geth() {
-    __non_interactive=0
-    while :
-    do
-        if [ -z ${1+x} ]; then
-            break
-        fi
-        case "$1" in
-            --non-interactive)
-                __non_interactive=1
-                shift
-                ;;
-            *)
-                echo "Error: Unknown option: $1" >&2
-                exit 130
-                ;;
-        esac
-    done
-
-    if [ ! -f "${ENV_FILE}" ]; then
-        echo "${ENV_FILE} configuration file not found, aborting."
-        exit 130
-    fi
-
-    echo "In testing, pruning op-geth is not safe. This function has been disabled."
-    if true; then
-      exit 0
-    fi
-
-    if ! grep -q '^COMPOSE_FILE=.*optimism\.yml' "${ENV_FILE}" 2>/dev/null ; then
-        echo "You do not appear to be using Geth, aborting."
-        exit 130
-    fi
-
-    __docker_dir=$(docker system info --format '{{.DockerRootDir}}')
-
-    if [ "$(df -P "${__docker_dir}" | awk '/[0-9]%/{print $(NF-2)}')" -lt 41943040 ]; then
-        echo "You do not have enough free disk space. Make sure this reads at least 40G free (Avail):"
-        df -h "${__docker_dir}"
-        echo ""
-        echo "Aborting."
-        exit 130
-    fi
-
-    rpc_line=$(grep '^RPC_PORT=' "${ENV_FILE}")
-    regex='^RPC_PORT=([0-9]+)'
-    if [[ ! "${rpc_line}" =~ ${regex} ]]; then
-        echo "Unable to determine RPC_PORT, aborting."
-        exit 130
-    else
-        rpc_port="${BASH_REMATCH[1]}"
-    fi
-
-    sync_status=$(docompose exec -T op-geth wget -qO- "http://localhost:$rpc_port" --header 'Content-Type: application/json' --post-data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}')
-    exitstatus=$?
-    if [ $exitstatus -ne 0 ]; then
-        echo "Unable to connect to Geth: Is it running?"
-        echo "Output: ${sync_status}"
-        echo "Aborting."
-        exit 130
-    fi
-
-    if [[ ! "${sync_status}" =~ "false" ]]; then
-        echo "Geth is not done syncing yet. Sync status:"
-        echo "${sync_status}"
-        echo ""
-        echo "Aborting."
-        exit 130
-    fi
-
-    node_logs=$(docompose logs --no-color --tail 1000 op-geth)
-    if [[ "${node_logs}" =~ "snapshot generation" && ! "${node_logs}" =~ "Generated state" ]]; then
-        echo "Geth has not finished generating a state snapshot yet, aborting."
-        exit 130
-    fi
-
-    regex='\[([0-9][0-9]-[0-9][0-9])\|([0-9][0-9]:[0-9][0-9]):[0-9.]*\][[:space:]]*Generated state'
-    if [[ "${node_logs}" =~ $regex ]]; then
-        snap_time=$(date -d "1970-${BASH_REMATCH[1]} ${BASH_REMATCH[2]}" +"%s")
-        now_time=$(date +"%s")
-        if [ $((snap_time+2100)) -gt "$now_time" ]; then
-            echo "Please wait 35 minutes after snapshot generation finished. Aborting."
-            exit 130
-        fi
-    fi
-
-    if [ $__non_interactive = 0 ]; then
-      while true; do
-          read -rp "WARNING - this will stop Geth and prune its database. Do you wish to continue? (No/Yes) " yn
-          case $yn in
-              [Yy][Ee][Ss] ) break;;
-              * ) echo "Aborting, no changes made"; exit 130;;
-          esac
-      done
-    fi
-
-    echo
-    echo "Starting Geth prune"
-    echo
-    docompose run --rm set-prune-marker "touch /var/lib/op-geth/prune-marker"
-    docompose stop op-geth && docompose rm -f op-geth
-    start
-    echo
-    echo "Prune is running, you can observe it with \"$__me logs -f op-geth\""
-    echo
-    echo "There should be three stages: \"Iterating state snapshot\", \"Pruning state data\", and"
-    echo "\"Compacting database\". There may be a half-hour delay between the first and second stages without logs,"
-    echo "and during the \"Compacting database\" stage it may not output logs for an hour or so. That is normal."
-    echo
-    echo "When prune is done, which takes 4-5 hours, Geth will automatically start again."
-    echo
-}
-
 help() {
     echo "usage: ${__me} [-h|--help] <command>"
     echo
@@ -751,8 +627,6 @@ help() {
     echo "     executes an arbitrary Docker Compose command. Use \"cmd help\" to list them"
     echo "  terminate"
     echo "     stops the ${__app_name} and destroys all data stores"
-    echo "  prune-geth"
-    echo "     stops the op-geth execution client and prunes its DB. This takes about 4-5 hours"
     echo "  help"
     echo "      print this help screen"
     echo
@@ -835,7 +709,7 @@ if ! docompose --help >/dev/null 2>&1; then
 fi
 
 case "$__command" in
-    help|update|up|start|down|stop|restart|version|logs|cmd|terminate|prune-geth)
+    help|update|up|start|down|stop|restart|version|logs|cmd|terminate)
         $__command "$@";;
     *)
         echo "Unrecognized command $__command"
