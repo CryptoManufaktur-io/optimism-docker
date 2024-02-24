@@ -105,11 +105,6 @@ else
   __legacy=""
 fi
 
-if [ -f /var/lib/op-geth/prune-marker ]; then
-  rm -f /var/lib/op-geth/prune-marker
-  exec "$@" snapshot prune-state
-else
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-  exec "$@" ${__verbosity} ${__pbss} ${__legacy} ${EL_EXTRAS}
-fi
+exec "$@" ${__verbosity} ${__pbss} ${__legacy} ${EL_EXTRAS}

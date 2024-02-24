@@ -167,15 +167,6 @@ services:
       - metrics.path=/metrics
       - metrics.port=7300
 
-  set-prune-marker:
-    profiles: ["tools"]
-    image: alpine:3
-    restart: "no"
-    volumes:
-      - opgeth-data:/var/lib/op-geth
-    entrypoint: ["/bin/sh","-c"]
-    command: /bin/sh
-
 volumes:
   opgeth-data:
   opnode-data:
