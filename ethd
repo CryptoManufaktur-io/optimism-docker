@@ -642,8 +642,10 @@ version() {
     # Client versions
     case "${value}" in
         *optimism.yml* )
+            echo "OPGETH_DOCKER_TAG: $(grep -E '^OPGETH_DOCKER_TAG=' .env | cut -d '=' -f2)"
             docompose exec op-geth geth version
             echo
+            echo "OPNODE_DOCKER_TAG: $(grep -E '^OPNODE_DOCKER_TAG=' .env | cut -d '=' -f2)"
             docompose exec op-node op-node --version
             ;;&
     esac
