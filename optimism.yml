@@ -47,6 +47,8 @@ services:
       - --rollup.disabletxpoolgossip
       - --rollup.halt
       - major
+      - --port
+      - ${OPGETH_P2P_PORT:-30303}
       - --authrpc.addr
       - 0.0.0.0
       - --authrpc.port
