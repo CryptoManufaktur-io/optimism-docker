@@ -12,7 +12,7 @@ services:
     build:
       context: ./prom-metrics
     restart: unless-stopped
-    pull_policy: build
+    pull_policy: never
     environment:
       - NETWORK=${NETWORK:-}
     labels:

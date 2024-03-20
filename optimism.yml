@@ -15,7 +15,7 @@ services:
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
     image: op-geth:${NETWORK}
-    pull_policy: build
+    pull_policy: never
     stop_grace_period: 5m
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
@@ -27,6 +27,9 @@ services:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
       - /etc/localtime:/etc/localtime:ro
+    ports:
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/tcp
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/udp
     networks:
       default:
         aliases:
@@ -69,11 +72,6 @@ services:
       - --pprof
       - --pprof.addr
       - 0.0.0.0
-      - --syncmode
-      - full
-      - --maxpeers
-      - "0"
-      - --nodiscover
     labels:
       - traefik.enable=true
       - traefik.http.routers.${RPC_HOST:-op}.service=${RPC_HOST:-op}
@@ -106,7 +104,7 @@ services:
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
     image: op-node:${NETWORK}
-    pull_policy: build
+    pull_policy: never
     stop_grace_period: 1m
     stop_signal: SIGHUP
     environment:
@@ -152,6 +150,8 @@ services:
       - /var/lib/op-node/opnode_peerstore_db
       - --p2p.priv.path
       - /var/lib/op-node/opnode_p2p_priv.txt
+      - --syncmode
+      - execution-layer
     labels:
       - traefik.enable=true
       - traefik.http.routers.${OPNODE_HOST:-opnode}.service=${OPNODE_HOST:-opnode}
