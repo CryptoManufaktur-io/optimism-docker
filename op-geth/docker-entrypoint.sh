@@ -86,10 +86,6 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   fi
 fi
 
-if [[ -z "${SNAPSHOT}" && ( "${NETWORK}" = "op-goerli" || "${NETWORK}" = "op-mainnet" ) ]]; then
-  echo "WARNING: Optimism Goerli and Optimism Mainnet should be using a SNAPSHOT in .env"
-fi
-
 # Detect existing DB; use PBSS if fresh
 if [ -d "/var/lib/op-geth/geth/chaindata/" ]; then
   __pbss=""
