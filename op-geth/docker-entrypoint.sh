@@ -75,7 +75,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
     if [ -n "$__found_path" ]; then
       __geth_dir=$(dirname "$__found_path")
       __geth_dir=${__geth_dir%/chaindata}
-      if [ "${__geth_dir}" = "geth" ]; then
+      if [ "${__geth_dir}" = "${__base_dir}/geth" ]; then
          echo "Snapshot extracted into ${__geth_dir}/chaindata"
       else 
         echo "Found a geth directory at ${__geth_dir}, moving it."
