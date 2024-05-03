@@ -498,12 +498,12 @@ envmigrate() {
     for var in "${ALL_VARS[@]}"; do
         value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}.source" || true)
         if [ -n "${value}" ] || [ "${var}" = "EXTRA_STATIC_NODES" ] || [ "${var}" = "SNAPSHOT" ]; then
-            # For goerli and mainnet, we mean op-goerli and op-mainnet
-            if [[ "${var}" = "NETWORK" && ( "${value}" = "goerli" || "${value}" = "mainnet" ) ]]; then
+            # For mainnet, we mean op-mainnet
+            if [[ "${var}" = "NETWORK" && "${value}" = "mainnet" ]]; then
                 __adjust_NETWORK="${value}"
                 value="op-${value}"
             fi
-            # Coming from the original Optimism Docker, replace ${NETWORK} in strings with goerli or mainnet
+            # Coming from the original Optimism Docker, replace ${NETWORK} in strings with mainnet
             if [[ -n "${__adjust_NETWORK}" && ( "${var}" = "SNAPSHOT" || "${var}" = "SEQUENCER"
                 || "${var}" = "LEGACY_TAR" ) ]]; then
                 value="${value//\$\{NETWORK\}/${__adjust_NETWORK}}"
