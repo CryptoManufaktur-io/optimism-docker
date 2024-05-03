@@ -7,6 +7,19 @@ x-logging: &logging
       tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
 
 services:
+  op-geth-init:
+    restart: "no"
+    build:
+      context: ./op-geth
+      dockerfile: Dockerfile.init
+    image: op-geth-init
+    pull_policy: never
+    environment:
+      - SNAPSHOT=${SNAPSHOT:-}
+    volumes:
+      - opgeth-data:/var/lib/op-geth
+      - jwtsecret:/var/lib/op-geth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
   op-geth:
     restart: "unless-stopped"
     build:
@@ -19,7 +32,6 @@ services:
     stop_grace_period: 5m
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
-      - SNAPSHOT=${SNAPSHOT:-}
       - NETWORK=${NETWORK:-}
       - LEGACY=${LEGACY:-false}
       - EL_EXTRAS=${EL_EXTRAS:-}
@@ -34,6 +46,9 @@ services:
       default:
         aliases:
           - ${NETWORK}-geth # This allows multiple Optimism Docker stacks all connected to the same central traefik
+    depends_on:
+      op-geth-init:
+        condition: service_completed_successfully
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
@@ -60,7 +75,7 @@ services:
       - --http.addr
       - 0.0.0.0
       - --http.port
-      - ${RPC_PORT:-8545} 
+      - ${RPC_PORT:-8545}
       - --http.vhosts=*
       - --http.corsdomain=*
       - --ws
