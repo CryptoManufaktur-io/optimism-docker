@@ -60,6 +60,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   if [[ ! -d /var/lib/op-geth/geth/chaindata ]]; then
     echo "Chaindata isn't in the expected location."
     echo "This snapshot likely won't work until the entrypoint script has been adjusted for it."
+    exit 1
   fi
 else
   echo "No snapshot fetch necessary"
