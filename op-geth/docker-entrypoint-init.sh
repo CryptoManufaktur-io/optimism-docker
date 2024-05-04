@@ -20,7 +20,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   if [[ "${__url}" == "https://storage.cloud.google.com/"* ]]; then
     echo "Google Cloud URL detected, using gsutil"
     __path="gs://${__url#https://storage.cloud.google.com/}"
-    gsutil cp "${__path}" .
+    gsutil -m cp -v "${__path}" .
   else
     aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true "${__url}"
   fi
