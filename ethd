@@ -535,7 +535,7 @@ start() {
   var="NETWORK"
   NETWORK=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
   rm -f "/tmp/${NETWORK}-compose-screen.log"
-  screen -dmS optimism-compose-session -L -Logfile "/tmp/${NETWORK}-compose-screen.log" ${__compose_exe} up -d --remove-orphans
+  screen -dmS "${NETWORK}-compose-session" -L -Logfile "/tmp/${NETWORK}-compose-screen.log" ${__compose_exe} up -d --remove-orphans
   echo "Running \"docker compose up -d\" in screen because of the op-geth-init container."
   echo
   echo "If this is your first start and you are getting a SNAPSHOT, you can view the init logs:"
