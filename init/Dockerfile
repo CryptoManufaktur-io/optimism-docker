@@ -1,8 +1,8 @@
 FROM google/cloud-sdk:latest
 
-COPY docker-entrypoint-init.sh /usr/local/bin/docker-entrypoint.sh
+COPY fetch-snapshot.sh /usr/local/bin/
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y ca-certificates tzdata aria2 zstd lz4 \
         && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT [ "docker-entrypoint.sh" ]
+ENTRYPOINT [ "fetch-snapshot.sh" ]

@@ -10,8 +10,8 @@ services:
   op-geth-init:
     restart: "no"
     build:
-      context: ./op-geth
-      dockerfile: Dockerfile.init
+      context: ./init
+      dockerfile: Dockerfile
     image: init:optimism
     pull_policy: never
     environment:
