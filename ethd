@@ -532,20 +532,23 @@ start() {
   if ! type -P screen >/dev/null 2>&1; then
     ${__auto_sudo} apt-get update && ${__auto_sudo} apt-get install -y screen
   fi
-  rm -f /tmp/compose-screen.log
-  screen -dmS docker-compose-session -L -Logfile /tmp/compose-screen.log ${__compose_exe} up -d --remove-orphans
+  var="NETWORK"
+  NETWORK=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}" || true)
+  rm -f "/tmp/${NETWORK}-compose-screen.log"
+  screen -dmS optimism-compose-session -L -Logfile "/tmp/${NETWORK}-compose-screen.log" ${__compose_exe} up -d --remove-orphans
   echo "Running \"docker compose up -d\" in screen because of the op-geth-init container."
   echo
   echo "If this is your first start and you are getting a SNAPSHOT, you can view the init logs:"
   echo "\"./ethd logs -f op-geth-init\""
   echo
-  echo "You can attach to the screen session with \"screen -r docker-compose-session\""
+  echo "You can attach to the screen session with \"screen -r ${NETWORK}-compose-session\""
   echo
   echo "Waiting 5 seconds"
   sleep 5
   echo
   echo "Here's the output of docker compose so far:"
-  cat /tmp/compose-screen.log
+  cat "/tmp/${NETWORK}-compose-screen.log"
+  echo
 }
 
 
