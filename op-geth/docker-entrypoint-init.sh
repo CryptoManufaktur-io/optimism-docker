@@ -24,6 +24,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   else
     aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true "${__url}"
   fi
+  echo "Copy completed, extracting"
   filename=$(echo "${__url}" | awk -F/ '{print $NF}')
   if [[ "${filename}" =~ \.tar\.zst$ ]]; then
     pzstd -c -d "${filename}" | tar xvf - -C /var/lib/op-geth
