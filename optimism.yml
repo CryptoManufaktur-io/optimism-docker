@@ -12,7 +12,7 @@ services:
     build:
       context: ./op-geth
       dockerfile: Dockerfile.init
-    image: op-geth-init
+    image: init:optimism
     pull_policy: never
     environment:
       - SNAPSHOT=${SNAPSHOT:-}
