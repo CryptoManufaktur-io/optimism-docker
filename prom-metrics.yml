@@ -19,6 +19,7 @@ services:
       - metrics.scrape=true
       - metrics.path=/metrics
       - metrics.port=8000
+      - metrics.network=${NETWORK:-}
     # ports:
     #   - 8000:8000/tcp
     <<: *logging
