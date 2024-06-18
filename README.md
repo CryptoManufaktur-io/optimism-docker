@@ -2,8 +2,8 @@
 
 Docker Compose for OP Stack chains: Optimism, Base, PGN, Zora.
 
-`cp default.env .env`, then `nano .env` and adjust values for the right network including sequencer. On op-mainnet and
-op-goerli, set a snapshot; on other networks, optionally set a snapshot.
+`cp default.env .env`, then `nano .env` and adjust values for the right network including sequencer. On op-mainnet,
+set a snapshot; on other networks, optionally set a snapshot.
 
 Meant to be used with [central-proxy-docker](https://github.com/CryptoManufaktur-io/central-proxy-docker) for traefik
 and Prometheus remote write; use `:ext-network.yml` in `COMPOSE_FILE` inside `.env` in that case.
@@ -28,4 +28,4 @@ The `./optd` script can be used as a quick-start:
 
 To update the software, run `./optd update` and then `./optd up`
 
-This is Optimism Docker v2.0.0
+This is Optimism Docker v3.1.0

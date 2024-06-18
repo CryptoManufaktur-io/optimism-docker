@@ -15,7 +15,7 @@ services:
       args:
         - DOCKER_TAG=${L2GETH_DOCKER_TAG}
     image: l2geth:local
-    pull_policy: build
+    pull_policy: never
     stop_signal: SIGINT
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
