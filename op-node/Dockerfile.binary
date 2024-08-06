@@ -1,4 +1,4 @@
-ARG DOCKER_TAG
+ARG DOCKER_TAG=latest
 
 FROM us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:${DOCKER_TAG}
 
