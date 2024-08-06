@@ -112,6 +112,7 @@ services:
       - metrics.scrape=true
       - metrics.path=/debug/metrics/prometheus
       - metrics.port=6060
+      - metrics.network=${NETWORK:-}
 
   op-node:
     restart: "unless-stopped"
@@ -183,6 +184,7 @@ services:
       - metrics.scrape=true
       - metrics.path=/metrics
       - metrics.port=7300
+      - metrics.network=${NETWORK:-}
 
 volumes:
   opgeth-data:
