@@ -25,6 +25,8 @@ case ${LOG_LEVEL} in
     ;;
 esac
 
+__public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
+
 if [ -n "${GENESIS_URL}" ]; then
   __network=""
   if [[ ! -d "/var/lib/op-geth/geth/" && -n "${GENESIS_URL}" ]]; then
@@ -59,4 +61,4 @@ fi
 
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__verbosity} ${__network} ${__pbss} ${__bootnodes} ${__legacy} ${EL_EXTRAS}
+exec "$@" ${__verbosity} ${__network} ${__public_ip} ${__pbss} ${__bootnodes} ${__legacy} ${EL_EXTRAS}
