@@ -130,6 +130,7 @@ services:
     environment:
       - CL_EXTRAS=${CL_EXTRAS}
       - OPNODE_P2P_BOOTNODES=${OPNODE_P2P_BOOTNODES}
+      - OPNODE_P2P_STATIC_PEERS=${OPNODE_P2P_STATIC_PEERS}
       - ROLLUP_URL=${ROLLUP_URL:-}
       - NETWORK=${NETWORK}
     volumes:

@@ -46,6 +46,12 @@ else
   __bootnodes=""
 fi
 
+
+if [ -n "${OPNODE_P2P_STATIC_PEERS}" ]; then
+  __staticpeers="p2p.static=${OPNODE_P2P_STATIC_PEERS}"
+else
+  __staticpeers=""
+fi
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__public_ip} ${__network} ${__bootnodes} ${CL_EXTRAS}
+exec "$@" ${__public_ip} ${__network} ${__bootnodes} ${__static_peers} ${CL_EXTRAS}
