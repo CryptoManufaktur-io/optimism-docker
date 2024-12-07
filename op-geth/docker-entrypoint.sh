@@ -29,7 +29,7 @@ __public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
 
 if [ -n "${GENESIS_URL}" ]; then
   __network=""
-  if [[ ! -d "/var/lib/op-geth/geth/" && -n "${GENESIS_URL}" ]]; then
+  if [ ! -d "/var/lib/op-geth/geth/" ]; then
     echo "Initializing geth datadir from genesis.json"
     wget $GENESIS_URL -O genesis.json
     geth init --datadir=/var/lib/op-geth --state.scheme path genesis.json
@@ -59,6 +59,12 @@ else
   __bootnodes=""
 fi
 
+if [ -n "${SEQUENCER}" ]; then
+  __sequencer="--rollup.sequencerhttp=${SEQUENCER}"
+else
+  __sequencer=""
+fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__verbosity} ${__network} ${__public_ip} ${__pbss} ${__bootnodes} ${__legacy} ${EL_EXTRAS}
+exec "$@" ${__verbosity} ${__network} ${__public_ip} ${__pbss} ${__bootnodes} ${__legacy} ${__sequencer} ${EL_EXTRAS}

@@ -39,6 +39,7 @@ services:
       - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES}
       - GENESIS_URL=${GENESIS_URL:-}
       - NETWORK=${NETWORK}
+      - SEQUENCER=${SEQUENCER}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
@@ -59,8 +60,6 @@ services:
       - geth
       - --datadir
       - /var/lib/op-geth
-      - --rollup.sequencerhttp
-      - ${SEQUENCER}
       - --rollup.disabletxpoolgossip
       - ${DISABLE_TXPOOL_GOSSIP:-true}
       - --rollup.halt
