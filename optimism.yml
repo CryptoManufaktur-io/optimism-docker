@@ -60,8 +60,7 @@ services:
       - geth
       - --datadir
       - /var/lib/op-geth
-      - --rollup.disabletxpoolgossip
-      - ${DISABLE_TXPOOL_GOSSIP:-true}
+      - --rollup.disabletxpoolgossip=${DISABLE_TXPOOL_GOSSIP:-true}
       - --rollup.halt
       - major
       - --port
