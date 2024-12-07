@@ -25,11 +25,13 @@ case ${LOG_LEVEL} in
     ;;
 esac
 
-if [[ ! -d "/var/lib/op-geth/geth/" && -n "${GENESIS_URL}" ]]; then
-  echo "Initializing geth datadir from genesis.json"
-  wget $GENESIS_URL -O genesis.json
-  geth init --datadir=/var/lib/op-geth --state.scheme path genesis.json
+if [ -n "${GENESIS_URL}" ]; then
   __network=""
+  if [[ ! -d "/var/lib/op-geth/geth/" && -n "${GENESIS_URL}" ]]; then
+    echo "Initializing geth datadir from genesis.json"
+    wget $GENESIS_URL -O genesis.json
+    geth init --datadir=/var/lib/op-geth --state.scheme path genesis.json
+  fi
 else
   __network="--op-network=${NETWORK}"
 fi
