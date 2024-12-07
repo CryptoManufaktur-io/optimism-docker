@@ -62,6 +62,7 @@ services:
       - --rollup.sequencerhttp
       - ${SEQUENCER}
       - --rollup.disabletxpoolgossip
+      - ${DISABLE_TXPOOL_GOSSIP:-true}
       - --rollup.halt
       - major
       - --port
