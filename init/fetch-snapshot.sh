@@ -32,7 +32,7 @@ __get_snapshot() {
   elif [[ "${filename}" =~ \.tar$ ]]; then
     tar xvf "${filename}" -C /var/lib/op-geth
   elif [[ "${filename}" =~ \.lz4$ ]]; then
-    lz4 -d "${filename}" | tar xvf - -C /var/lib/op-geth
+    lz4 -c -d "${filename}" | tar xvf - -C /var/lib/op-geth
   else
     __dont_rm=1
     echo "The snapshot file has a format that Optimism Docker can't handle."
@@ -66,7 +66,7 @@ __get_snapshot() {
 # Prep datadir
 if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
   __get_snapshot "${SNAPSHOT}"
-  if [ -n "{SNAPSHOT_PART}" ]; then
+  if [ -n "${SNAPSHOT_PART}" ]; then
     __get_snapshot "${SNAPSHOT_PART}"
   fi
 else
