@@ -16,6 +16,7 @@ services:
     pull_policy: never
     environment:
       - SNAPSHOT=${SNAPSHOT:-}
+      - SNAPSHOT_PART=${SNAPSHOT_PART:-}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret

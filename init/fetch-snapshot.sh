@@ -12,11 +12,10 @@ if [[ -O "/var/lib/op-geth/ee-secret/jwtsecret" ]]; then
   chmod 666 /var/lib/op-geth/ee-secret/jwtsecret
 fi
 
-# Prep datadir
-if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
+__get_snapshot() {
   __dont_rm=0
   cd /var/lib/op-geth/snapshot
-  eval "__url=${SNAPSHOT}"
+  eval "__url=$1"
   if [[ "${__url}" == "https://storage.cloud.google.com/"* ]]; then
     echo "Google Cloud URL detected, using gsutil"
     __path="gs://${__url#https://storage.cloud.google.com/}"
@@ -51,7 +50,7 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
     __geth_dir=${__geth_dir%/chaindata}
     if [ "${__geth_dir}" = "${__base_dir}geth" ]; then
        echo "Snapshot extracted into ${__geth_dir}/chaindata"
-    else 
+    else
       echo "Found a geth directory at ${__geth_dir}, moving it."
       mv "$__geth_dir" "$__base_dir"
       rm -rf "$__geth_dir"
@@ -61,6 +60,14 @@ if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
     echo "Chaindata isn't in the expected location."
     echo "This snapshot likely won't work until the entrypoint script has been adjusted for it."
     exit 1
+  fi
+}
+
+# Prep datadir
+if [ -n "${SNAPSHOT}" ] && [ ! -d "/var/lib/op-geth/geth/" ]; then
+  __get_snapshot "${SNAPSHOT}"
+  if [ -n "{SNAPSHOT_PART}" ]; then
+    __get_snapshot "${SNAPSHOT_PART}"
   fi
 else
   echo "No snapshot fetch necessary"
