@@ -8,7 +8,6 @@ __docker_exe="docker"
 __compose_exe="docker compose"
 __compose_upgraded=0
 
-# Also adjust version() and __env_migrate for your chain, look for the word "Adjust" below
 
 version() {
 # script version
@@ -78,7 +77,6 @@ __env_migrate() {
   # Migrate over user settings
   for __var in "${__all_vars[@]}"; do
     __value=$(__get_value_from_env "${__var}" "${__env_file}.source")
-# Adjust for vars that are possibly empty
     if [ -n "${__value}" ] || [ "${__var}" = "SNAPSHOT" ]; then
         # For mainnet, we mean op-mainnet
         if [[ "${__var}" = "NETWORK" && "${__value}" = "mainnet" ]]; then
