@@ -25,6 +25,15 @@ case ${LOG_LEVEL} in
     ;;
 esac
 
+if [[ ! -d "/var/lib/op-geth/geth/" && -n "${GENESIS_URL}" ]]; then
+  echo "Initializing geth datadir from genesis.json"
+  wget $GENESIS_URL -O genesis.json
+  geth init --datadir=/var/lib/op-geth --state.scheme path genesis.json
+  __network=""
+else
+  __network="--op-network=${NETWORK}"
+fi
+
 # Detect existing DB; use PBSS if fresh
 if [ -d "/var/lib/op-geth/geth/chaindata/" ]; then
   __pbss=""
@@ -40,6 +49,12 @@ else
   __legacy=""
 fi
 
+if [ -n "${OPGETH_P2P_BOOTNODES}" ]; then
+  __bootnodes="--bootnodes=${OPGETH_P2P_BOOTNODES}"
+else
+  __bootnodes=""
+fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__verbosity} ${__pbss} ${__legacy} ${EL_EXTRAS}
+exec "$@" ${__verbosity} ${__network} ${__pbss} ${__bootnodes} ${__legacy} ${EL_EXTRAS}

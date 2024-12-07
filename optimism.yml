@@ -27,6 +27,7 @@ services:
       dockerfile: Dockerfile.binary
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
+        - DOCKER_REPO=${OPGETH_DOCKER_REPO}
     image: op-geth:${NETWORK}
     pull_policy: never
     stop_grace_period: 5m
@@ -35,6 +36,9 @@ services:
       - NETWORK=${NETWORK:-}
       - LEGACY=${LEGACY:-false}
       - EL_EXTRAS=${EL_EXTRAS:-}
+      - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES}
+      - GENESIS_URL=${GENESIS_URL:-}
+      - NETWORK=${NETWORK}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
@@ -53,8 +57,6 @@ services:
     entrypoint:
       - docker-entrypoint.sh
       - geth
-      - --op-network
-      - ${NETWORK}
       - --datadir
       - /var/lib/op-geth
       - --rollup.sequencerhttp
@@ -121,12 +123,16 @@ services:
       dockerfile: Dockerfile.binary
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
+        - DOCKER_REPO=${OPNODE_DOCKER_REPO}
     image: op-node:${NETWORK}
     pull_policy: never
     stop_grace_period: 1m
     stop_signal: SIGHUP
     environment:
       - CL_EXTRAS=${CL_EXTRAS}
+      - OPNODE_P2P_BOOTNODES=${OPNODE_P2P_BOOTNODES}
+      - ROLLUP_URL=${ROLLUP_URL:-}
+      - NETWORK=${NETWORK}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - opnode-data:/var/lib/op-node
@@ -144,8 +150,6 @@ services:
       - ${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551
       - --l2.jwt-secret
       - /var/lib/op-node/ee-secret/jwtsecret
-      - --network
-      - ${NETWORK}
       - --rollup.halt
       - major
       - --rollup.load-protocol-versions=true
@@ -169,7 +173,7 @@ services:
       - --p2p.priv.path
       - /var/lib/op-node/opnode_p2p_priv.txt
       - --syncmode
-      - execution-layer
+      - ${OPNODE_SYNC_MODE}
     labels:
       - traefik.enable=true
       - traefik.http.routers.${OPNODE_HOST:-opnode}.service=${OPNODE_HOST:-opnode}

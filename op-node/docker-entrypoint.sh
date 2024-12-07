@@ -14,6 +14,38 @@ fi
 
 __public_ip="--p2p.advertise.ip $(wget -qO- https://ifconfig.me/ip)"
 
+if [ -n "${ROLLUP_URL}" ]; then
+  mkdir -p /var/lib/op-node/config
+# We use Notion links and this may fail
+  set +e
+  curl \
+    --fail \
+    --show-error \
+    --silent \
+    --retry-connrefused \
+    --retry-all-errors \
+    --retry 5 \
+    --retry-delay 5 \
+    "${ROLLUP_URL}" \
+    -o /var/lib/op-node/config/rollup.json
+  set -e
+
+
+  if [ ! -f /var/lib/op-node/config/rollup.json ]; then
+    echo "No rollup.json found, this is fatal. Please check your download link for it in .env"
+    exit 1
+  fi
+  __network="--rollup.config=/var/lib/op-node/config/rollup.json"
+else
+  __network="--network=${NETWORK}"
+fi
+
+if [ -n "${OPNODE_P2P_BOOTNODES}" ]; then
+  __bootnodes="p2p.bootnodes=${OPNODE_P2P_BOOTNODES}"
+else
+  __bootnodes=""
+fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__public_ip} ${CL_EXTRAS}
+exec "$@" ${__public_ip} ${__network} ${__bootnodes} ${CL_EXTRAS}

@@ -474,9 +474,10 @@ envmigrate() {
     fi
 
     ALL_VARS=( COMPOSE_FILE NETWORK SNAPSHOT L1_RPC L1_RPC_KIND L1_BEACON SEQUENCER LEGACY_TAR LEGACY EL_EXTRAS \
-            CL_EXTRAS LOG_LEVEL OPNODE_DOCKER_TAG OPGETH_DOCKER_TAG L2GETH_DOCKER_TAG DOMAIN RPC_HOST RPC_LB \
-            OPNODE_HOST OPNODE_LB WS_HOST WS_LB RPC_PORT WS_PORT OPGETH_P2P_PORT OPNODE_RPC_PORT OPNODE_P2P_PORT \
-            L2_CONNECTION_KIND )
+            CL_EXTRAS LOG_LEVEL OPNODE_DOCKER_TAG OPNODE_DOCKER_REPO OPGETH_DOCKER_TAG OPGETH_DOCKER_REPO \
+            L2GETH_DOCKER_TAG DOMAIN RPC_HOST RPC_LB OPNODE_HOST OPNODE_LB WS_HOST WS_LB RPC_PORT WS_PORT \
+            OPGETH_P2P_PORT OPNODE_RPC_PORT OPNODE_P2P_PORT L2_CONNECTION_KIND OPNODE_SYNC_MODE GENESIS_URL ROLLUP_URL \
+            OPGETH_P2P_BOOTNODES OPNODE_P2P_BOOTNODES )
     OLD_VARS=( )
     NEW_VARS=( )
 
@@ -497,7 +498,7 @@ envmigrate() {
     __adjust_NETWORK=""
     for var in "${ALL_VARS[@]}"; do
         value=$(sed -n -e "s/^${var}=\(.*\)/\1/p" "${ENV_FILE}.source" || true)
-        if [ -n "${value}" ] || [ "${var}" = "EXTRA_STATIC_NODES" ] || [ "${var}" = "SNAPSHOT" ]; then
+        if [ -n "${value}" ] || [ "${var}" = "SNAPSHOT" ]; then
             # For mainnet, we mean op-mainnet
             if [[ "${var}" = "NETWORK" && "${value}" = "mainnet" ]]; then
                 __adjust_NETWORK="${value}"
