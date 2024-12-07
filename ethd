@@ -75,21 +75,22 @@ __env_migrate() {
   __migrated=1
   ${__as_owner} cp default.env "${__env_file}"
   # Migrate over user settings
+  __adjust_NETWORK=""
   for __var in "${__all_vars[@]}"; do
     __value=$(__get_value_from_env "${__var}" "${__env_file}.source")
     if [ -n "${__value}" ] || [ "${__var}" = "SNAPSHOT" ]; then
-        # For mainnet, we mean op-mainnet
-        if [[ "${__var}" = "NETWORK" && "${__value}" = "mainnet" ]]; then
-            __adjust_NETWORK="${__value}"
-            value="op-${__value}"
-        fi
-        # Coming from the original Optimism Docker, replace ${NETWORK} in strings with mainnet
-        if [[ -n "${__adjust_NETWORK}" && ( "${__var}" = "SNAPSHOT" || "${__var}" = "SEQUENCER"
-            || "${__var}" = "LEGACY_TAR" ) ]]; then
-            value="${__value//\$\{NETWORK\}/${__adjust_NETWORK}}"
-        fi
+      # For mainnet, we mean op-mainnet
+      if [[ "${__var}" = "NETWORK" && "${__value}" = "mainnet" ]]; then
+        __adjust_NETWORK="${__value}"
+        __value="op-${__value}"
+      fi
+      # Coming from the original Optimism Docker, replace ${NETWORK} in strings with mainnet
+      if [[ -n "${__adjust_NETWORK}" && ( "${__var}" = "SNAPSHOT" || "${__var}" = "SEQUENCER"
+        || "${__var}" = "LEGACY_TAR" ) ]]; then
+        __value="${__value//\$\{NETWORK\}/${__adjust_NETWORK}}"
+      fi
       # Handle & gracefully, as well as multi-line
-      __update_value_in_env "${__var}" "$__value" "${__env_file}"
+      __update_value_in_env "${__var}" "${__value}" "${__env_file}"
     fi
   done
   # Move value from old variable name(s) to new one(s)
