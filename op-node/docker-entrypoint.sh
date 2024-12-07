@@ -54,4 +54,4 @@ else
 fi
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__public_ip} ${__network} ${__bootnodes} ${__static_peers} ${CL_EXTRAS}
+exec "$@" ${__public_ip} ${__network} ${__bootnodes} ${__staticpeers} ${CL_EXTRAS}
