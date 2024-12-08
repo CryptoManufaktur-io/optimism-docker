@@ -24,22 +24,27 @@ __get_snapshot() {
     aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true "${__url}"
   fi
   echo "Copy completed, extracting"
-  filename=$(echo "${__url}" | awk -F/ '{print $NF}')
-  if [[ "${filename}" =~ \.tar\.zst$ ]]; then
-    pzstd -c -d "${filename}" | tar xvf - -C /var/lib/op-geth
-  elif [[ "${filename}" =~ \.tar\.gz$ || "${filename}" =~ \.tgz$ ]]; then
-    tar xzvf "${filename}" -C /var/lib/op-geth
-  elif [[ "${filename}" =~ \.tar$ ]]; then
-    tar xvf "${filename}" -C /var/lib/op-geth
-  elif [[ "${filename}" =~ \.lz4$ ]]; then
-    lz4 -c -d "${filename}" | tar xvf - -C /var/lib/op-geth
+  if ! __final_url=$(curl -s -I -L -o /dev/null -w '%{url_effective}' "$__url"); then
+    printf "Error: Failed to retrieve final URL for %s\n" "$__url" >&2
+    return 1
+  fi
+  __filename=$(basename "$__final_url")
+  __filename="${__filename%%\?*}"
+  if [[ "${__filename}" =~ \.tar\.zst$ ]]; then
+    pzstd -c -d "${__filename}" | tar xvf - -C /var/lib/op-geth
+  elif [[ "${__filename}" =~ \.tar\.gz$ || "${__filename}" =~ \.tgz$ ]]; then
+    tar xzvf "${__filename}" -C /var/lib/op-geth
+  elif [[ "${__filename}" =~ \.tar$ ]]; then
+    tar xvf "${__filename}" -C /var/lib/op-geth
+  elif [[ "${__filename}" =~ \.lz4$ ]]; then
+    lz4 -c -d "${__filename}" | tar xvf - -C /var/lib/op-geth
   else
     __dont_rm=1
     echo "The snapshot file has a format that Optimism Docker can't handle."
     echo "Please come to CryptoManufaktur Discord to work through this."
   fi
   if [ "${__dont_rm}" -eq 0 ]; then
-    rm -f "${filename}"
+    rm -f "${__filename}"
   fi
   # try to find the directory
   __search_dir="geth/chaindata"
