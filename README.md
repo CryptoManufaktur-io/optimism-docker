@@ -65,6 +65,23 @@ OPGETH_P2P_BOOTNODES=enode://09acd29625beb40604b12b1c2194d6d5eb290aee03e01496752
 OPNODE_P2P_STATIC_PEERS=/ip4/34.83.120.192/tcp/9222/p2p/16Uiu2HAkv5SVdeF4hFqJyCATwT87S3PZmutm8akrgwfcdFeqNxWw
 ```
 
+## B^2
+
+```
+NETWORK=b2
+SNAPSHOT=https://download.bsquared.network/db.tar.gz
+SEQUENCER=https://b2-mainnet.alt.technology/
+L1_RPC=https://hub-rpc.bsquared.network
+L1_BEACON=https://hub-cl-rpc.bsquared.network
+EL_EXTRAS="--syncmode=full --snapshot=false"
+CL_EXTRAS="--verifier.l1-confs=10 --sequencer.l1-confs=10 --l1.trustrpc=true"
+OPNODE_SYNC_MODE=execution-layer
+GENESIS_URL="https://download.bsquared.network/mainnet/genesis.json"
+ROLLUP_URL="https://download.bsquared.network/mainnet/rollup.json"
+OPGETH_P2P_BOOTNODES=enode://55b79017f15cad10bb8ad433fb991e6a0d0ca5ccef3f9123618869ee405d61b564a44dee1b87c47e62dba51e63a9172e356714a7ecdf20594d041ddf9013136c@b2-mainnet-geth-p2p.altlayer.network:30303,enode://7ddd900597dde5cca6508cf33264dd528b945563d3d6ff5d0d2b16ecf8e14ca92ebf44fdabe9ecef44532aa0caeb54945c7d40af9d5a08e4b81853308a91ed27@b2-mainnet-bootnode1.bsquared.network:30303,enode://01c15b6db86024b708a3f3e2cdea2769264bc81dc8997752b44b904daff98f2ca15ca1e3096ed601debe7ad0f057c12d30bf93aeaeb227a59443059402c57dec@b2-mainnet-bootnode2.bsquared.network:30303
+OPNODE_P2P_STATIC_PEERS=/dns/b2-mainnet-node-p2p.altlayer.network/tcp/9003/p2p/16Uiu2HAm1hkacTvu8HzwPs2Mv8cHo6RfMX9vbEi4T8FuXFRK7VEM,/dns/b2-mainnet-bootnode1.bsquared.network/tcp/9222/p2p/16Uiu2HAkwyquyg55Jnmo97czvXfB6Evove1C4jUdMoFRQEQkgbnn,/dns/b2-mainnet-bootnode2.bsquared.network/tcp/9222/p2p/16Uiu2HAmSP44jYc7aJVXJhKVoYUFqkotwpEU1zqxYCksvUWwcyFT
+```
+
 # Version
 
 This is Optimism Docker v3.2.0
