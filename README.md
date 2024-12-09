@@ -38,33 +38,6 @@ You'll want to set `NETWORK` to something unique (it cannot be empty), then set 
 
 Some example values by chain are below
 
-## Worldchain
-
-```
-NETWORK=worldchain-mainnet
-SEQUENCER=https://worldchain-mainnet-sequencer.g.alchemy.com
-EL_EXTRAS="--override.fjord=1721826000 --override.granite=1727780400 --override.ecotone=0 --override.canyon=0"
-CL_EXTRAS="--override.fjord=1721826000 --override.granite=1727780400 --override.ecotone=0 --override.canyon=0 --sequencer.l1-confs=10 --verifier.l1-confs=10 --l1.trustrpc=true"
-OPNODE_SYNC_MODE=execution-layer
-GENESIS_URL="https://raw.githubusercontent.com/worldcoin/world-id-docs/refs/heads/main/public/code/world-chain/genesis.json"
-ROLLUP_URL="https://raw.githubusercontent.com/worldcoin/world-id-docs/refs/heads/main/public/code/world-chain/rollup.json"
-OPGETH_P2P_BOOTNODES="enode://dd4e44e87d68dd43bfc16d4fd5d9a6a2cd428986f75ddf15c8a72add0ad425852b9c36b6c5999ab7a37cc64d9bc1b68d549bc088dfa728e84dea7ae617f64e04@107.22.23.212:0?discport=30301,enode://47bd99d0bc393c6ca5569058b2d031067a3df5d05214036a5b88c9b817d52e08d7514d452b1aa623cfb3dd415136dcaf90c962e62d9337ff511fee0e9d1c8b28@18.207.96.148:0?discport=30301"
-```
-
-## BoB
-
-```
-NETWORK=bob
-SEQUENCER=https://rpc.gobob.xyz
-EL_EXTRAS="--override.fjord=1720627201 --override.granite=1726070401"
-CL_EXTRAS="--override.fjord=1720627201 --override.granite=1726070401 --l1.trustrpc=true"
-OPNODE_SYNC_MODE=execution-layer
-GENESIS_URL="https://raw.githubusercontent.com/CryptoManufaktur-io/optimism-docker/refs/heads/main/config/bob/genesis.json"
-ROLLUP_URL="https://raw.githubusercontent.com/CryptoManufaktur-io/optimism-docker/refs/heads/main/config/bob/rollup.json"
-OPGETH_P2P_BOOTNODES=enode://09acd29625beb40604b12b1c2194d6d5eb290aee03e0149675201ed717ce226c506671f46fcd440ce6f5e62dc4e059ffe88bcd931f2febcd22520ae7b9d00b5e@34.83.120.192:9222?discport=30301,enode://d25ce99435982b04d60c4b41ba256b84b888626db7bee45a9419382300fbe907359ae5ef250346785bff8d3b9d07cd3e017a27e2ee3cfda3bcbb0ba762ac9674@bootnode.conduit.xyz:0?discport=30301,enode://2d4e7e9d48f4dd4efe9342706dd1b0024681bd4c3300d021f86fc75eab7865d4e0cbec6fbc883f011cfd6a57423e7e2f6e104baad2b744c3cafaec6bc7dc92c1@34.65.43.171:0?discport=30305,enode://9d7a3efefe442351217e73b3a593bcb8efffb55b4807699972145324eab5e6b382152f8d24f6301baebbfb5ecd4127bd3faab2842c04cd432bdf50ba092f6645@34.65.109.126:0?discport=30305
-OPNODE_P2P_STATIC_PEERS=/ip4/34.83.120.192/tcp/9222/p2p/16Uiu2HAkv5SVdeF4hFqJyCATwT87S3PZmutm8akrgwfcdFeqNxWw
-```
-
 ## B^2
 
 ```
@@ -101,6 +74,20 @@ ROLLUP_URL=https://raw.githubusercontent.com/blast-io/deployment/master/mainnet/
 OPNODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ
 ```
 
+## BoB
+
+```
+NETWORK=bob
+SEQUENCER=https://rpc.gobob.xyz
+EL_EXTRAS="--override.fjord=1720627201 --override.granite=1726070401"
+CL_EXTRAS="--override.fjord=1720627201 --override.granite=1726070401 --l1.trustrpc=true"
+OPNODE_SYNC_MODE=execution-layer
+GENESIS_URL="https://raw.githubusercontent.com/CryptoManufaktur-io/optimism-docker/refs/heads/main/config/bob/genesis.json"
+ROLLUP_URL="https://raw.githubusercontent.com/CryptoManufaktur-io/optimism-docker/refs/heads/main/config/bob/rollup.json"
+OPGETH_P2P_BOOTNODES=enode://09acd29625beb40604b12b1c2194d6d5eb290aee03e0149675201ed717ce226c506671f46fcd440ce6f5e62dc4e059ffe88bcd931f2febcd22520ae7b9d00b5e@34.83.120.192:9222?discport=30301,enode://d25ce99435982b04d60c4b41ba256b84b888626db7bee45a9419382300fbe907359ae5ef250346785bff8d3b9d07cd3e017a27e2ee3cfda3bcbb0ba762ac9674@bootnode.conduit.xyz:0?discport=30301,enode://2d4e7e9d48f4dd4efe9342706dd1b0024681bd4c3300d021f86fc75eab7865d4e0cbec6fbc883f011cfd6a57423e7e2f6e104baad2b744c3cafaec6bc7dc92c1@34.65.43.171:0?discport=30305,enode://9d7a3efefe442351217e73b3a593bcb8efffb55b4807699972145324eab5e6b382152f8d24f6301baebbfb5ecd4127bd3faab2842c04cd432bdf50ba092f6645@34.65.109.126:0?discport=30305
+OPNODE_P2P_STATIC_PEERS=/ip4/34.83.120.192/tcp/9222/p2p/16Uiu2HAkv5SVdeF4hFqJyCATwT87S3PZmutm8akrgwfcdFeqNxWw
+```
+
 ## Mantle
 
 Mantle provides a [snapshot](https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md#download-latest-snapshot-from-mantle), which must be used.
@@ -123,6 +110,19 @@ EL_EXTRAS=--syncmode=full --snapshot=false --networkid=5000 --nodiscover --maxpe
 GENESIS_URL=""
 ROLLUP_URL=https://raw.githubusercontent.com/mantlenetworkio/networks/main/mainnet/rollup.json
 OPNODE_P2P_STATIC_PEERS=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gLhZAz1PYcbnhY3WpxNxUZYeTN1x29tNBAW,/dns4/peer1.mantle.xyz/tcp/9003/p2p/16Uiu2HAm1AiZtVp8f5C8LvpSTAXC6GtwqAVKnB3VLawWYSEBmcFN,/dns4/peer2.mantle.xyz/tcp/9003/p2p/16Uiu2HAm2UHVKiPXpovs8VbbUQVPr7feBAqBJdFsH1z5XDiLEvHT
+```
+
+## Worldchain
+
+```
+NETWORK=worldchain-mainnet
+SEQUENCER=https://worldchain-mainnet-sequencer.g.alchemy.com
+EL_EXTRAS="--override.fjord=1721826000 --override.granite=1727780400 --override.ecotone=0 --override.canyon=0"
+CL_EXTRAS="--override.fjord=1721826000 --override.granite=1727780400 --override.ecotone=0 --override.canyon=0 --sequencer.l1-confs=10 --verifier.l1-confs=10 --l1.trustrpc=true"
+OPNODE_SYNC_MODE=execution-layer
+GENESIS_URL="https://raw.githubusercontent.com/worldcoin/world-id-docs/refs/heads/main/public/code/world-chain/genesis.json"
+ROLLUP_URL="https://raw.githubusercontent.com/worldcoin/world-id-docs/refs/heads/main/public/code/world-chain/rollup.json"
+OPGETH_P2P_BOOTNODES="enode://dd4e44e87d68dd43bfc16d4fd5d9a6a2cd428986f75ddf15c8a72add0ad425852b9c36b6c5999ab7a37cc64d9bc1b68d549bc088dfa728e84dea7ae617f64e04@107.22.23.212:0?discport=30301,enode://47bd99d0bc393c6ca5569058b2d031067a3df5d05214036a5b88c9b817d52e08d7514d452b1aa623cfb3dd415136dcaf90c962e62d9337ff511fee0e9d1c8b28@18.207.96.148:0?discport=30301"
 ```
 
 # Version
