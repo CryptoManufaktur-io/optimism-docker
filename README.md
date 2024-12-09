@@ -69,6 +69,8 @@ OPNODE_P2P_STATIC_PEERS=/ip4/34.83.120.192/tcp/9222/p2p/16Uiu2HAkv5SVdeF4hFqJyCA
 
 ```
 NETWORK=b2
+OPNODE_DOCKER_TAG=v1.7.7
+OPGETH_DOCKER_TAG=v1.101315.2
 SNAPSHOT=https://download.bsquared.network/db.tar.gz
 SEQUENCER=https://b2-mainnet.alt.technology/
 L1_RPC=https://hub-rpc.bsquared.network
