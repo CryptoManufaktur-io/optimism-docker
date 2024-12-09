@@ -40,15 +40,19 @@ else
   __network="--network=${NETWORK}"
 fi
 
+if [ "${NETWORK}" = "mantle" ]; then
+  export OP_NODE_P2P_AGENT="mantle"
+fi
+
 if [ -n "${OPNODE_P2P_BOOTNODES}" ]; then
-  __bootnodes="p2p.bootnodes=${OPNODE_P2P_BOOTNODES}"
+  __bootnodes="--p2p.bootnodes=${OPNODE_P2P_BOOTNODES}"
 else
   __bootnodes=""
 fi
 
 
 if [ -n "${OPNODE_P2P_STATIC_PEERS}" ]; then
-  __staticpeers="p2p.static=${OPNODE_P2P_STATIC_PEERS}"
+  __staticpeers="--p2p.static=${OPNODE_P2P_STATIC_PEERS}"
 else
   __staticpeers=""
 fi
