@@ -52,6 +52,13 @@ if [ -n "${OPNODE_P2P_STATIC_PEERS}" ]; then
 else
   __staticpeers=""
 fi
+
+if [ -n "${ROLLUP_HALT}" ]; then
+  __rolluphalt="--rollup.halt=${ROLLUP_HALT} --rollup.load-protocol-versions=true"
+else
+  __rolluphalt=""
+fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__public_ip} ${__network} ${__bootnodes} ${__staticpeers} ${CL_EXTRAS}
+exec "$@" ${__public_ip} ${__network} ${__rolluphalt} ${__bootnodes} ${__staticpeers} ${CL_EXTRAS}

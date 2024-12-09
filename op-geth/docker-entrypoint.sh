@@ -65,6 +65,12 @@ else
   __sequencer=""
 fi
 
+if [ -n "${ROLLUP_HALT}" ]; then
+  __rolluphalt="--rollup.halt=${ROLLUP_HALT}"
+else
+  __rolluphalt=""
+fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__verbosity} ${__network} ${__public_ip} ${__pbss} ${__bootnodes} ${__legacy} ${__sequencer} ${EL_EXTRAS}
+exec "$@" ${__verbosity} ${__network} ${__public_ip} ${__pbss} ${__bootnodes} ${__rolluphalt} ${__legacy} ${__sequencer} ${EL_EXTRAS}

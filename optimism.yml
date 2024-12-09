@@ -41,6 +41,7 @@ services:
       - GENESIS_URL=${GENESIS_URL:-}
       - NETWORK=${NETWORK}
       - SEQUENCER=${SEQUENCER}
+      - ROLLUP_HALT=${ROLLUP_HALT}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret
@@ -62,8 +63,6 @@ services:
       - --datadir
       - /var/lib/op-geth
       - --rollup.disabletxpoolgossip=${DISABLE_TXPOOL_GOSSIP:-true}
-      - --rollup.halt
-      - major
       - --port
       - ${OPGETH_P2P_PORT:-30303}
       - --authrpc.addr
@@ -134,6 +133,7 @@ services:
       - OPNODE_P2P_STATIC_PEERS=${OPNODE_P2P_STATIC_PEERS}
       - ROLLUP_URL=${ROLLUP_URL:-}
       - NETWORK=${NETWORK}
+      - ROLLUP_HALT=${ROLLUP_HALT}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - opnode-data:/var/lib/op-node
@@ -151,9 +151,6 @@ services:
       - ${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551
       - --l2.jwt-secret
       - /var/lib/op-node/ee-secret/jwtsecret
-      - --rollup.halt
-      - major
-      - --rollup.load-protocol-versions=true
       - --l1
       - ${L1_RPC}
       - --l1.rpckind
