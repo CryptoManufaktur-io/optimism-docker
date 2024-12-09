@@ -112,9 +112,10 @@ OPNODE_DOCKER_TAG=v1.0.2
 OPGETH_DOCKER_REPO=mantlenetworkio/op-geth
 OPNODE_DOCKER_REPO=mantlenetworkio/op-node
 SEQUENCER=https://rpc.mantle.xyz
-OPNODE_SYNC_MODE=consensus-layer
+OPNODE_SYNC_MODE=""
 DISABLE_TXPOOL_GOSSIP=false
 ROLLUP_HALT=""
+L1_BEACON=""
 CL_EXTRAS=--l1.trustrpc --l2.backup-unsafe-sync-rpc=https://rpc.mantle.xyz --da.indexer-enable --da.indexer-socket=da-indexer-api.mantle.xyz:80 --sequencer.enabled=false --l2.engine-sync=true --l2.skip-sync-start-check=true --p2p.sync.req-resp=true --verifier.l1-confs=3 --p2p.scoring.peers=light --p2p.ban.peers=true
 EL_EXTRAS=--syncmode=full --snapshot=false --networkid=5000 --nodiscover --maxpeers=0
 GENESIS_URL=""

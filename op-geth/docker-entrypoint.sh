@@ -35,7 +35,11 @@ if [ -n "${GENESIS_URL}" ]; then
     geth init --datadir=/var/lib/op-geth --state.scheme path genesis.json
   fi
 else
-  __network="--op-network=${NETWORK}"
+  if [ "${NETWORK}" = "mantle" ]; then
+    __network=""
+  else
+    __network="--op-network=${NETWORK}"
+  fi
 fi
 
 # Detect existing DB; use PBSS if fresh

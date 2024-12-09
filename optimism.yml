@@ -134,6 +134,8 @@ services:
       - ROLLUP_URL=${ROLLUP_URL:-}
       - NETWORK=${NETWORK}
       - ROLLUP_HALT=${ROLLUP_HALT}
+      - OPNODE_SYNC_MODE=${OPNODE_SYNC_MODE}
+      - L1_BEACON=${L1_BEACON}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - opnode-data:/var/lib/op-node
@@ -155,8 +157,6 @@ services:
       - ${L1_RPC}
       - --l1.rpckind
       - ${L1_RPC_KIND:-basic}
-      - --l1.beacon
-      - ${L1_BEACON}
       - --rpc.addr
       - 0.0.0.0
       - --rpc.port
@@ -170,8 +170,6 @@ services:
       - /var/lib/op-node/opnode_peerstore_db
       - --p2p.priv.path
       - /var/lib/op-node/opnode_p2p_priv.txt
-      - --syncmode
-      - ${OPNODE_SYNC_MODE}
     labels:
       - traefik.enable=true
       - traefik.http.routers.${OPNODE_HOST:-opnode}.service=${OPNODE_HOST:-opnode}

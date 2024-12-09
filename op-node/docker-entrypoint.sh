@@ -59,6 +59,18 @@ else
   __rolluphalt=""
 fi
 
+if [ -n "${OPNODE_SYNC_MODE}" ]; then
+  __syncmode="--syncmode ${OPNODE_SYNC_MODE}"
+else
+  __syncmode=""
+fi
+
+if [ -n "${L1_BEACON}" ]; then
+  __beacon="--l1.beacon ${L1_BEACON}"
+else
+  __beacon=""
+fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
-exec "$@" ${__public_ip} ${__network} ${__rolluphalt} ${__bootnodes} ${__staticpeers} ${CL_EXTRAS}
+exec "$@" ${__public_ip} ${__network} ${__rolluphalt} ${__syncmode} ${__beacon} ${__bootnodes} ${__staticpeers} ${CL_EXTRAS}
