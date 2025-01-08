@@ -88,6 +88,27 @@ OPGETH_P2P_BOOTNODES=enode://09acd29625beb40604b12b1c2194d6d5eb290aee03e01496752
 OPNODE_P2P_STATIC_PEERS=/ip4/34.83.120.192/tcp/9222/p2p/16Uiu2HAkv5SVdeF4hFqJyCATwT87S3PZmutm8akrgwfcdFeqNxWw
 ```
 
+## Ink
+
+Ink provides a [snapshot](https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/latest), which
+is optional. It can be synced from Genesis, but is faster from snapshot.
+
+Ink's snapshot link gives you a path, which should be combined with
+`https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/` to get a full URL.
+
+```
+NETWORK=ink-mainnet
+SNAPSHOT=https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/<current-snapshot-path>
+SEQUENCER=https://rpc-gel.inkonchain.com
+CL_EXTRAS=--l1.trustrpc=true --p2p.scoring=none
+EL_EXTRAS=--syncmode=snap --maxpeers=0 --networkid=57073 --nodiscover --gpo.percentile=60 --txlookuplimit=0 --history.state=0 --history.transactions=0 --txpool.pricebump=10 --txpool.lifetime=12h0m0s --rpc.txfeecap=4 --rpc.evmtimeout=0
+OPNODE_SYNC_MODE=consensus-layer
+GENESIS_URL=https://raw.githubusercontent.com/inkonchain/node/refs/heads/main/envs/ink-mainnet/config/genesis.json
+ROLLUP_URL=https://raw.githubusercontent.com/inkonchain/node/refs/heads/main/envs/ink-mainnet/config/rollup.json
+OPNODE_P2P_BOOTNODES=enr:-Iu4QCqTQZVBnbPWXcdUxcakGoCCzCFr5vVzDfNTOr-Pi3KaOJZMXlnqTR9r9p4EemXS8fS59EdQaX8qrkyE01nvsNcBgmlkgnY0gmlwhCIgwYaJc2VjcDI1NmsxoQMW3w0F1AibYelKqJUKaie5RuKc7S9sPfWvH4lSJw4Fo4N0Y3CCIyuDdWRwgiMs
+OPNODE_P2P_STATIC_PEERS=/ip4/34.32.193.134/tcp/9003/p2p/16Uiu2HAmECGb1vmBKhgxVHzX2aYkPcmV8CZjpPxrNkRiFA1wa3CN
+```
+
 ## Mantle
 
 Mantle provides a [snapshot](https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md#download-latest-snapshot-from-mantle), which must be used.
