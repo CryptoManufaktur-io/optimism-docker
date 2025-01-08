@@ -42,6 +42,7 @@ services:
       - NETWORK=${NETWORK}
       - SEQUENCER=${SEQUENCER}
       - ROLLUP_HALT=${ROLLUP_HALT}
+      - INIT_STATE_SCHEME=${INIT_STATE_SCHEME:-path}
     volumes:
       - opgeth-data:/var/lib/op-geth
       - jwtsecret:/var/lib/op-geth/ee-secret

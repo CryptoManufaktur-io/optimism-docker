@@ -32,7 +32,7 @@ if [ -n "${GENESIS_URL}" ]; then
   if [ ! -d "/var/lib/op-geth/geth/" ]; then
     echo "Initializing geth datadir from genesis.json"
     wget $GENESIS_URL -O genesis.json
-    geth init --datadir=/var/lib/op-geth --state.scheme path genesis.json
+    geth init --datadir=/var/lib/op-geth --state.scheme=$INIT_STATE_SCHEME genesis.json
   fi
 else
   if [ "${NETWORK}" = "mantle" ]; then
