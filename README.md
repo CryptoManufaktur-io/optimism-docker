@@ -114,13 +114,14 @@ OPNODE_P2P_STATIC_PEERS=/ip4/34.32.193.134/tcp/9003/p2p/16Uiu2HAmECGb1vmBKhgxVHz
 ```
 NETWORK=hashkeychain-mainnet
 SEQUENCER=https://mainnet.hsk.xyz
-CL_EXTRAS=--l1.trustrpc --l1.beacon.ignore
+CL_EXTRAS=--l1.trustrpc --l1.beacon.ignore --safedb.path /var/lib/op-node/safedb --verifier.l1-confs=15 --sequencer.l1-confs=15
 EL_EXTRAS=---syncmode=full --gcmode=full
 INIT_STATE_SCHEME: hash
 OPNODE_SYNC_MODE=execution-layer
 GENESIS_URL=https://operator-public.s3.us-west-2.amazonaws.com/hashkeychain/mainnet/genesis.json
 ROLLUP_URL=https://operator-public.s3.us-west-2.amazonaws.com/hashkeychain/mainnet/rollup.json
-OPNODE_P2P_BOOTNODES=enode://e3d83751cba1f5fd806a73e9701baaa93eb729474eb6c246050e76f9cde32915d4904e1fa12be4196ad7296aba61d4ffebfb7a9c5eeff2b9578e0d7a55cc5ed5@mainnet-mux-aws.altlayer.network:31419,enode://b3714bf5e75760fcbb4de393b75bbcf046be7aa6fb47bd928c4ad6405717a5e67cb01a31dc820ce6b51cfb6c8268ec6c1166fdb2a66f9c92ea67f2fdfdf130fc@mainnet-mux-aws.altlayer.network:31371,enode://6ad0903b679bed251393813042f2452f55ec4e6f120347d412c203072e58bb2e3c1d68247eba25a89b920995bed3b043819d49577a8c1fe4f1c0d762d7d6763a@mainnet-mux-aws.altlayer.network:30250,enode://17162151981152707b855e1e67ab9027dcad7af7a2dbcfa40352c6940f1a977f490b2522986736a8c20327abd5f50afd39f23031b3b103d99c0c03c4449bd172@mainnet-mux-aws.altlayer.network:30924
+OPNODE_P2P_BOOTNODES: ""
+OPGETH_P2P_BOOTNODES=enode://e3d83751cba1f5fd806a73e9701baaa93eb729474eb6c246050e76f9cde32915d4904e1fa12be4196ad7296aba61d4ffebfb7a9c5eeff2b9578e0d7a55cc5ed5@mainnet-mux-aws.altlayer.network:31419,enode://b3714bf5e75760fcbb4de393b75bbcf046be7aa6fb47bd928c4ad6405717a5e67cb01a31dc820ce6b51cfb6c8268ec6c1166fdb2a66f9c92ea67f2fdfdf130fc@mainnet-mux-aws.altlayer.network:31371,enode://6ad0903b679bed251393813042f2452f55ec4e6f120347d412c203072e58bb2e3c1d68247eba25a89b920995bed3b043819d49577a8c1fe4f1c0d762d7d6763a@mainnet-mux-aws.altlayer.network:30250,enode://17162151981152707b855e1e67ab9027dcad7af7a2dbcfa40352c6940f1a977f490b2522986736a8c20327abd5f50afd39f23031b3b103d99c0c03c4449bd172@mainnet-mux-aws.altlayer.network:30924
 OPNODE_P2P_STATIC_PEERS=/dns/mainnet-mux-aws.altlayer.network/tcp/30678/p2p/16Uiu2HAm1UX8Lx4XKnHXncKCw5Q4r6jsajKDEukHk9S9NXuroVKY,/dns/mainnet-mux-aws.altlayer.network/tcp/32307/p2p/16Uiu2HAm2PzcWR3pgBkCSUC8Co6WsKHhyyxJysQqzeZpHoX2RaAf,/dns/mainnet-mux-aws.altlayer.network/tcp/32441/p2p/16Uiu2HAm6s2pY65dcXi8zM4EfD7oCP4o64C6a8XbxwgLU1q6WAUe,/dns/mainnet-mux-aws.altlayer.network/tcp/31478/p2p/16Uiu2HAmQEAZhJTPSdrJpH2NqZ5X368XPXGq68XxL1r8wQamdbwQ
 ```
 
