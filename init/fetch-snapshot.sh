@@ -47,10 +47,14 @@ __get_snapshot() {
     rm -f "${__filename}"
   fi
   # try to find the directory
-  __search_dir="geth/chaindata"
+  __search_dir="chaindata"
   __base_dir="/var/lib/op-geth/"
   __found_path=$(find "$__base_dir" -type d -path "*/$__search_dir" -print -quit)
-  if [ -n "$__found_path" ]; then
+  if [ "${__found_path}" = "${__base_dir}chaindata" ]; then
+    echo "Found chaindata in root directory, moving it to geth folder"
+    mkdir -p "$__base_dir/geth"
+    mv "$__found_path" "$__base_dir/geth"
+  elif [ -n "$__found_path" ]; then
     __geth_dir=$(dirname "$__found_path")
     __geth_dir=${__geth_dir%/chaindata}
     if [ "${__geth_dir}" = "${__base_dir}geth" ]; then
