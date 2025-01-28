@@ -58,7 +58,7 @@ __env_migrate() {
             L2GETH_DOCKER_TAG DOMAIN RPC_HOST RPC_LB OPNODE_HOST OPNODE_LB WS_HOST WS_LB RPC_PORT WS_PORT \
             OPGETH_P2P_PORT OPNODE_RPC_PORT OPNODE_P2P_PORT L2_CONNECTION_KIND OPNODE_SYNC_MODE GENESIS_URL ROLLUP_URL \
             OPGETH_P2P_BOOTNODES OPNODE_P2P_BOOTNODES OPNODE_P2P_STATIC_PEERS DISABLE_TXPOOL_GOSSIP SNAPSHOT_PART \
-            ROLLUP_HALT )
+            ROLLUP_HALT DOCKER_EXT_NETWORK )
   __old_vars=( )
   __new_vars=( )
 
@@ -664,6 +664,15 @@ update() {
       if [[ "${__branch}" =~ ^tag-* ]]; then
         git checkout main
       fi
+# Handle legacy ext-network. A future update after a hardfork will bring in the changed ext-network
+      DOCKER_EXT_NETWORK=$(${__as_owner} sed -n 's/^\s*name:\s*\(.*\)/\1/p' ext-network.yml)
+# I mean this literally
+# shellcheck disable=SC2016
+      if [ ! "${DOCKER_EXT_NETWORK:-"traefik_default"}" = '${DOCKER_EXT_NETWORK}' ]; then
+        __var=DOCKER_EXT_NETWORK
+        __update_value_in_env "${__var}" "${!__var}" "${__env_file}"
+      fi
+# End legacy handling
       ${__as_owner} git pull
     else
       export ETHDPINNED="${__value}"
@@ -733,6 +742,7 @@ find the original contents in ${__env_file}.bak."
 
 
 __prep_conffiles() {
+# Remove this after the next hardfork, when there's a new ext-network
 # Create ext-network.yml if it doesn't exist
   if [ ! -f "ext-network.yml" ]; then
     ${__as_owner} cp ext-network.yml.sample ext-network.yml
