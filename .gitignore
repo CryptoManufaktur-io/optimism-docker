@@ -1,3 +1,6 @@
 .env*
 *.swp
+*.bak
+*.original
+custom.yml
 ext-network.yml
