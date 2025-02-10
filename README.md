@@ -40,7 +40,7 @@ Some example values by chain are below
 
 ## B^2
 
-```
+```properties
 NETWORK=b2
 OPNODE_DOCKER_TAG=v1.7.7
 OPGETH_DOCKER_TAG=v1.101315.2
@@ -59,7 +59,7 @@ OPNODE_P2P_STATIC_PEERS=/dns/b2-mainnet-node-p2p.altlayer.network/tcp/9003/p2p/1
 
 ## Blast
 
-```
+```properties
 NETWORK=blast
 OPGETH_DOCKER_TAG=v1.1.0-mainnet
 OPNODE_DOCKER_TAG=v1.1.0-mainnet
@@ -76,7 +76,7 @@ OPNODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-
 
 ## BoB
 
-```
+```properties
 NETWORK=bob
 SEQUENCER=https://rpc.gobob.xyz
 EL_EXTRAS="--override.fjord=1720627201 --override.granite=1726070401"
@@ -96,7 +96,7 @@ is optional. It can be synced from Genesis, but is faster from snapshot.
 Ink's snapshot link gives you a path, which should be combined with
 `https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/` to get a full URL.
 
-```
+```properties
 NETWORK=ink-mainnet
 SNAPSHOT=https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/<current-snapshot-path>
 SEQUENCER=https://rpc-gel.inkonchain.com
@@ -111,7 +111,7 @@ OPNODE_P2P_STATIC_PEERS=/ip4/34.32.193.134/tcp/9003/p2p/16Uiu2HAmECGb1vmBKhgxVHz
 
 ## Hashkey
 
-```
+```properties
 NETWORK=hashkeychain-mainnet
 SEQUENCER=https://mainnet.hsk.xyz
 CL_EXTRAS=--l1.trustrpc --l1.beacon.ignore --safedb.path /var/lib/op-node/safedb --verifier.l1-confs=15 --sequencer.l1-confs=15
@@ -130,7 +130,7 @@ OPNODE_P2P_STATIC_PEERS=/dns/mainnet-mux-aws.altlayer.network/tcp/30678/p2p/16Ui
 Mantle provides a [snapshot](https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md#download-latest-snapshot-from-mantle), which must be used.
 It cannot be synced from genesis.
 
-```
+```properties
 NETWORK=mantle
 SNAPSHOT=https://current-snapshot-url
 OPGETH_DOCKER_TAG=v1.0.2
@@ -151,7 +151,7 @@ OPNODE_P2P_STATIC_PEERS=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gL
 
 ## Soneium
 
-```
+```properties
 NETWORK=soneium-mainnet
 SEQUENCER=""
 EL_EXTRAS=--syncmode=full --maxpeers=100
@@ -165,7 +165,7 @@ OPGETH_P2P_BOOTNODES=enode://04a630874fc4a46af430e92bdc8c3c14982f59fcded7429e4ef
 
 ## Worldchain
 
-```
+```properties
 NETWORK=worldchain-mainnet
 SEQUENCER=https://worldchain-mainnet-sequencer.g.alchemy.com
 EL_EXTRAS="--override.fjord=1721826000 --override.granite=1727780400 --override.ecotone=0 --override.canyon=0"
@@ -174,6 +174,24 @@ OPNODE_SYNC_MODE=execution-layer
 GENESIS_URL="https://raw.githubusercontent.com/worldcoin/world-id-docs/refs/heads/main/public/code/world-chain/genesis.json"
 ROLLUP_URL="https://raw.githubusercontent.com/worldcoin/world-id-docs/refs/heads/main/public/code/world-chain/rollup.json"
 OPGETH_P2P_BOOTNODES="enode://dd4e44e87d68dd43bfc16d4fd5d9a6a2cd428986f75ddf15c8a72add0ad425852b9c36b6c5999ab7a37cc64d9bc1b68d549bc088dfa728e84dea7ae617f64e04@107.22.23.212:0?discport=30301,enode://47bd99d0bc393c6ca5569058b2d031067a3df5d05214036a5b88c9b817d52e08d7514d452b1aa623cfb3dd415136dcaf90c962e62d9337ff511fee0e9d1c8b28@18.207.96.148:0?discport=30301"
+```
+
+## Fraxtal
+
+```properties
+CL_EXTRAS: --da.rpc=https://da-rpc.mainnet.frax.com
+EL_EXTRAS: --networkid=252 --maxpeers=50 --syncmode=snap --override.canyon=0 --override.ecotone=1717009201 --override.fjord=1733947201 --override.granite=1738958401
+OPNODE_DOCKER_REPO: ghcr.io/fraxfinance/fraxtal-op-node
+OPGETH_DOCKER_REPO: ghcr.io/fraxfinance/fraxtal-op-geth
+OPNODE_DOCKER_TAG: v1.9.5-frax-1.1.0
+OPGETH_DOCKER_TAG: v1.101411.6-frax-1.0.0
+NETWORK: fraxtal-mainnet
+SEQUENCER: "https://rpc.frax.com"
+OPNODE_SYNC_MODE: execution-layer
+GENESIS_URL: https://raw.githubusercontent.com/FraxFinance/fraxtal-node/refs/heads/master/mainnet/genesis.json
+ROLLUP_URL: https://raw.githubusercontent.com/FraxFinance/fraxtal-node/refs/heads/master/mainnet/rollup.json
+OPNODE_P2P_BOOTNODES: "enr:-J24QPGxmNmQ6Gsofjwnaaqt-RvC-2te44hHSU_wFGvCBpdnGnAuW0hKBCwzarXEmLN0TfwilwX3xS8xjEd9sQRqKXqGAY1ok0P3gmlkgnY0gmlwhDa-pcmHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQJA0echCE64KVt7m1lHfRF9_QgYxqIOSoPZ1UHcEArDu4N0Y3CCJAaDdWRwgiQG,enr:-J24QHPYu7uUXH4LCJ_pjHMD3fYhluZEgFRlewqOFFcja7ACaTDp4zG4GZBJdTPmLjsqskhTQa5ldKiVu4ypZYMzR_uGAY1ok_ABgmlkgnY0gmlwhCLvv1KHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQOEemNzZL5buGmwlN2naXLtz4nauCqBFeFxdmi4RL4rDIN0Y3CCJAaDdWRwgiQG,enr:-J24QBujtfGNIiE6GJrCgXEKJMs1F11wd4Y8Uvx7ZFn3Z1tyR0erNcpiW5EYIQEKQX0kL9PLJUDHWZFiaHWOTBvFg5aGAY1ok5p8gmlkgnY0gmlwhDbD-tqHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQLunzKLYJLvy6cWWkLgSSdLlILgSohrV8RT3tlKGwHBi4N0Y3CCJAaDdWRwgiQG"
+OPGETH_P2P_BOOTNODES: "enr:-J24QI8QR7VIgvQFuvLl09b9ocugoQ1WkS_AOMWKFgNX48-4P1hjgDKGeMFXZmKtfjYA2aEehxKT066riaktnxhh92OGAY5Sw_QsgmlkgnY0gmlwhCztZu2Hb3BzdGFja4P8AQCJc2VjcDI1NmsxoQM2KM0mkdH97Ze8AqwxLeqc934PKj8-xoKsyP6mAptWwIN0Y3CCdl2DdWRwgnZd,enr:-J24QGD1J-g2EPY9b7XiuwLhIoGocVp2qx2gWSfDI_CdftiPSHlgi7G6LtzkQlDskuSvRj4OXTg3vXLISubphXNNhqyGAY5Sw8GxgmlkgnY0gmlwhCzW_iGHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQPvMYlJHJUsEyciuJCTkKHLE2ogZ6cs2xuPI28CGq0CTIN0Y3CCdl2DdWRwgnZd,enr:-J24QCA5I3xroUXt7Ge_Kf04VCRBnI-GbZeyBxOkkpIDGGLrVsonrbngQG1hAEnufRb1TgS6sNFCGtaZ2ZpRx7AgciGGAY5SxEy0gmlkgnY0gmlwhCLzRQyHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQOaHzrtPQWYcwAcFJWFrbGlbNUsBC0VEhCcH02RbgEIwIN0Y3CCdl2DdWRwgnZd"
 ```
 
 # Version
