@@ -4,3 +4,5 @@
 *.original
 custom.yml
 ext-network.yml
+private-config/*
+!private-config/.hidden
