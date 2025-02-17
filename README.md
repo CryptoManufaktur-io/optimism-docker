@@ -28,6 +28,17 @@ The `./optd` script can be used as a quick-start:
 
 To update the software, run `./optd update` and then `./optd up`
 
+# For networks that use `genesis.json` and `rollup.json` files
+
+The repo supports both local and remote files for `genesis.json` and `rollup.json`. Using `https://` or `file://` it can detect to download the file or use a locally mounted file.
+
+To use a locally mounted file, add the files to `private-config` folder and then set the path as follows.
+
+```properties
+GENESIS_URL=file:///tmp/private-config/genesis-l2.json
+ROLLUP_URL=file:///tmp/private-config/rollup.json
+```
+
 # Other OP Stack chains
 
 Optimism Docker supports OP Stack chains that are not part of the Superchain Registry, or maybe are but still
