@@ -31,7 +31,15 @@ if [ -n "${GENESIS_URL}" ]; then
   __network=""
   if [ ! -d "/var/lib/op-geth/geth/" ]; then
     echo "Initializing geth datadir from genesis.json"
-    wget $GENESIS_URL -O genesis.json
+
+    # wget requires special recompile to support file://, instead just check
+    if [[ $GENESIS_URL == file://* ]]; then
+      LOCAL_PATH="${GENESIS_URL#file://}"
+      cp "$LOCAL_PATH" genesis.json
+    else
+      wget "$GENESIS_URL" -O genesis.json
+    fi
+
     geth init --datadir=/var/lib/op-geth --state.scheme=$INIT_STATE_SCHEME genesis.json
   fi
 else
