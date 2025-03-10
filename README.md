@@ -174,6 +174,15 @@ OPNODE_P2P_BOOTNODES=enr:-J24QAGAAjNNElj_YJEcwSbebPgOrvyxhPzXb95q-zVsUPeCU-GhySW
 OPGETH_P2P_BOOTNODES=enode://04a630874fc4a46af430e92bdc8c3c14982f59fcded7429e4ef461a624d6c5abf7ef8449d9bb9078187b226209cbac518e8ee8977af11fb33d1ad9003a7f1418@98.85.128.82:30303?discport=30304,enode://daaf1b6f4bba71bc6091c6502eabceebf50c1fea1ac2af8752a1a7b33ecc6e7e39d18c43372e642fb407308e3e22e0e856353dd8cfd726950ec39d975ba252de@98.85.64.238:30303?discport=30304,enode://57c54cc6624594f1bd5e143d26696b173834f87c38c5463ea51627f04b8ce1c7b8241f23dd87bb517ac2260e8e9e650b07b4c34c01904b08056c9e9697dd595b@44.193.21.100:30303?discport=30304
 ```
 
+## Worldchain
+
+```properties
+NETWORK=worldchain-mainnet
+SEQUENCER=https://worldchain-mainnet-sequencer.g.alchemy.com
+OPNODE_SYNC_MODE=execution-layer
+INIT_STATE_SCHEME=hash
+```
+
 ## Fraxtal
 
 ```properties
