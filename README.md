@@ -93,6 +93,15 @@ SEQUENCER=https://rpc.gobob.xyz
 OPNODE_SYNC_MODE=execution-layer
 ```
 
+## Unichain
+
+```properties
+NETWORK=unichain-mainnet
+SEQUENCER=https://mainnet-sequencer.unichain.org
+OPNODE_SYNC_MODE=execution-layer
+```
+
+
 ## Ink
 
 Ink provides a [snapshot](https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/latest), which
