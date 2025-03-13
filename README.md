@@ -112,15 +112,8 @@ Ink's snapshot link gives you a path, which should be combined with
 
 ```properties
 NETWORK=ink-mainnet
-SNAPSHOT=https://storage.googleapis.com/raas-op-geth-snapshots-e2025/datadir-archive/<current-snapshot-path>
 SEQUENCER=https://rpc-gel.inkonchain.com
-CL_EXTRAS=--l1.trustrpc=true --p2p.scoring=none
-EL_EXTRAS=--syncmode=snap --maxpeers=0 --networkid=57073 --nodiscover --gpo.percentile=60 --txlookuplimit=0 --history.state=0 --history.transactions=0 --txpool.pricebump=10 --txpool.lifetime=12h0m0s --rpc.txfeecap=4 --rpc.evmtimeout=0
-OPNODE_SYNC_MODE=consensus-layer
-GENESIS_URL=https://raw.githubusercontent.com/inkonchain/node/refs/heads/main/envs/ink-mainnet/config/genesis.json
-ROLLUP_URL=https://raw.githubusercontent.com/inkonchain/node/refs/heads/main/envs/ink-mainnet/config/rollup.json
-OPNODE_P2P_BOOTNODES=enr:-Iu4QCqTQZVBnbPWXcdUxcakGoCCzCFr5vVzDfNTOr-Pi3KaOJZMXlnqTR9r9p4EemXS8fS59EdQaX8qrkyE01nvsNcBgmlkgnY0gmlwhCIgwYaJc2VjcDI1NmsxoQMW3w0F1AibYelKqJUKaie5RuKc7S9sPfWvH4lSJw4Fo4N0Y3CCIyuDdWRwgiMs
-OPNODE_P2P_STATIC_PEERS=/ip4/34.32.193.134/tcp/9003/p2p/16Uiu2HAmECGb1vmBKhgxVHzX2aYkPcmV8CZjpPxrNkRiFA1wa3CN
+OPNODE_SYNC_MODE=execution-layer
 ```
 
 ## Hashkey
