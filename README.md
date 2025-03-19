@@ -121,15 +121,7 @@ OPNODE_SYNC_MODE=execution-layer
 ```properties
 NETWORK=hashkeychain-mainnet
 SEQUENCER=https://mainnet.hsk.xyz
-CL_EXTRAS=--l1.trustrpc --l1.beacon.ignore --safedb.path /var/lib/op-node/safedb --verifier.l1-confs=15 --sequencer.l1-confs=15
-EL_EXTRAS=---syncmode=full --gcmode=full
-INIT_STATE_SCHEME: hash
 OPNODE_SYNC_MODE=execution-layer
-GENESIS_URL=https://operator-public.s3.us-west-2.amazonaws.com/hashkeychain/mainnet/genesis.json
-ROLLUP_URL=https://operator-public.s3.us-west-2.amazonaws.com/hashkeychain/mainnet/rollup.json
-OPNODE_P2P_BOOTNODES: ""
-OPGETH_P2P_BOOTNODES=enode://e3d83751cba1f5fd806a73e9701baaa93eb729474eb6c246050e76f9cde32915d4904e1fa12be4196ad7296aba61d4ffebfb7a9c5eeff2b9578e0d7a55cc5ed5@mainnet-mux-aws.altlayer.network:31419,enode://b3714bf5e75760fcbb4de393b75bbcf046be7aa6fb47bd928c4ad6405717a5e67cb01a31dc820ce6b51cfb6c8268ec6c1166fdb2a66f9c92ea67f2fdfdf130fc@mainnet-mux-aws.altlayer.network:31371,enode://6ad0903b679bed251393813042f2452f55ec4e6f120347d412c203072e58bb2e3c1d68247eba25a89b920995bed3b043819d49577a8c1fe4f1c0d762d7d6763a@mainnet-mux-aws.altlayer.network:30250,enode://17162151981152707b855e1e67ab9027dcad7af7a2dbcfa40352c6940f1a977f490b2522986736a8c20327abd5f50afd39f23031b3b103d99c0c03c4449bd172@mainnet-mux-aws.altlayer.network:30924
-OPNODE_P2P_STATIC_PEERS=/dns/mainnet-mux-aws.altlayer.network/tcp/30678/p2p/16Uiu2HAm1UX8Lx4XKnHXncKCw5Q4r6jsajKDEukHk9S9NXuroVKY,/dns/mainnet-mux-aws.altlayer.network/tcp/32307/p2p/16Uiu2HAm2PzcWR3pgBkCSUC8Co6WsKHhyyxJysQqzeZpHoX2RaAf,/dns/mainnet-mux-aws.altlayer.network/tcp/32441/p2p/16Uiu2HAm6s2pY65dcXi8zM4EfD7oCP4o64C6a8XbxwgLU1q6WAUe,/dns/mainnet-mux-aws.altlayer.network/tcp/31478/p2p/16Uiu2HAmQEAZhJTPSdrJpH2NqZ5X368XPXGq68XxL1r8wQamdbwQ
 ```
 
 ## Mantle
@@ -161,13 +153,6 @@ OPNODE_P2P_STATIC_PEERS=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gL
 ```properties
 NETWORK=soneium-mainnet
 SEQUENCER=""
-EL_EXTRAS=--syncmode=full --maxpeers=100
-CL_EXTRAS=--l1.trustrpc=true --p2p.ban.peers=false
-OPNODE_SYNC_MODE=execution-layer
-GENESIS_URL=https://file.notion.so/<temporary-path-from-their-notion>&downloadName=genesis.json
-ROLLUP_URL=https://file.notion.so/<temporary-path-from-their-notion>&downloadName=rollup.json
-OPNODE_P2P_BOOTNODES=enr:-J24QAGAAjNNElj_YJEcwSbebPgOrvyxhPzXb95q-zVsUPeCU-GhySWj0Wdbv6scZkCrm_5-ARpaK0I5hg0evZG7oFWGAZOICbxHgmlkgnY0gmlwhGJVgFKHb3BzdGFja4PMDgCJc2VjcDI1NmsxoQIUyu7sy_esGEUiGlzVGeXTpo0BteEljJxoJ5kv76Vs0oN0Y3CCJAaDdWRwgiQH,enr:-J24QFKJIsLSdrHMNj_WfsYeL05YrVJEcq8rKfIUio0ok7aYD8hiAJtJkRod41HHZ5rafwsn_HF0zaEoQhxqp2daE8KGAZOICYvKgmlkgnY0gmlwhGJVQO6Hb3BzdGFja4PMDgCJc2VjcDI1NmsxoQMo2J0Z46Ul_eRxcaHrXmbBpXPEVosbkVRchDotfRp1AoN0Y3CCJAaDdWRwgiQH,enr:-J24QCYiDrgNy8qFOAmCy0Sy9qaN3voKhf0d2x4fbnfej2ccMMThjjvYJVIMJKzMOndxS3kqNJHt9NgOST5Wlg2g0fiGAZOICaX9gmlkgnY0gmlwhCzBFWSHb3BzdGFja4PMDgCJc2VjcDI1NmsxoQLwBRPi3guAkR2WRfs0DOEfzHbNKjjwR2bmW2qSNLGMYIN0Y3CCJAaDdWRwgiQH
-OPGETH_P2P_BOOTNODES=enode://04a630874fc4a46af430e92bdc8c3c14982f59fcded7429e4ef461a624d6c5abf7ef8449d9bb9078187b226209cbac518e8ee8977af11fb33d1ad9003a7f1418@98.85.128.82:30303?discport=30304,enode://daaf1b6f4bba71bc6091c6502eabceebf50c1fea1ac2af8752a1a7b33ecc6e7e39d18c43372e642fb407308e3e22e0e856353dd8cfd726950ec39d975ba252de@98.85.64.238:30303?discport=30304,enode://57c54cc6624594f1bd5e143d26696b173834f87c38c5463ea51627f04b8ce1c7b8241f23dd87bb517ac2260e8e9e650b07b4c34c01904b08056c9e9697dd595b@44.193.21.100:30303?discport=30304
 ```
 
 ## Worldchain
