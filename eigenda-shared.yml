@@ -1,0 +1,5 @@
+# To be used with eigenda.yml
+services:
+  eigenda-proxy:
+    ports:
+      - ${PORT_EIGENDA_PROXY:-4242}:4242
