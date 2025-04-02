@@ -753,6 +753,8 @@ update() {
       if [ ! "${DOCKER_EXT_NETWORK:-"traefik_default"}" = '${DOCKER_EXT_NETWORK}' ]; then
         __var=DOCKER_EXT_NETWORK
         __update_value_in_env "${__var}" "${!__var}" "${__env_file}"
+        ${__as_owner} cp ext-network.yml ext-network.yml.bak
+        ${__as_owner} rm -f ext-network.yml
       fi
 # End legacy handling
       ${__as_owner} git pull
@@ -767,6 +769,12 @@ update() {
     # to avoid infinite loop
     export ETHDSECUNDO=1
     exec "${BASH_SOURCE[0]}" update "$@"
+  fi
+
+# Remove this after the next hardfork
+  if [ -f "ext-network.yml.bak" ]; then
+    ${__as_owner} cp ext-network.yml.bak ext-network.yml
+    ${__as_owner} rm ext-network.yml.bak
   fi
 
   __keep_targets=1
