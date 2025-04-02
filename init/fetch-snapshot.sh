@@ -16,6 +16,7 @@ __get_snapshot() {
   __dont_rm=0
   cd /var/lib/op-geth/snapshot
   eval "__url=$1"
+#shellcheck disable=SC2154
   if [[ "${__url}" == "https://storage.cloud.google.com/"* ]]; then
     echo "Google Cloud URL detected, using gsutil"
     __path="gs://${__url#https://storage.cloud.google.com/}"
