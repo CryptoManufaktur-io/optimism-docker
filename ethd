@@ -875,9 +875,10 @@ start() {
   fi
   __var="NETWORK"
   __get_value_from_env "${__var}" "${__env_file}" "__screen_id"
-#shellcheck disable=SC2154
+# shellcheck disable=SC2154
   rm -f "/tmp/${__screen_id}-compose-screen.log"
-  screen -dmS "${__screen_id}-compose-session" -L -Logfile "/tmp/${__screen_id}-compose-screen.log" "${__compose_exe}" up -d --remove-orphans "$@"
+# shellcheck disable=SC2086
+  screen -dmS "${__screen_id}-compose-session" -L -Logfile "/tmp/${__screen_id}-compose-screen.log" ${__compose_exe} up -d --remove-orphans "$@"
   echo "Running \"docker compose up -d\" in screen because of the init container."
   echo
   echo "If this is your first start and you are getting a SNAPSHOT, you can view the init logs:"
