@@ -8,7 +8,7 @@ x-logging: &logging
 
 services:
   eigenda-proxy:
-    image: ${EIGENDA_DOCKER_REPO}:${EIGENDA_VERSION}
+    image: ${EIGENDA_DOCKER_REPO}:${EIGENDA_DOCKER_TAG}
     restart: unless-stopped
     stop_grace_period: 5m
     entrypoint: /scripts/start-eigenda-proxy.sh
