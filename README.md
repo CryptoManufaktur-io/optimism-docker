@@ -212,4 +212,4 @@ OPGETH_P2P_BOOTNODES="enr:-J24QI8QR7VIgvQFuvLl09b9ocugoQ1WkS_AOMWKFgNX48-4P1hjgD
 
 # Version
 
-This is Optimism Docker v3.3.0
+This is Optimism Docker v3.3.1
