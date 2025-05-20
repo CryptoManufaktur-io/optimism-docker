@@ -199,6 +199,41 @@ NETWORK=soneium-mainnet
 SEQUENCER=""
 ```
 
+## Base
+
+```properties
+NETWORK=base-mainnet
+SEQUENCER=""
+```
+
+## Zora
+
+```properties
+NETWORK=zora-mainnet
+SEQUENCER=""
+```
+
+## Metal
+
+```properties
+NETWORK=metal-mainnet
+SEQUENCER=""
+```
+
+## Mint
+
+```properties
+NETWORK=mint-mainnet
+SEQUENCER=""
+```
+
+## Lisk
+
+```properties
+NETWORK=lisk-mainnet
+SEQUENCER=""
+```
+
 ## Superseed
 
 ```properties
