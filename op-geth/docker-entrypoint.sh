@@ -45,6 +45,8 @@ if [ -n "${GENESIS_URL}" ]; then
 else
   if [ "${NETWORK}" = "mantle" ]; then
     __network=""
+  elif [ "${NETWORK}" = "opBNBMainnet" ]; then
+    __network="--opBNBMainnet"
   else
     __network="--op-network=${NETWORK}"
   fi
