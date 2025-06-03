@@ -29,11 +29,6 @@ version() {
 
 
 __prep_conffiles() {
-# Remove this after the next hardfork, when there's a new ext-network
-# Create ext-network.yml if it doesn't exist
-  if [ ! -f "ext-network.yml" ]; then
-    ${__as_owner} cp ext-network.yml.sample ext-network.yml
-  fi
   return
 }
 
@@ -746,17 +741,6 @@ update() {
       if [[ "${__branch}" =~ ^tag-* ]]; then
         git checkout main
       fi
-# Handle legacy ext-network. A future update after a hardfork will bring in the changed ext-network
-      DOCKER_EXT_NETWORK=$(${__as_owner} sed -n 's/^\s*name:\s*\(.*\)/\1/p' ext-network.yml)
-# I mean this literally
-# shellcheck disable=SC2016
-      if [ ! "${DOCKER_EXT_NETWORK:-"traefik_default"}" = '${DOCKER_EXT_NETWORK}' ]; then
-        __var=DOCKER_EXT_NETWORK
-        __update_value_in_env "${__var}" "${!__var}" "${__env_file}"
-        ${__as_owner} cp ext-network.yml ext-network.yml.bak
-        ${__as_owner} rm -f ext-network.yml
-      fi
-# End legacy handling
       ${__as_owner} git pull
     else
       export ETHDPINNED="${__value}"
@@ -773,7 +757,6 @@ update() {
 
 # Remove this after the next hardfork
   if [ -f "ext-network.yml.bak" ]; then
-    ${__as_owner} cp ext-network.yml.bak ext-network.yml
     ${__as_owner} rm ext-network.yml.bak
   fi
 
