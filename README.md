@@ -168,6 +168,33 @@ SEQUENCER=https://mainnet.hsk.xyz
 OPNODE_SYNC_MODE=execution-layer
 ```
 
+## Hemi
+
+`hemi-min.yml` is required in `COMPOSE_FILE`. Additional entries such as `op-shared.yml` can of course be used.
+
+```properties
+COMPOSE_FILE=optimism.yml:hemi-min.yml
+NETWORK=hemi-mainnet
+SEQUENCER=""
+CL_EXTRAS=--sequencer.enabled=false --p2p.ban.peers=false --p2p.ban.duration=1s --p2p.ban.threshold=-10000000000 --override.ecotone=1725868497 --override.canyon=1725868497 --override.delta=1725868497 --override.pectrablobschedule=1751554801 --override.isthmus=1751554801 --override.holocene=1751554801 --override.granite=1751554801 --override.fjord=1751554801
+EL_EXTRAS=--syncmode=snap --gcmode=archive --networkid=43111 --override.ecotone=1725868497 --override.canyon=1725868497 --override.cancun=1725868497 --override.hvm0=1739286001 --override.isthmus=1751554801 --override.holocene=1751554801 --override.granite=1751554801 --override.fjord=1751554801 --tbc.leveldbhome=/var/lib/tbc/data --hvm.headerdatadir=/var/lib/tbc/headers --tbc.network=mainnet --hvm.genesisheader=0000003efaaa2ba65de684c512bb67ef115298d1d16bcb49b16c02000000000000000000ed31a56788c4488afc4ee69e0791ad6aeeb9ea05f069e0fdde6159068765ad3f4128a96726770217e7f41c86 --hvm.genesisheight=883092 --http.api=web3,eth,txpool,net --ws.api=eth,txpool,net --maxpeers=100 --blobpool.datacap 10737418240 --miner.gasprice 10
+OPNODE_SYNC_MODE=execution-layer
+DISABLE_TXPOOL_GOSSIP=false
+ROLLUP_HALT=""
+GENESIS_URL=https://raw.githubusercontent.com/hemilabs/heminetwork/refs/heads/main/localnode/mainnet-genesis.json
+INIT_STATE_SCHEME=hash
+ROLLUP_URL=https://raw.githubusercontent.com/hemilabs/heminetwork/refs/heads/main/localnode/mainnet-rollup.json
+OPNODE_P2P_BOOTNODES=enr:-J64QACnJ0giPmPXowNCHP-FDleMMbDqYg5nuLABYfJeYbP9OA6_fZtvCsTbAwvlPD8_C6ZSXEk1-XPabDBwD8UTyNCGAZMxdy4tgmlkgnY0gmlwhCINopiHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaED22EOmUryrNnFOwq6Ve1Hpw5CMFz_TnhIkVS4Sq8JhkmDdGNwgiMrg3VkcIKjLg,enr:-J64QA20VNMfLMtbSuHYmQH2I-xaqT4-9g7lqO-VHr0fFvtSB7QybJ_7W5fuEjLAa6kh82fGLjRUdZE0hW0pfVBcxP6GAZMxdwfngmlkgnY0gmlwhCJaFfaHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaEDjt3C-gv87B5rWa5M52WUFGy16mjQvFsC7OgPkqu-rn-DdGNwgiMrg3VkcIKRXQ,enr:-J64QLQyh3lXjQLzfCbfNw0DUb4A0OEcTLmVGexMbK-2jjCtHOIlRnDqLuedQ0orNHt7zmsILELYi4ozg-0bQzc34F-GAZMxdxNogmlkgnY0gmlwhCINq4uHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaED1NV9w0EmnMXBNRnDWj6kdqzE6_4HigHopeu3ewQTwouDdGNwgiMrg3VkcIK1Iw,enr:-J64QNPfOEViWkN7U_ul5Zhw_mc5_Hta92eUufrgu6oTqSMzRsqCje-P0vPrOQ9XjVIk4VP7mmFVP6qoTrtkIwvwUV2GAZMxdv4zgmlkgnY0gmlwhCJb2HmHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaEDYAidV8rzABKrKAL9jwP1aoi3wj-GtuML4FKtUDOgzCGDdGNwgiMrg3VkcILijg,enr:-J64QFalFr9Y4r9v8Svh7XFwerJeLTRnfTixfCy_NZw3OTMVZL_dSAvcZ6JIeK0JAZf6-PU3YknV9m9Jd5V5WlnqHKWGAZMxdxT4gmlkgnY0gmlwhCKNlBOHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaECI1jqAzkQ0JRkwL-UBP2TBUfUdLyTaqAXtey82CTysdCDdGNwgiMrg3VkcILOyg
+OPNODE_P2P_STATIC_PEERS=/ip4/34.90.21.246/tcp/9003/p2p/16Uiu2HAmNGgNTgiFBAqH58aCT3iXWMnetYMtQgH21Ydjq2R7QRbt,/ip4/34.13.162.152/tcp/9003/p2p/16Uiu2HAm33YRmCya94zRXddxaWj25QAXW5MhuJkaEvfMLXkB4GCK,/ip4/34.13.171.139/tcp/9003/p2p/16Uiu2HAm5d71wTbQPkBA3VW9suge2afCKtrGdk7UapRHR4va8jTY,/ip4/34.91.216.121/tcp/9003/p2p/16Uiu2HAmK7s7F1ALmtXKH3LxeEENstqw8jiDzUtifasS4LkUKGVE,/ip4/34.141.148.19/tcp/9003/p2p/16Uiu2HAkwoetK83q3WNRQ4t4eV8B3DosnwcFqd9VHxz24ZZzzEgo
+OPGETH_P2P_BOOTNODES=enode://e7970a29d89f8b158371a8d4aca909ee8c1c759e711547b797a6a6f01513c1e7c85121dd2600397ca20cebf3cea21025001be7c0f577b496caf32ea0433a1cfd@34.90.21.246:30303,enode://70877d3aa6c4ccc09d960c269846215d5dcc8bf47013ac532c1ccc3d9cfe61434c96b9d6cad88a96c3f91187fb00214d903a6be6d8e93140ac4a3c099684ce34@34.13.162.152:30303,enode://27f75e68a8c14cae2f4e12f060477c150767e98149e16a448baddc25d800c008edf8b1fefd13b206c27e5473ac9234ba1958a8267fe5272e9de3819ac080bf22@34.13.171.139:30303,enode://588ffb65f841aede8d8f69a3175f9cfed1b79d20d40a7feb8a70e574b5610fb4049bf02f3170f1ae25bff806b2c823653b28af711e1962ea3f45d99d58608191@34.91.216.121:30303,enode://ba86a76186268948bc34b7fa1c2f08c24ed60cda61346cf1a1cca278b0ef1de49e567039952e06e4887a0252974401a6d6729bfc12945c6d8c65eacbf3b11ca7@34.141.148.19:30303
+OPGETH_P2P_TRUSTED_NODES=["enode://e7970a29d89f8b158371a8d4aca909ee8c1c759e711547b797a6a6f01513c1e7c85121dd2600397ca20cebf3cea21025001be7c0f577b496caf32ea0433a1cfd@34.90.21.246:30303","enode://70877d3aa6c4ccc09d960c269846215d5dcc8bf47013ac532c1ccc3d9cfe61434c96b9d6cad88a96c3f91187fb00214d903a6be6d8e93140ac4a3c099684ce34@34.13.162.152:30303","enode://27f75e68a8c14cae2f4e12f060477c150767e98149e16a448baddc25d800c008edf8b1fefd13b206c27e5473ac9234ba1958a8267fe5272e9de3819ac080bf22@34.13.171.139:30303","enode://588ffb65f841aede8d8f69a3175f9cfed1b79d20d40a7feb8a70e574b5610fb4049bf02f3170f1ae25bff806b2c823653b28af711e1962ea3f45d99d58608191@34.91.216.121:30303","enode://ba86a76186268948bc34b7fa1c2f08c24ed60cda61346cf1a1cca278b0ef1de49e567039952e06e4887a0252974401a6d6729bfc12945c6d8c65eacbf3b11ca7@34.141.148.19:30303"]
+OPNODE_DOCKER_TAG=ea9fe7b@sha256:7110e3c4c61e495ea0a6621d7ec211ceb7e948e25c648b05bd51fcc557ad06bc
+OPNODE_DOCKER_REPO=ghcr.io/hemilabs/op-node
+OPGETH_DOCKER_TAG=e79d992@sha256:dbe292e013345a8a41c9dc8ee09088853410b17c06ef779258d251f55356c501
+OPGETH_DOCKER_REPO=ghcr.io/hemilabs/op-geth
+HEMI_BSSD_DOCKER_TAG=1.6.3
+```
+
 ## Mantle
 
 Mantle provides a [snapshot](https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md#download-latest-snapshot-from-mantle), which must be used.
