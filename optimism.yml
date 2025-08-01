@@ -38,9 +38,10 @@ services:
       - LEGACY=${LEGACY:-false}
       - EL_EXTRAS=${EL_EXTRAS:-}
       - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES}
+      - OPGETH_P2P_TRUSTED_NODES=${OPGETH_P2P_TRUSTED_NODES}
       - GENESIS_URL=${GENESIS_URL:-}
       - NETWORK=${NETWORK}
-      - SEQUENCER=${SEQUENCER}
+      - SEQUENCER=${SEQUENCER:-}
       - ROLLUP_HALT=${ROLLUP_HALT}
       - INIT_STATE_SCHEME=${INIT_STATE_SCHEME:-path}
     volumes:
@@ -88,7 +89,6 @@ services:
       - ${WS_PORT:-8546}
       - --ws.origins=*
       - --metrics
-      - --metrics.expensive
       - --pprof
       - --pprof.addr
       - 0.0.0.0

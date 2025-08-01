@@ -1,0 +1,58 @@
+# These are overrides for optimism.yml, must be used with it
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: "3"
+      tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
+
+services:
+# Bitcoin Secure Sequencer
+  bssd:
+    image: hemilabs/bssd:${HEMI_BSSD_DOCKER_TAG:-1}
+    environment:
+      BSS_LOG_LEVEL: "INFO"
+      BSS_ADDRESS: ":8081"
+    <<: *logging
+
+  hemi-geth-init:
+    image: "alpine@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c"  # 3.21.3
+    volumes:
+      - opgeth-data:/var/lib/op-geth
+    command:
+      - "chown"
+      - "-R"
+      - "65532"  # geth user
+      - "/var/lib/op-geth"
+
+  hemi-geth-init-tbc:
+    image: "alpine@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c"  # 3.21.3
+    volumes:
+      - hemi-tbc-data:/var/lib/tbc
+    command:
+      - "chown"
+      - "-R"
+      - "65532"  # geth user
+      - "/var/lib/tbc"
+
+  op-geth:
+    user: 65532:65532
+    volumes:
+      - hemi-tbc-data:/var/lib/tbc
+    environment:
+      OP_GETH_L2_READINESS_RPC: "http://localhost:${RPC_PORT}"
+    depends_on:
+      hemi-geth-init:
+        condition: service_completed_successfully
+      hemi-geth-init-tbc:
+        condition: service_completed_successfully
+    ulimits:
+      memlock: -1
+
+  op-node:
+    environment:
+      OP_NODE_BSS_WS: "http://bssd:8081/v1/ws"
+
+volumes:
+  hemi-tbc-data:
