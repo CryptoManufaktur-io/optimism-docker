@@ -294,11 +294,11 @@ INIT_STATE_SCHEME=hash
 
 ```properties
 CL_EXTRAS="--da.rpc=https://da-rpc.mainnet.frax.com"
-EL_EXTRAS="--networkid=252 --maxpeers=50 --syncmode=snap --override.canyon=0 --override.ecotone=1717009201 --override.fjord=1733947201 --override.granite=1738958401"
+EL_EXTRAS="--networkid=252 --maxpeers=50 --syncmode=snap --override.canyon=0 --override.ecotone=1717009201 --override.fjord=1733947201 --override.granite=1738958401 --override.isthmus=1755716401"
 OPNODE_DOCKER_REPO=ghcr.io/fraxfinance/fraxtal-op-node
 OPGETH_DOCKER_REPO=ghcr.io/fraxfinance/fraxtal-op-geth
-OPNODE_DOCKER_TAG=v1.9.5-frax-1.1.0
-OPGETH_DOCKER_TAG=v1.101411.6-frax-1.0.0
+OPNODE_DOCKER_TAG=v1.13.5-frax-1.2.0
+OPGETH_DOCKER_TAG=v1.101511.1-frax-1.3.0
 NETWORK=fraxtal-mainnet
 SEQUENCER="https://rpc.frax.com"
 OPNODE_SYNC_MODE=execution-layer
