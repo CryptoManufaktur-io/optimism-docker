@@ -41,6 +41,7 @@ services:
     volumes:
       - hemi-tbc-data:/var/lib/tbc
     environment:
+      OP_GETH_L1_RPC: "${L1_RPC}"
       OP_GETH_L2_READINESS_RPC: "http://localhost:${RPC_PORT}"
     depends_on:
       hemi-geth-init:
