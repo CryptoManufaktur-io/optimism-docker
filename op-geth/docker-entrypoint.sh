@@ -40,7 +40,7 @@ if [ -n "${GENESIS_URL}" ]; then
       wget "$GENESIS_URL" -O genesis.json
     fi
 
-    geth init --datadir=/var/lib/op-geth --state.scheme="${INIT_STATE_SCHEME}" genesis.json ${EL_INIT_EXTRAS}
+    geth init --datadir=/var/lib/op-geth ${EL_INIT_EXTRAS} --state.scheme="${INIT_STATE_SCHEME}" genesis.json
   fi
 else
   if [ "${NETWORK}" = "mantle" ]; then
