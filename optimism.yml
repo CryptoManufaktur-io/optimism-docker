@@ -149,7 +149,7 @@ services:
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
-      - op-node
+      - ${OPNODE_BIN_PATH:-op-node}
       - --log.level
       - ${LOG_LEVEL}
       - --l2
