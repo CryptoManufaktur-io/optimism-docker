@@ -25,7 +25,7 @@ services:
     restart: "unless-stopped"
     build:
       context: ./op-geth
-      dockerfile: Dockerfile.binary
+      dockerfile: ${OPGETH_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
         - DOCKER_REPO=${OPGETH_DOCKER_REPO}
@@ -121,7 +121,7 @@ services:
     restart: "unless-stopped"
     build:
       context: ./op-node
-      dockerfile: Dockerfile.binary
+      dockerfile: ${OPNODE_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
         - DOCKER_REPO=${OPNODE_DOCKER_REPO}
