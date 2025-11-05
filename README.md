@@ -50,7 +50,9 @@ You'll want to set `NETWORK` to something unique (it cannot be empty), then set 
 Some example values by chain are below
 
 ## Xlayer
-For genesis.json download it from https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz referenced here https://github.com/okx/xlayer-toolkit/blob/c98ef4d579f641c3bb37d9a8390a6bc8fb572327/scripts/rpc-setup/init.sh#L28C22-L28C130 and place it inside clone dir `private-config`
+For genesis.json download it from https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz referenced here https://github.com/okx/xlayer-toolkit/blob/c98ef4d579f641c3bb37d9a8390a6bc8fb572327/scripts/rpc-setup/init.sh#L28C22-L28C130 and place it inside clone dir `private-config`.
+
+NB: The file is a `.tar.gz` file, need to be extracted as service expects `.json` file.
 
 ```properties
 COMPOSE_FILE="optimism.yml:ext-network.yml"
