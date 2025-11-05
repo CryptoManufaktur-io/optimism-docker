@@ -22,7 +22,7 @@ version() {
       __docompose exec op-geth geth version
       echo
       echo "OPNODE_DOCKER_TAG: $(grep -E '^OPNODE_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
-      __docompose exec op-node op-node --version
+      __docompose exec op-node "$(grep -E '^OPNODE_BIN_PATH=' "${__env_file}" | cut -d '=' -f2)" --version
       ;;&
   esac
 }
