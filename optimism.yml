@@ -25,7 +25,7 @@ services:
     restart: "unless-stopped"
     build:
       context: ./op-geth
-      dockerfile: Dockerfile.binary
+      dockerfile: ${OPGETH_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
         - DOCKER_REPO=${OPGETH_DOCKER_REPO}
@@ -37,6 +37,7 @@ services:
       - NETWORK=${NETWORK:-}
       - LEGACY=${LEGACY:-false}
       - EL_EXTRAS=${EL_EXTRAS:-}
+      - EL_INIT_EXTRAS=${EL_INIT_EXTRAS:-}
       - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES}
       - OPGETH_P2P_TRUSTED_NODES=${OPGETH_P2P_TRUSTED_NODES}
       - GENESIS_URL=${GENESIS_URL:-}
@@ -121,7 +122,7 @@ services:
     restart: "unless-stopped"
     build:
       context: ./op-node
-      dockerfile: Dockerfile.binary
+      dockerfile: ${OPNODE_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
         - DOCKER_REPO=${OPNODE_DOCKER_REPO}
@@ -149,7 +150,7 @@ services:
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
-      - op-node
+      - ${OPNODE_BIN_PATH:-op-node}
       - --log.level
       - ${LOG_LEVEL}
       - --l2
