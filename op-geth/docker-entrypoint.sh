@@ -40,6 +40,7 @@ if [ -n "${GENESIS_URL}" ]; then
       wget "$GENESIS_URL" -O genesis.json
     fi
 
+#shellcheck disable=SC2086
     geth ${EL_INIT_EXTRAS} init --datadir=/var/lib/op-geth --state.scheme="${INIT_STATE_SCHEME}" genesis.json
   fi
 else
