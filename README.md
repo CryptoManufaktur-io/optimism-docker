@@ -49,6 +49,34 @@ You'll want to set `NETWORK` to something unique (it cannot be empty), then set 
 
 Some example values by chain are below
 
+## Xlayer
+For genesis.json download it from https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz referenced here https://github.com/okx/xlayer-toolkit/blob/c98ef4d579f641c3bb37d9a8390a6bc8fb572327/scripts/rpc-setup/init.sh#L28C22-L28C130 and place it inside clone dir `private-config`.
+
+NB: The file is a `.tar.gz` file, need to be extracted as service expects `.json` file.
+
+```properties
+COMPOSE_FILE="optimism.yml:ext-network.yml"
+NETWORK=xlayer
+OPNODE_DOCKERFILE=Dockerfile-debian.binary
+OPGETH_DOCKER_REPO=xlayer/op-geth
+OPGETH_DOCKER_TAG=0.0.6
+OPNODE_DOCKER_REPO=xlayer/op-node
+OPNODE_DOCKER_TAG=0.0.9
+GENESIS_URL=file:///tmp/private-config/merged.genesis.json
+ROLLUP_URL="https://raw.githubusercontent.com/okx/xlayer-toolkit/refs/heads/main/scripts/rpc-setup/config/rollup-mainnet.json"
+EL_INIT_EXTRAS="--gcmode=archive --db.engine=pebble"
+INIT_STATE_SCHEME=hash
+SEQUENCER=https://rpc.xlayer.tech
+OPNODE_P2P_STATIC_PEERS=/ip4/47.242.38.0/tcp/9223/p2p/16Uiu2HAmH1AVhKWR29mb5s8Cubgsbh4CH1G86A6yoVtjrLWQgiY3,/ip4/8.210.153.12/tcp/9223/p2p/16Uiu2HAkuerkmQYMZxYiQYfQcPob9H7XHPwS7pd8opPTMEm2nsAp,/ip4/8.210.117.27/tcp/9223/p2p/16Uiu2HAmQEzn2WQj4kmWVrK9aQsfyQcETgXQKjcKGrTPsKcJBv7a
+OPNODE_P2P_BOOTNODES=enode://c67d7f63c5483ab8311123d2997bfe6a8aac2b117a40167cf71682f8a3e37d3b86547c786559355c4c05ae0b1a7e7a1b8fde55050b183f96728d62e276467ce1@8.210.177.150:9223,enode://28e3e305b266e01226a7cc979ab692b22507784095157453ee0e34607bb3beac9a5b00f3e3d7d3ac36164612ca25108e6b79f75e3a9ecb54a0b3e7eb3e097d37@8.210.15.172:9223,enode://b5aa43622aad25c619650a0b7f8bb030161dfbfd5664233f92d841a33b404cea3ffffdc5bc8d6667c7dc212242a52f0702825c1e51612047f75c847ab96ef7a6@8.210.69.97:9223
+SNAPSHOT=""
+EL_EXTRAS="--http.api=web3,debug,eth,txpool,net,engine,miner,admin --ws.api=debug,eth,txtpool,net,engine --db.engine=pebble --gcmode=archive --rollup.enabletxpooladmission --discovery.v5=true --maxpeers=30 --networkid=1952 --syncmode=full --gpo.blocks=20 --gpo.percentile=60 --gpo.maxprice=5000000000000000000 --gpo.ignoreprice=2000000000000000 --gpo.default-l1-coin-price=2000.0 --gpo.l1-coin-id=15756 --gpo.default-l2-coin-price=0.5 --gpo.l2-coin-id=7184 --gpo.type=follower --gpo.factor=0.1 --gpo.update-period=100000000000 --gpo.default=100000000 --gpo.kafka-url=localhost:9092 --gpo.topic=middle_coinPrice_push --gpo.group-id=geth-consumer"
+CL_EXTRAS="--log.level=info --sequencer.enabled=false --verifier.l1-confs=1 --rpc.enable-admin=true --conductor.enabled=false --safedb.path=/var/lib/op-node/safedb"
+OPNODE_SYNC_MODE=""
+OPGETH_P2P_BOOTNODES=""
+OPGETH_P2P_TRUSTED_NODES=enode://2104d54a7fbd58a408590035a3628f1e162833c901400d490ccc94de416baf13639ce2dad388b7a5fd43c535468c106b660d42d94451e39b08912005aa4e4195@8.210.181.50:30303
+```
+
 ## Celo
 
 Celo requires eigenda-proxy so make sure to add `eigenda.yml` in `COMPOSE_FILE` as below. Then you set the value using arguments as seen in CL_EXTRAS `--altda.da-server=http://eigenda-proxy:4242`
@@ -79,18 +107,18 @@ OPGETH_P2P_BOOTNODES="enode://28f4fcb7f38c1b012087f7aef25dcb0a1257ccf1cdc4caa885
 
 ## opBNB
 ```properties
-NETWORK: opBNBMainnet
-OPNODE_DOCKER_TAG: v0.5.3-hotfix
-OPGETH_DOCKER_TAG: v0.5.7
-OPGETH_DOCKER_REPO: ghcr.io/bnb-chain/op-geth
-OPNODE_DOCKER_REPO: ghcr.io/bnb-chain/op-node
-SNAPSHOT: https://pub-2ea2209b4ee74f4398c5ac50c3b2efeb.r2.dev/geth-mainnet-pbss-20250516.tar.gz
-SEQUENCER: https://opbnb-mainnet-rpc.bnbchain.org
-OPGETH_P2P_BOOTNODES: enr:-KO4QHs5qh_kPFcjMgqkuN9dbxXT4C5Cjad4SAheaUxveCbJQ3XdeMMDHeHilHyqisyYQAByfdhzyKAdUp2SvyzWeBqGAYvRDf80g2V0aMfGhHFtSjqAgmlkgnY0gmlwhDaykUmJc2VjcDI1NmsxoQJUevTL3hJwj21IT2GC6VaNqVQEsJFPtNtO-ld5QTNCfIRzbmFwwIN0Y3CCdl-DdWRwgnZf,enr:-KO4QKIByq-YMjs6IL2YCNZEmlo3dKWNOy4B6sdqE3gjOrXeKdNbwZZGK_JzT1epqCFs3mujjg2vO1lrZLzLy4Rl7PyGAYvRA8bEg2V0aMfGhHFtSjqAgmlkgnY0gmlwhDbjSM6Jc2VjcDI1NmsxoQNQhJ5pqCPnTbK92gEc2F98y-u1OgZVAI1Msx-UiHezY4RzbmFwwIN0Y3CCdl-DdWRwgnZf
-OPNODE_P2P_BOOTNODES: enr:-J24QA9sgVxbZ0KoJ7-1gx_szfc7Oexzz7xL2iHS7VMHGj2QQaLc_IQZmFthywENgJWXbApj7tw7BiouKDOZD4noWEWGAYppffmvgmlkgnY0gmlwhDbjSM6Hb3BzdGFja4PMAQCJc2VjcDI1NmsxoQKetGQX7sXd4u8hZr6uayTZgHRDvGm36YaryqZkgnidS4N0Y3CCIyuDdWRwgiMs,enr:-J24QPSZMaGw3NhO6Ll25cawknKcOFLPjUnpy72HCkwqaHBKaaR9ylr-ejx20INZ69BLLj334aEqjNHKJeWhiAdVcn-GAYv28FmZgmlkgnY0gmlwhDTDWQOHb3BzdGFja4PMAQCJc2VjcDI1NmsxoQJ-_5GZKjs7jaB4TILdgC8EwnwyL3Qip89wmjnyjvDDwoN0Y3CCIyuDdWRwgiMs
-EL_EXTRAS: --syncmode=full --db.engine=pebble
-CL_EXTRAS: --l1.trustrpc
-OPNODE_SYNC_MODE: execution-layer
+NETWORK=opBNBMainnet
+OPNODE_DOCKER_TAG=v0.5.3-hotfix
+OPGETH_DOCKER_TAG=v0.5.7
+OPGETH_DOCKER_REPO=ghcr.io/bnb-chain/op-geth
+OPNODE_DOCKER_REPO=ghcr.io/bnb-chain/op-node
+SNAPSHOT=https://pub-2ea2209b4ee74f4398c5ac50c3b2efeb.r2.dev/geth-mainnet-pbss-20250516.tar.gz
+SEQUENCER=https://opbnb-mainnet-rpc.bnbchain.org
+OPGETH_P2P_BOOTNODES=enr:-KO4QHs5qh_kPFcjMgqkuN9dbxXT4C5Cjad4SAheaUxveCbJQ3XdeMMDHeHilHyqisyYQAByfdhzyKAdUp2SvyzWeBqGAYvRDf80g2V0aMfGhHFtSjqAgmlkgnY0gmlwhDaykUmJc2VjcDI1NmsxoQJUevTL3hJwj21IT2GC6VaNqVQEsJFPtNtO-ld5QTNCfIRzbmFwwIN0Y3CCdl-DdWRwgnZf,enr:-KO4QKIByq-YMjs6IL2YCNZEmlo3dKWNOy4B6sdqE3gjOrXeKdNbwZZGK_JzT1epqCFs3mujjg2vO1lrZLzLy4Rl7PyGAYvRA8bEg2V0aMfGhHFtSjqAgmlkgnY0gmlwhDbjSM6Jc2VjcDI1NmsxoQNQhJ5pqCPnTbK92gEc2F98y-u1OgZVAI1Msx-UiHezY4RzbmFwwIN0Y3CCdl-DdWRwgnZf
+OPNODE_P2P_BOOTNODES=enr:-J24QA9sgVxbZ0KoJ7-1gx_szfc7Oexzz7xL2iHS7VMHGj2QQaLc_IQZmFthywENgJWXbApj7tw7BiouKDOZD4noWEWGAYppffmvgmlkgnY0gmlwhDbjSM6Hb3BzdGFja4PMAQCJc2VjcDI1NmsxoQKetGQX7sXd4u8hZr6uayTZgHRDvGm36YaryqZkgnidS4N0Y3CCIyuDdWRwgiMs,enr:-J24QPSZMaGw3NhO6Ll25cawknKcOFLPjUnpy72HCkwqaHBKaaR9ylr-ejx20INZ69BLLj334aEqjNHKJeWhiAdVcn-GAYv28FmZgmlkgnY0gmlwhDTDWQOHb3BzdGFja4PMAQCJc2VjcDI1NmsxoQJ-_5GZKjs7jaB4TILdgC8EwnwyL3Qip89wmjnyjvDDwoN0Y3CCIyuDdWRwgiMs
+EL_EXTRAS=--syncmode=full --db.engine=pebble
+CL_EXTRAS=--l1.trustrpc
+OPNODE_SYNC_MODE=execution-layer
 ```
 
 ## B^2
