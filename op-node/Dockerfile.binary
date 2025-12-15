@@ -1,7 +1,11 @@
 ARG DOCKER_TAG=latest
 ARG DOCKER_REPO=us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
+ARG ORIGINAL_USER=root
 
 FROM ${DOCKER_REPO}:${DOCKER_TAG}
+
+# Switch to root temporary
+USER root
 
 RUN apk update && apk add --no-cache ca-certificates tzdata bash curl su-exec
 
@@ -11,5 +15,8 @@ RUN mkdir -p /var/lib/op-node/ee-secret
 COPY ./docker-entrypoint.sh /usr/local/bin/
 # Belt and suspenders
 RUN chmod -R 755 /usr/local/bin/*
+
+# Restore the user
+USER ${ORIGINAL_USER}
 
 ENTRYPOINT ["op-node"]
