@@ -126,6 +126,7 @@ services:
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
         - DOCKER_REPO=${OPNODE_DOCKER_REPO}
+        - ORIGINAL_USER=${OPNODE_ORIGINAL_USER:-root}
     image: op-node:${NETWORK}
     pull_policy: never
     stop_grace_period: 1m
