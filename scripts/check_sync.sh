@@ -49,7 +49,7 @@ load_env_file() {
         val="${val:1:-1}"
       fi
       printf -v "$key" '%s' "$val"
-      export "$key"
+      export "${key?}"
     fi
   done < "$file"
 }
