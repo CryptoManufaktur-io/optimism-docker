@@ -644,6 +644,10 @@ space() {
   __display_docker_volumes
 }
 
+check-sync() {
+  bash scripts/check_sync.sh "$@" || true
+}
+
 
 # Warn user if space is low, so they can prune
 __check_disk_space() {
@@ -1009,6 +1013,8 @@ __full_help() {
   echo "    stops the ${__app_name} and destroys all data stores"
   echo "  space"
   echo "    show Docker volume space usage"
+  echo "  check-sync"
+  echo "    Call the check sync script for checking status of the node"
   echo "  help"
   echo "    print this help screen"
   echo
@@ -1040,7 +1046,7 @@ __me="./$(basename "${BASH_SOURCE[0]}")"
 
 trap '__handle_error $? $LINENO' ERR
 
-if [[ "$#" -eq 0 || "$*" =~ "-h" ]]; then # Lazy match for -h and --help but also --histogram, so careful here
+if [[ "$#" -eq 0 || ("$*" =~ "-h" && ! "$*" =~ "check-sync") ]]; then # Lazy match for -h and --help but also --histogram, so careful here
   help "$@"
   exit 0
 fi
@@ -1105,7 +1111,7 @@ if ! __docompose --help >/dev/null 2>&1; then
 fi
 
 case "$__command" in
-  help|update|up|start|down|stop|restart|version|logs|cmd|terminate|space)
+  help|update|up|start|down|stop|restart|version|logs|cmd|terminate|space|check-sync)
     $__command "$@";;
   *)
     echo "Unrecognized command $__command"
