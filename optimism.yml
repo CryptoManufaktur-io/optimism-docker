@@ -8,6 +8,7 @@ x-logging: &logging
 
 services:
   op-geth-init:
+    profiles: [ "geth" ]
     restart: "no"
     build:
       context: ./init
@@ -22,6 +23,7 @@ services:
       - jwtsecret:/var/lib/op-geth/ee-secret
       - /etc/localtime:/etc/localtime:ro
   op-geth:
+    profiles: [ "geth" ]
     restart: "unless-stopped"
     build:
       context: ./op-geth
@@ -118,6 +120,67 @@ services:
       - metrics.port=6060
       - metrics.network=${NETWORK:-}
 
+  op-reth-init:
+    profiles: ["reth"]
+    restart: "no"
+    build:
+      context: ./init-reth
+      dockerfile: Dockerfile
+    image: init:optimism-reth
+    pull_policy: never
+    environment:
+      - SNAPSHOT=${SNAPSHOT:-}
+      - SNAPSHOT_PART=${SNAPSHOT_PART:-}
+    volumes:
+      - opreth-data:/var/lib/op-reth
+      - jwtsecret:/var/lib/op-reth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
+
+  op-reth:
+    profiles: [ "reth" ]
+    restart: unless-stopped
+    build:
+      context: ./op-reth
+      dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
+      args:
+        - DOCKER_TAG=${OPRETH_DOCKER_TAG}
+        - DOCKER_REPO=${OPRETH_DOCKER_REPO}
+    image: op-reth:${NETWORK}
+    pull_policy: never
+    stop_grace_period: 5m
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NETWORK=${NETWORK:-}
+      - LEGACY=${LEGACY:-false}
+      - EL_OPRETH_EXTRAS=${EL_OPRETH_EXTRAS:-}
+      - EL_OPRETH_INIT_EXTRAS=${EL_OPRETH_INIT_EXTRAS:-}
+      - OPRETH_P2P_BOOTNODES=${OPRETH_P2P_BOOTNODES}
+      - OPRETH_P2P_TRUSTED_NODES=${OPRETH_P2P_TRUSTED_NODES}
+      - GENESIS_URL=${GENESIS_URL:-}
+      - NETWORK=${NETWORK}
+      - SEQUENCER=${SEQUENCER:-}
+      - ROLLUP_HALT=${ROLLUP_HALT}
+      - INIT_STATE_SCHEME=${INIT_STATE_SCHEME:-path}
+    volumes:
+      - opreth-data:/var/lib/op-reth
+      - jwtsecret:/var/lib/op-reth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
+
+    ports:
+      - ${OPRETH_P2P_PORT:-30303}:${OPRETH_P2P_PORT:-30303}/tcp
+      - ${OPRETH_P2P_PORT:-30303}:${OPRETH_P2P_PORT:-30303}/udp
+    command: >
+      node
+      --datadir /var/lib/op-reth
+      --chain ${L2_CHAIN_ID_OR_SPEC}
+      --http --http.addr 0.0.0.0 --http.port 8545
+      --ws --ws.addr 0.0.0.0 --ws.port 8546
+      --authrpc.addr 0.0.0.0 --authrpc.port 8551
+      --authrpc.jwtsecret /var/lib/op-reth/ee-secret/jwtsecret
+      --port 30303
+      ${OPRETH_EXTRA_ARGS:-}
+
+
   op-node:
     restart: "unless-stopped"
     build:
@@ -140,6 +203,7 @@ services:
       - ROLLUP_HALT=${ROLLUP_HALT}
       - OPNODE_SYNC_MODE=${OPNODE_SYNC_MODE}
       - L1_BEACON=${L1_BEACON}
+      - OP_NODE_L2_ENGINE_ENDPOINT=${OP_NODE_L2_ENGINE_ENDPOINT:-${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - opnode-data:/var/lib/op-node
@@ -155,7 +219,7 @@ services:
       - --log.level
       - ${LOG_LEVEL}
       - --l2
-      - ${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551
+      - ${OP_NODE_L2_ENGINE_ENDPOINT}
       - --l2.jwt-secret
       - /var/lib/op-node/ee-secret/jwtsecret
       - --l1
@@ -190,8 +254,15 @@ services:
       - metrics.path=/metrics
       - metrics.port=7300
       - metrics.network=${NETWORK:-}
+    depends_on:
+      op-geth:
+        condition: service_started
+      op-reth:
+        condition: service_started
 
 volumes:
   opgeth-data:
   opnode-data:
   jwtsecret:
+  opreth-data:
+
