@@ -297,11 +297,11 @@ services:
       - metrics.path=/metrics
       - metrics.port=7300
       - metrics.network=${NETWORK:-}
-    depends_on:
-      op-geth:
-        condition: service_started
-      op-reth:
-        condition: service_started
+#    depends_on:
+#      op-geth:
+#        condition: service_started
+#      op-reth:
+#        condition: service_started
 
 volumes:
   opgeth-data:
