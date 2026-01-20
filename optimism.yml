@@ -135,7 +135,6 @@ services:
       - opreth-data:/var/lib/op-reth
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
-
   op-reth:
     profiles: [ "reth" ]
     restart: unless-stopped
@@ -152,8 +151,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - NETWORK=${NETWORK:-}
       - LEGACY=${LEGACY:-false}
-      - EL_OPRETH_EXTRAS=${EL_OPRETH_EXTRAS:-}
-      - EL_OPRETH_INIT_EXTRAS=${EL_OPRETH_INIT_EXTRAS:-}
+      - EL_RETH_EXTRAS=${EL_RETH_EXTRAS:-}
+      - EL_RETH_INIT_EXTRAS=${EL_RETH_INIT_EXTRAS:-}
       - OPRETH_P2P_BOOTNODES=${OPRETH_P2P_BOOTNODES}
       - OPRETH_P2P_TRUSTED_NODES=${OPRETH_P2P_TRUSTED_NODES}
       - GENESIS_URL=${GENESIS_URL:-}
@@ -165,21 +164,65 @@ services:
       - opreth-data:/var/lib/op-reth
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
-
     ports:
-      - ${OPRETH_P2P_PORT:-30303}:${OPRETH_P2P_PORT:-30303}/tcp
-      - ${OPRETH_P2P_PORT:-30303}:${OPRETH_P2P_PORT:-30303}/udp
-    command: >
-      node
-      --datadir /var/lib/op-reth
-      --chain ${L2_CHAIN_ID_OR_SPEC}
-      --http --http.addr 0.0.0.0 --http.port 8545
-      --ws --ws.addr 0.0.0.0 --ws.port 8546
-      --authrpc.addr 0.0.0.0 --authrpc.port 8551
-      --authrpc.jwtsecret /var/lib/op-reth/ee-secret/jwtsecret
-      --port 30303
-      ${OPRETH_EXTRA_ARGS:-}
-
+      - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/tcp
+      - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/udp
+    networks:
+      default:
+        aliases:
+          - ${NETWORK}-reth
+    depends_on:
+      op-reth-init:
+        condition: service_completed_successfully
+    <<: *logging
+    entrypoint:
+      - docker-entrypoint.sh
+      - op-reth
+      - node
+      - --datadir
+      - /var/lib/op-reth
+      - --chain
+      - ${OPRETH_CHAIN}
+      - --http
+      - --http.addr
+      - 0.0.0.0
+      - --http.port
+      - ${RPC_PORT:-8545}
+      - --ws
+      - --ws.addr
+      - 0.0.0.0
+      - --ws.port
+      - ${WS_PORT:-8546}
+      - --authrpc.addr
+      - 0.0.0.0
+      - --authrpc.port
+      - "8551"
+      - --authrpc.jwtsecret
+      - /var/lib/op-reth/ee-secret/jwtsecret
+      - --port
+      - ${OPRETH_P2P_PORT:-30304}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${RPC_HOST:-op}.service=${RPC_HOST:-op}
+      - traefik.http.routers.${RPC_HOST:-op}.entrypoints=websecure
+      - traefik.http.routers.${RPC_HOST:-op}.rule=Host(`${RPC_HOST:-op}.${DOMAIN}`)
+      - traefik.http.routers.${RPC_HOST:-op}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${RPC_HOST:-op}lb.service=${RPC_HOST:-op}
+      - traefik.http.routers.${RPC_HOST:-op}lb.entrypoints=websecure
+      - traefik.http.routers.${RPC_HOST:-op}lb.rule=Host(`${RPC_LB:-op-lb}.${DOMAIN}`)
+      - traefik.http.routers.${RPC_HOST:-op}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${RPC_HOST:-op}.loadbalancer.server.port=${RPC_PORT:-8545}
+      - traefik.http.routers.${WS_HOST:-opws}.service=${WS_HOST:-opws}
+      - traefik.http.routers.${WS_HOST:-opws}.entrypoints=websecure
+      - traefik.http.routers.${WS_HOST:-opws}.rule=Host(`${WS_HOST:-opws}.${DOMAIN}`)
+      - traefik.http.routers.${WS_HOST:-opws}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${WS_HOST:-opws}lb.service=${WS_HOST:-opws}
+      - traefik.http.routers.${WS_HOST:-opws}lb.entrypoints=websecure
+      - traefik.http.routers.${WS_HOST:-opws}lb.rule=Host(`${WS_LB:-opws-lb}.${DOMAIN}`)
+      - traefik.http.routers.${WS_HOST:-opws}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${WS_HOST:-opws}.loadbalancer.server.port=${WS_PORT:-8546}
+      - metrics.scrape=true
+      - metrics.network=${NETWORK:-}
 
   op-node:
     restart: "unless-stopped"
