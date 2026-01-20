@@ -32,7 +32,7 @@ esac
 : "${OPRETH_P2P_TRUSTED_NODES:=}"
 : "${DISABLE_TXPOOL_GOSSIP:=false}"
 : "${SEQUENCER:=}"
-: "${ROLLUP_HALT:=}"   # <-- IMPLEMENTED
+: "${ROLLUP_HALT:=}"
 
 # -----------------------------
 # Best-effort genesis init hook
@@ -94,9 +94,13 @@ if [ "${DISABLE_TXPOOL_GOSSIP:-false}" = "true" ]; then
 fi
 
 # Implement ROLLUP_HALT: add --rollup.halt=<value> unless user already supplied it
-__rollup_halt=""
+__rolluphalt=""
 if [ -n "${ROLLUP_HALT:-}" ]; then
-  __rollup_halt="--rollup.halt=${ROLLUP_HALT}"
+  if op-reth node --help 2>&1 | grep -q -- '--rollup.halt'; then
+    __rolluphalt="--rollup.halt=${ROLLUP_HALT}"
+  else
+    echo "NOTE: This op-reth build does not support --rollup.halt; ignoring ROLLUP_HALT='${ROLLUP_HALT}'"
+  fi
 fi
 
 # Ensure jwtsecret file exists (mounted by compose); warn if not present
@@ -146,12 +150,11 @@ if [ -n "${__sequencer}" ] && [[ ! " ${ARGS[*]} " =~ " --rollup.sequencer" ]]; t
   ARGS+=( ${__sequencer} )
 fi
 
-# Add rollup halt if not already present (either in args or extras)
-# (Avoid duplicate flags if operator provided it manually.)
-if [ -n "${__rollup_halt}" ]; then
+# Add rollup halt if supported and not already present
+if [ -n "${__rolluphalt}" ]; then
   if [[ ! " ${ARGS[*]} " =~ " --rollup.halt" ]] && [[ "${EL_RETH_EXTRAS}" != *"--rollup.halt"* ]]; then
     # shellcheck disable=SC2086
-    ARGS+=( ${__rollup_halt} )
+    ARGS+=( ${__rolluphalt} )
   fi
 fi
 
