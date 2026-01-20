@@ -1,0 +1,16 @@
+ARG DOCKER_TAG=latest
+ARG DOCKER_REPO=ghcr.io/paradigmxyz/op-reth
+
+FROM ${DOCKER_REPO}:${DOCKER_TAG}
+
+USER root
+RUN apk update && apk add --no-cache bash ca-certificates tzdata wget curl jq
+
+RUN mkdir -p /var/lib/op-reth/ee-secret && mkdir -p /var/lib/op-reth/snapshot
+
+COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod -R 755 /usr/local/bin/docker-entrypoint.sh
+
+# Keep default ENTRYPOINT as the op-reth binary so that:
+# command: "node ..." works (because it becomes: op-reth node ...)
+ENTRYPOINT ["op-reth"]
