@@ -38,6 +38,7 @@ services:
     ports:
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/tcp
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/udp
+      - ${OPNODE_RPC_PORT:-9545}:${OPNODE_RPC_PORT:-9545}/tcp
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
