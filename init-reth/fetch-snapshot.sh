@@ -21,7 +21,10 @@ fi
 __get_snapshot() {
   __dont_rm=0
   cd /var/lib/op-reth/snapshot
-  eval "__url=$1"
+#  eval "__url=$1"
+
+# assign argument to local var (avoid eval & SC2154)
+  local __url="$1"
 
   if [[ "${__url}" == "https://storage.cloud.google.com/"* ]]; then
     echo "Google Cloud URL detected, using gsutil"
