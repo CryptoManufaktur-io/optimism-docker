@@ -8,7 +8,6 @@ x-logging: &logging
 
 services:
   op-geth-init:
-    profiles: [ "geth" ]
     restart: "no"
     build:
       context: ./init
@@ -23,7 +22,6 @@ services:
       - jwtsecret:/var/lib/op-geth/ee-secret
       - /etc/localtime:/etc/localtime:ro
   op-geth:
-    profiles: [ "geth" ]
     restart: "unless-stopped"
     build:
       context: ./op-geth
@@ -121,7 +119,6 @@ services:
       - metrics.network=${NETWORK:-}
 
   op-reth-init:
-    profiles: ["reth"]
     restart: "no"
     build:
       context: ./init-reth
@@ -136,7 +133,6 @@ services:
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
   op-reth:
-    profiles: [ "reth" ]
     restart: unless-stopped
     build:
       context: ./op-reth
@@ -307,4 +303,3 @@ volumes:
   opnode-data:
   jwtsecret:
   opreth-data:
-
