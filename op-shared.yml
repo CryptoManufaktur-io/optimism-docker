@@ -7,4 +7,3 @@ services:
   op-node:
     ports:
       - ${OPNODE_RPC_PORT:-9545}:${OPNODE_RPC_PORT:-9545}/tcp
-
