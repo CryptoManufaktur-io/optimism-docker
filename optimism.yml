@@ -246,7 +246,6 @@ services:
       - ROLLUP_HALT=${ROLLUP_HALT}
       - OPNODE_SYNC_MODE=${OPNODE_SYNC_MODE}
       - L1_BEACON=${L1_BEACON}
-      - OP_NODE_L2_ENGINE_ENDPOINT=${OP_NODE_L2_ENGINE_ENDPOINT:-${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551}
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - opnode-data:/var/lib/op-node
@@ -262,7 +261,7 @@ services:
       - --log.level
       - ${LOG_LEVEL}
       - --l2
-      - ${OP_NODE_L2_ENGINE_ENDPOINT}
+      - ${L2_CONNECTION_KIND:-http}://${NETWORK}:8551
       - --l2.jwt-secret
       - /var/lib/op-node/ee-secret/jwtsecret
       - --l1

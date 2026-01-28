@@ -1,0 +1,85 @@
+# op-node.yml
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: "3"
+      tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
+
+services:
+  op-node:
+    restart: "unless-stopped"
+    build:
+      context: ./op-node
+      dockerfile: ${OPNODE_DOCKERFILE:-Dockerfile.binary}
+      args:
+        - DOCKER_TAG=${OPNODE_DOCKER_TAG}
+        - DOCKER_REPO=${OPNODE_DOCKER_REPO}
+        - ORIGINAL_USER=${OPNODE_ORIGINAL_USER:-root}
+    image: op-node:${NETWORK}
+    pull_policy: never
+    stop_grace_period: 1m
+    stop_signal: SIGHUP
+    environment:
+      - CL_EXTRAS=${CL_EXTRAS:-}
+      - OPNODE_P2P_BOOTNODES=${OPNODE_P2P_BOOTNODES:-}
+      - OPNODE_P2P_STATIC_PEERS=${OPNODE_P2P_STATIC_PEERS:-}
+      - NETWORK=${NETWORK}
+      - ROLLUP_HALT=${ROLLUP_HALT:-}
+      - OPNODE_SYNC_MODE=${OPNODE_SYNC_MODE:-}
+      - L1_BEACON=${L1_BEACON:-}
+    volumes:
+      - jwtsecret:/var/lib/op-node/ee-secret
+      - opnode-data:/var/lib/op-node
+      - /etc/localtime:/etc/localtime:ro
+      - ./private-config:/tmp/private-config:ro
+    ports:
+      - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/tcp
+      - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/udp
+    <<: *logging
+    entrypoint:
+      - docker-entrypoint.sh
+      - ${OPNODE_BIN_PATH:-op-node}
+      - --log.level
+      - ${LOG_LEVEL}
+      - --l2
+      - ${L2_CONNECTION_KIND:-http}://${NETWORK}:8551
+      - --l2.jwt-secret
+      - /var/lib/op-node/ee-secret/jwtsecret
+      - --l1
+      - ${L1_RPC}
+      - --l1.rpckind
+      - ${L1_RPC_KIND:-basic}
+      - --rpc.addr
+      - 0.0.0.0
+      - --rpc.port
+      - ${OPNODE_RPC_PORT:-9545}
+      - --metrics.enabled
+      - --p2p.listen.tcp
+      - ${OPNODE_P2P_PORT:-9222}
+      - --p2p.discovery.path
+      - /var/lib/op-node/opnode_discovery_db
+      - --p2p.peerstore.path
+      - /var/lib/op-node/opnode_peerstore_db
+      - --p2p.priv.path
+      - /var/lib/op-node/opnode_p2p_priv.txt
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.service=${OPNODE_HOST:-opnode}
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.entrypoints=websecure
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.rule=Host(`${OPNODE_HOST:-opnode}.${DOMAIN}`)
+      - traefik.http.routers.${OPNODE_HOST:-opnode}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.service=${OPNODE_HOST:-opnode}
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.entrypoints=websecure
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.rule=Host(`${OPNODE_LB:-opnode-lb}.${DOMAIN}`)
+      - traefik.http.routers.${OPNODE_HOST:-opnode}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${OPNODE_HOST:-opnode}.loadbalancer.server.port=${OPNODE_RPC_PORT:-9545}
+      - metrics.scrape=true
+      - metrics.path=/metrics
+      - metrics.port=7300
+      - metrics.network=${NETWORK:-}
+
+volumes:
+  opnode-data:
+  jwtsecret:

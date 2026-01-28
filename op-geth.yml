@@ -1,0 +1,123 @@
+# op-geth.yml
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: "3"
+      tag: '{{.ImageName}}|{{.ImageFullID}}|{{.FullID}}'
+
+services:
+  op-geth-init:
+    restart: "no"
+    build:
+      context: ./init
+      dockerfile: Dockerfile
+    image: init:optimism
+    pull_policy: never
+    environment:
+      - SNAPSHOT=${SNAPSHOT:-}
+      - SNAPSHOT_PART=${SNAPSHOT_PART:-}
+    volumes:
+      - opgeth-data:/var/lib/op-geth
+      - jwtsecret:/var/lib/op-geth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
+  op-geth:
+    restart: "unless-stopped"
+    build:
+      context: ./op-geth
+      dockerfile: ${OPGETH_DOCKERFILE:-Dockerfile.binary}
+      args:
+        - DOCKER_TAG=${OPGETH_DOCKER_TAG}
+        - DOCKER_REPO=${OPGETH_DOCKER_REPO}
+    image: op-geth:${NETWORK}
+    pull_policy: never
+    stop_grace_period: 5m
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NETWORK=${NETWORK:-}
+      - LEGACY=${LEGACY:-false}
+      - EL_EXTRAS=${EL_EXTRAS:-}
+      - EL_INIT_EXTRAS=${EL_INIT_EXTRAS:-}
+      - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES:-}
+      - OPGETH_P2P_TRUSTED_NODES=${OPGETH_P2P_TRUSTED_NODES:-}
+      - GENESIS_URL=${GENESIS_URL:-}
+      - NETWORK=${NETWORK}
+      - SEQUENCER=${SEQUENCER:-}
+      - ROLLUP_HALT=${ROLLUP_HALT:-}
+      - INIT_STATE_SCHEME=${INIT_STATE_SCHEME:-path}
+    volumes:
+      - opgeth-data:/var/lib/op-geth
+      - jwtsecret:/var/lib/op-geth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
+      - ./private-config:/tmp/private-config:ro
+    ports:
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/tcp
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/udp
+    networks:
+      default:
+        aliases:
+          - ${NETWORK}
+    depends_on:
+      op-geth-init:
+        condition: service_completed_successfully
+    <<: *logging
+    entrypoint:
+      - docker-entrypoint.sh
+      - geth
+      - --datadir
+      - /var/lib/op-geth
+      - --rollup.disabletxpoolgossip=${DISABLE_TXPOOL_GOSSIP:-true}
+      - --port
+      - ${OPGETH_P2P_PORT:-30303}
+      - --authrpc.addr
+      - 0.0.0.0
+      - --authrpc.port
+      - "8551"
+      - --authrpc.jwtsecret
+      - /var/lib/op-geth/ee-secret/jwtsecret
+      - --authrpc.vhosts=*
+      - --http
+      - --http.addr
+      - 0.0.0.0
+      - --http.port
+      - ${RPC_PORT:-8545}
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --ws
+      - --ws.addr
+      - 0.0.0.0
+      - --ws.port
+      - ${WS_PORT:-8546}
+      - --ws.origins=*
+      - --metrics
+      - --pprof
+      - --pprof.addr
+      - 0.0.0.0
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${RPC_HOST:-op}.service=${RPC_HOST:-op}
+      - traefik.http.routers.${RPC_HOST:-op}.entrypoints=websecure
+      - traefik.http.routers.${RPC_HOST:-op}.rule=Host(`${RPC_HOST:-op}.${DOMAIN}`)
+      - traefik.http.routers.${RPC_HOST:-op}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${RPC_HOST:-op}lb.service=${RPC_HOST:-op}
+      - traefik.http.routers.${RPC_HOST:-op}lb.entrypoints=websecure
+      - traefik.http.routers.${RPC_HOST:-op}lb.rule=Host(`${RPC_LB:-op-lb}.${DOMAIN}`)
+      - traefik.http.routers.${RPC_HOST:-op}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${RPC_HOST:-op}.loadbalancer.server.port=${RPC_PORT:-8545}
+      - traefik.http.routers.${WS_HOST:-opws}.service=${WS_HOST:-opws}
+      - traefik.http.routers.${WS_HOST:-opws}.entrypoints=websecure
+      - traefik.http.routers.${WS_HOST:-opws}.rule=Host(`${WS_HOST:-opws}.${DOMAIN}`)
+      - traefik.http.routers.${WS_HOST:-opws}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${WS_HOST:-opws}lb.service=${WS_HOST:-opws}
+      - traefik.http.routers.${WS_HOST:-opws}lb.entrypoints=websecure
+      - traefik.http.routers.${WS_HOST:-opws}lb.rule=Host(`${WS_LB:-opws-lb}.${DOMAIN}`)
+      - traefik.http.routers.${WS_HOST:-opws}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${WS_HOST:-opws}.loadbalancer.server.port=${WS_PORT:-8546}
+      - metrics.scrape=true
+      - metrics.path=/debug/metrics/prometheus
+      - metrics.port=6060
+      - metrics.network=${NETWORK:-}
+volumes:
+  opgeth-data:
+  jwtsecret:
