@@ -52,6 +52,8 @@ services:
     ports:
       - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/tcp
       - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/udp
+      - ${RPC_PORT:-8545}:${RPC_PORT:-8545}/tcp
+      - ${WS_PORT:-8546}:${WS_PORT:-8546}/tcp
     networks:
       default:
         aliases:

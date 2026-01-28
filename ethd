@@ -8,6 +8,35 @@ __docker_exe="docker"
 __compose_exe="docker compose"
 __compose_upgraded=0
 
+# Detect which execution client/init service exists in the active compose set.
+__detect_el_and_init_services() {
+  local __services
+  __services=$(__docompose config --services 2>/dev/null || true)
+
+  __el_service=""
+  __init_service=""
+  __execution_client=""
+
+  if echo "${__services}" | grep -qx "op-reth"; then
+    __execution_client="reth"
+    __el_service="op-reth"
+    __init_service="op-reth-init"
+  elif echo "${__services}" | grep -qx "op-geth"; then
+    __execution_client="geth"
+    __el_service="op-geth"
+    __init_service="op-geth-init"
+  else
+    # Backward compatibility or partial stacks: keep defaults safe
+    __execution_client=""
+    __el_service=""
+    __init_service=""
+  fi
+
+  # Keep sample service meaningful for help text/log examples
+  if [ -n "${__el_service}" ]; then
+    __sample_service="${__el_service}"
+  fi
+}
 
 version() {
 # script version
@@ -15,6 +44,9 @@ version() {
   echo
   __var="COMPOSE_FILE"
   __get_value_from_env "${__var}" "${__env_file}" "__value"
+
+  __detect_el_and_init_services
+
 # Client versions
   case "${__value}" in
     *optimism.yml* )
@@ -25,8 +57,28 @@ version() {
       __docompose exec op-node "$(grep -E '^OPNODE_BIN_PATH=' "${__env_file}" | cut -d '=' -f2 || echo "op-node")" --version
       ;;&
   esac
-}
+  # Print EL + op-node versions based on detected services.
+  if [ -n "${__el_service}" ]; then
+    case "${__execution_client}" in
+      geth)
+        echo "OPGETH_DOCKER_TAG: $(grep -E '^OPGETH_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
+        __docompose exec op-geth geth version || true
+        ;;
+      reth)
+        echo "OPRETH_DOCKER_TAG: $(grep -E '^OPRETH_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
+        # Best-effort: version output can differ by image
+        __docompose exec op-reth op-reth --version || __docompose exec op-reth reth --version || true
+        ;;
+    esac
+    echo
+  fi
 
+  # op-node is common to both stacks; print if present
+  if __docompose config --services 2>/dev/null | grep -qx "op-node"; then
+    echo "OPNODE_DOCKER_TAG: $(grep -E '^OPNODE_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
+    __docompose exec op-node "$(grep -E '^OPNODE_BIN_PATH=' "${__env_file}" | cut -d '=' -f2 || echo "op-node")" --version || true
+  fi
+}
 
 __prep_conffiles() {
   return
@@ -864,6 +916,9 @@ start() {
   __get_value_from_env "${__var}" "${__env_file}" "__screen_id"
 # shellcheck disable=SC2154
   rm -f "/tmp/${__screen_id}-compose-screen.log"
+
+  __detect_el_and_init_services
+
 # shellcheck disable=SC2086
   screen -dmS "${__screen_id}-compose-session" -L -Logfile "/tmp/${__screen_id}-compose-screen.log" ${__compose_exe} up -d --remove-orphans "$@"
   echo "Running \"docker compose up -d\" in screen because of the init container."
