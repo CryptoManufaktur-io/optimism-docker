@@ -26,19 +26,20 @@ esac
 : "${WS_PORT:=8546}"
 : "${OPRETH_P2P_PORT:=30304}"
 : "${AUTHRPC_PORT:=8551}"
-: "${EL_RETH_EXTRAS:=}"
-: "${EL_RETH_INIT_EXTRAS:=}"
+: "${EL_EXTRAS:=}"
+: "${EL_INIT_EXTRAS:=}"
 : "${OPRETH_P2P_BOOTNODES:=}"
 : "${OPRETH_P2P_TRUSTED_NODES:=}"
 : "${DISABLE_TXPOOL_GOSSIP:=false}"
 : "${SEQUENCER:=}"
 : "${ROLLUP_HALT:=}"
+: "${GENESIS_URL:=}"
 
 # -----------------------------
 # Best-effort genesis init hook
 # -----------------------------
 # If GENESIS_URL provided and datadir empty -> init with genesis.
-# Apply EL_RETH_INIT_EXTRAS here (init-only).
+# Apply EL_INIT_EXTRAS here (init-only).
 if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib/op-reth/chaindata" ]; then
   echo "Initializing op-reth datadir from GENESIS_URL..."
   if [[ "${GENESIS_URL}" == file://* ]]; then
@@ -56,9 +57,9 @@ if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib
       # Try common init/import patterns.
       # Apply init-only extras if user provided them.
       # shellcheck disable=SC2086
-      op-reth db init --data-dir /var/lib/op-reth --genesis /tmp/genesis.json ${EL_RETH_INIT_EXTRAS} 2>/dev/null || true
+      op-reth db init --data-dir /var/lib/op-reth --genesis /tmp/genesis.json ${EL_INIT_EXTRAS} 2>/dev/null || true
       # shellcheck disable=SC2086
-      op-reth genesis import --data-dir /var/lib/op-reth /tmp/genesis.json ${EL_RETH_INIT_EXTRAS} 2>/dev/null || true
+      op-reth genesis import --data-dir /var/lib/op-reth /tmp/genesis.json ${EL_INIT_EXTRAS} 2>/dev/null || true
 
       set -e
     else
@@ -90,7 +91,7 @@ fi
 # Disable txpool gossip mapping
 if [ "${DISABLE_TXPOOL_GOSSIP:-false}" = "true" ]; then
   # append both syntaxes safely in the extras variable (version-tolerant)
-  EL_RETH_EXTRAS="${EL_RETH_EXTRAS} --rollup.disable-tx-pool-gossip --rollup.disabletxpoolgossip"
+  EL_EXTRAS="${EL_EXTRAS} --rollup.disable-tx-pool-gossip --rollup.disabletxpoolgossip"
 fi
 
 # Implement ROLLUP_HALT: add --rollup.halt=<value> unless user already supplied it
@@ -152,16 +153,16 @@ fi
 
 # Add rollup halt if supported and not already present
 if [ -n "${__rolluphalt}" ]; then
-  if [[ ! " ${ARGS[*]} " =~ " --rollup.halt" ]] && [[ "${EL_RETH_EXTRAS}" != *"--rollup.halt"* ]]; then
+  if [[ ! " ${ARGS[*]} " =~ " --rollup.halt" ]] && [[ "${EL_EXTRAS}" != *"--rollup.halt"* ]]; then
     # shellcheck disable=SC2086
     ARGS+=( ${__rolluphalt} )
   fi
 fi
 
 # Append extras last
-if [ -n "${EL_RETH_EXTRAS:-}" ]; then
+if [ -n "${EL_EXTRAS:-}" ]; then
   # shellcheck disable=SC2086
-  ARGS+=( ${EL_RETH_EXTRAS} )
+  ARGS+=( ${EL_EXTRAS} )
 fi
 
 echo "Launching op-reth with:"
