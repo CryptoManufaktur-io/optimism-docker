@@ -35,9 +35,6 @@ esac
 : "${ROLLUP_HALT:=}"
 : "${GENESIS_URL:=}"
 
-# -----------------------------
-# Best-effort genesis init hook
-# -----------------------------
 # If GENESIS_URL provided and datadir empty -> init with genesis.
 # Apply EL_INIT_EXTRAS here (init-only).
 if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib/op-reth/chaindata" ]; then
@@ -123,39 +120,39 @@ if [[ ! " ${ARGS[*]} " =~ " --chain " ]] && [ -n "${OPRETH_CHAIN}" ]; then
 fi
 
 # RPC/WS/authrpc default ports unless overridden in ARGS
-if [[ ! " ${ARGS[*]} " =~ " --http.port " ]]; then
+if [[ ! " ${ARGS[*]} " =~  --http\.port  ]]; then
   ARGS+=( --http.port "${RPC_PORT}" )
 fi
-if [[ ! " ${ARGS[*]} " =~ " --ws.port " ]]; then
+if [[ ! " ${ARGS[*]} " =~  --ws\.port  ]]; then
   ARGS+=( --ws.port "${WS_PORT}" )
 fi
-if [[ ! " ${ARGS[*]} " =~ " --authrpc.port " ]]; then
+if [[ ! " ${ARGS[*]} " =~  --authrpc\.port  ]]; then
   ARGS+=( --authrpc.port "${AUTHRPC_PORT}" )
 fi
-if [[ ! " ${ARGS[*]} " =~ " --port " ]]; then
+if [[ ! " ${ARGS[*]} " =~  --port  ]]; then
   ARGS+=( --port "${OPRETH_P2P_PORT}" )
 fi
 
 # authrpc jwt secret path
-if [[ ! " ${ARGS[*]} " =~ " --authrpc.jwtsecret " ]]; then
+if [[ ! " ${ARGS[*]} " =~  --authrpc\.jwtsecret  ]]; then
   ARGS+=( --authrpc.jwtsecret /var/lib/op-reth/ee-secret/jwtsecret )
 fi
 
 # Add bootnodes & sequencer flags if not already present
-if [ -n "${__bootnodes}" ] && [[ ! " ${ARGS[*]} " =~ " --bootnodes " ]]; then
+if [ -n "${__bootnodes}" ] && [[ ! " ${ARGS[*]} " =~  --bootnodes  ]]; then
   # shellcheck disable=SC2086
-  ARGS+=( ${__bootnodes} )
+  ARGS+=( "${__bootnodes}" )
 fi
-if [ -n "${__sequencer}" ] && [[ ! " ${ARGS[*]} " =~ " --rollup.sequencer" ]]; then
+if [ -n "${__sequencer}" ] && [[ ! " ${ARGS[*]} " =~  --rollup\.sequencer ]]; then
   # shellcheck disable=SC2086
-  ARGS+=( ${__sequencer} )
+  ARGS+=( "${__sequencer}" )
 fi
 
 # Add rollup halt if supported and not already present
 if [ -n "${__rolluphalt}" ]; then
-  if [[ ! " ${ARGS[*]} " =~ " --rollup.halt" ]] && [[ "${EL_EXTRAS}" != *"--rollup.halt"* ]]; then
+  if [[ ! " ${ARGS[*]} " =~  --rollup\.halt ]] && [[ "${EL_EXTRAS}" != *"--rollup.halt"* ]]; then
     # shellcheck disable=SC2086
-    ARGS+=( ${__rolluphalt} )
+    ARGS+=( "${__rolluphalt}" )
   fi
 fi
 
