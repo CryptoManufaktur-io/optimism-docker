@@ -50,10 +50,8 @@ services:
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/tcp
-      - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/udp
-      - ${RPC_PORT:-8545}:${RPC_PORT:-8545}/tcp
-      - ${WS_PORT:-8546}:${WS_PORT:-8546}/tcp
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/tcp
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/udp
     networks:
       default:
         aliases:
@@ -87,7 +85,7 @@ services:
       - --authrpc.jwtsecret
       - /var/lib/op-reth/ee-secret/jwtsecret
       - --port
-      - ${OPRETH_P2P_PORT:-30304}
+      - ${OPGETH_P2P_PORT:-30303}
       - --rollup.sequencer-http=${SEQUENCER:-}
       - --metrics
       - 0.0.0.0:6060

@@ -24,7 +24,6 @@ esac
 : "${OPRETH_CHAIN:=}"
 : "${RPC_PORT:=8545}"
 : "${WS_PORT:=8546}"
-: "${OPRETH_P2P_PORT:=30304}"
 : "${AUTHRPC_PORT:=8551}"
 : "${EL_EXTRAS:=}"
 : "${EL_INIT_EXTRAS:=}"
@@ -127,7 +126,7 @@ if [[ ! " ${ARGS[*]} " =~  --authrpc\.port  ]]; then
   ARGS+=( --authrpc.port "${AUTHRPC_PORT}" )
 fi
 if [[ ! " ${ARGS[*]} " =~  --port  ]]; then
-  ARGS+=( --port "${OPRETH_P2P_PORT}" )
+  ARGS+=( --port "${OPGETH_P2P_PORT}" )
 fi
 
 # authrpc jwt secret path
