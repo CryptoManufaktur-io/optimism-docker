@@ -5,7 +5,7 @@ x-logging: &logging
     options:
       max-size: 100m
       max-file: "3"
-      tag: '{{.ImageName}}|{{.ImageFullID}}|{{.FullID}}'
+      tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
 
 services:
   op-geth-init:
@@ -57,7 +57,7 @@ services:
     networks:
       default:
         aliases:
-          - ${NETWORK}
+          - ${NETWORK} # This allows multiple Optimism Docker stacks all connected to the same central traefik
     depends_on:
       op-geth-init:
         condition: service_completed_successfully
