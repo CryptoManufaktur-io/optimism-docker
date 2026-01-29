@@ -29,7 +29,7 @@ services:
       args:
         - DOCKER_TAG=${OPGETH_DOCKER_TAG}
         - DOCKER_REPO=${OPGETH_DOCKER_REPO}
-    image: op-geth:${NETWORK}-geth
+    image: op-geth:${NETWORK}
     pull_policy: never
     stop_grace_period: 5m
     environment:
@@ -56,7 +56,7 @@ services:
     networks:
       default:
         aliases:
-          - ${NETWORK} # This allows multiple Optimism Docker stacks all connected to the same central traefik
+          - ${NETWORK}-geth # This allows multiple Optimism Docker stacks all connected to the same central traefik
     depends_on:
       op-geth-init:
         condition: service_completed_successfully
@@ -155,7 +155,7 @@ services:
       - --log.level
       - ${LOG_LEVEL}
       - --l2
-      - ${L2_CONNECTION_KIND:-http}://${NETWORK}:8551
+      - ${L2_CONNECTION_KIND:-http}://${NETWORK}-geth:8551
       - --l2.jwt-secret
       - /var/lib/op-node/ee-secret/jwtsecret
       - --l1
