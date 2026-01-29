@@ -5,7 +5,7 @@ set -euo pipefail
 mkdir -p /var/lib/op-reth/ee-secret
 mkdir -p /var/lib/op-reth/snapshot
 
-# Generate JWT secret (must match op-node volume)
+# Generate JWT secret
 if [[ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]]; then
   echo "Generating JWT secret for op-reth"
   __secret1=$(head -c 8 /dev/urandom | od -A n -t u8 | tr -d '[:space:]' | sha256sum | head -c 32)
@@ -13,7 +13,6 @@ if [[ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]]; then
   echo -n "${__secret1}${__secret2}" > /var/lib/op-reth/ee-secret/jwtsecret
 fi
 
-# Make readable (mirrors geth behavior)
 if [[ -O "/var/lib/op-reth/ee-secret/jwtsecret" ]]; then
   chmod 666 /var/lib/op-reth/ee-secret/jwtsecret
 fi
@@ -21,11 +20,8 @@ fi
 __get_snapshot() {
   __dont_rm=0
   cd /var/lib/op-reth/snapshot
-#  eval "__url=$1"
-
-# assign argument to local var (avoid eval & SC2154)
   local __url="$1"
-
+#shellcheck disable=SC2154
   if [[ "${__url}" == "https://storage.cloud.google.com/"* ]]; then
     echo "Google Cloud URL detected, using gsutil"
     __path="gs://${__url#https://storage.cloud.google.com/}"
@@ -33,9 +29,7 @@ __get_snapshot() {
   else
     aria2c -c -x6 -s6 --auto-file-renaming=false --conditional-get=true --allow-overwrite=true "${__url}"
   fi
-
   echo "Copy completed, extracting"
-
   if ! __final_url=$(curl -s -I -L -o /dev/null -w '%{url_effective}' "$__url"); then
     printf "Error: Failed to retrieve final URL for %s\n" "$__url" >&2
     return 1
@@ -63,16 +57,9 @@ __get_snapshot() {
     rm -f "${__filename}"
   fi
 
-  # -----------------------------
-  # Normalize snapshot layout for reth
-  # -----------------------------
+
   # Reth typically stores data under a "db" directory in the datadir, e.g.:
   #   /var/lib/op-reth/db
-  #
-  # Snapshots may contain:
-  #   - db/ at root
-  #   - a nested op-reth/ directory with db/
-  #   - other layouts (we try to locate and move)
   __search_dir="db"
   __base_dir="/var/lib/op-reth/"
   __found_path=$(find "$__base_dir" -type d -name "$__search_dir" -print -quit)
@@ -103,12 +90,11 @@ __get_snapshot() {
 
   mv "${__found_path}" "${__base_dir}db"
 
-  # Try to cleanup empty parent dirs but don’t be destructive
+  # Try to cleanup empty parent dirs
   rmdir "${__parent_dir}" 2>/dev/null || true
 }
 
 # Prep datadir:
-# Only fetch snapshot if SNAPSHOT is set and db doesn't already exist.
 if [ -n "${SNAPSHOT:-}" ] && [ ! -d "/var/lib/op-reth/db" ]; then
   __get_snapshot "${SNAPSHOT}"
   if [ -n "${SNAPSHOT_PART:-}" ]; then

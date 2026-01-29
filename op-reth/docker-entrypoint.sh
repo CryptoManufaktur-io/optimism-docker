@@ -36,7 +36,6 @@ esac
 : "${GENESIS_URL:=}"
 
 # If GENESIS_URL provided and datadir empty -> init with genesis.
-# Apply EL_INIT_EXTRAS here (init-only).
 if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib/op-reth/chaindata" ]; then
   echo "Initializing op-reth datadir from GENESIS_URL..."
   if [[ "${GENESIS_URL}" == file://* ]]; then
@@ -51,11 +50,8 @@ if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib
       echo "Attempting to initialize chain (op-reth genesis/db init)..."
       set +e
 
-      # Try common init/import patterns.
-      # Apply init-only extras if user provided them.
       # shellcheck disable=SC2086
       op-reth db init --data-dir /var/lib/op-reth --genesis /tmp/genesis.json ${EL_INIT_EXTRAS} 2>/dev/null || true
-      # shellcheck disable=SC2086
       op-reth genesis import --data-dir /var/lib/op-reth /tmp/genesis.json ${EL_INIT_EXTRAS} 2>/dev/null || true
 
       set -e
