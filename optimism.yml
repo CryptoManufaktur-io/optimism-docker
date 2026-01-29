@@ -53,10 +53,12 @@ services:
     ports:
       - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/tcp
       - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/udp
+      - ${RPC_PORT:-8545}:${RPC_PORT:-8545}/tcp
+      - ${WS_PORT:-8546}:${WS_PORT:-8546}/tcp
     networks:
       default:
         aliases:
-          - ${NETWORK}-geth # This allows multiple Optimism Docker stacks all connected to the same central traefik
+          - ${NETWORK} # This allows multiple Optimism Docker stacks all connected to the same central traefik
     depends_on:
       op-geth-init:
         condition: service_completed_successfully
@@ -163,10 +165,12 @@ services:
     ports:
       - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/tcp
       - ${OPRETH_P2P_PORT:-30304}:${OPRETH_P2P_PORT:-30304}/udp
+      - ${RPC_PORT:-8545}:${RPC_PORT:-8545}/tcp
+      - ${WS_PORT:-8546}:${WS_PORT:-8546}/tcp
     networks:
       default:
         aliases:
-          - ${NETWORK}-reth
+          - ${NETWORK}
     depends_on:
       op-reth-init:
         condition: service_completed_successfully
@@ -197,6 +201,9 @@ services:
       - /var/lib/op-reth/ee-secret/jwtsecret
       - --port
       - ${OPRETH_P2P_PORT:-30304}
+      - --rollup.sequencer-http=${SEQUENCER:-}
+      - --metrics
+      - 0.0.0.0:6060
     labels:
       - traefik.enable=true
       - traefik.http.routers.${RPC_HOST:-op}.service=${RPC_HOST:-op}
@@ -218,6 +225,8 @@ services:
       - traefik.http.routers.${WS_HOST:-opws}lb.tls.certresolver=letsencrypt
       - traefik.http.services.${WS_HOST:-opws}.loadbalancer.server.port=${WS_PORT:-8546}
       - metrics.scrape=true
+      - metrics.path=/metrics
+      - metrics.port=6060
       - metrics.network=${NETWORK:-}
 
   op-node:
@@ -250,6 +259,7 @@ services:
     ports:
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/tcp
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/udp
+      - ${OPNODE_RPC_PORT:-9545}:${OPNODE_RPC_PORT:-9545}/tcp
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
@@ -292,11 +302,6 @@ services:
       - metrics.path=/metrics
       - metrics.port=7300
       - metrics.network=${NETWORK:-}
-#    depends_on:
-#      op-geth:
-#        condition: service_started
-#      op-reth:
-#        condition: service_started
 
 volumes:
   opgeth-data:
