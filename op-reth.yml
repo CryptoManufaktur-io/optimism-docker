@@ -1,0 +1,119 @@
+# op-reth.yml
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: "3"
+      tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
+
+services:
+  op-reth-init:
+    restart: "no"
+    build:
+      context: ./init-reth
+      dockerfile: Dockerfile
+    image: init:optimism-reth
+    pull_policy: never
+    environment:
+      - SNAPSHOT=${SNAPSHOT:-}
+      - SNAPSHOT_PART=${SNAPSHOT_PART:-}
+    volumes:
+      - opreth-data:/var/lib/op-reth
+      - jwtsecret:/var/lib/op-reth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
+  op-reth:
+    restart: unless-stopped
+    build:
+      context: ./op-reth
+      dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
+      args:
+        - DOCKER_TAG=${OPRETH_DOCKER_TAG}
+        - DOCKER_REPO=${OPRETH_DOCKER_REPO}
+    image: op-reth:${NETWORK}
+    pull_policy: never
+    stop_grace_period: 5m
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NETWORK=${NETWORK:-}
+      - EL_EXTRAS=${EL_EXTRAS:-}
+      - EL_INIT_EXTRAS=${EL_INIT_EXTRAS:-}
+      - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES:-}
+      - OPGETH_P2P_TRUSTED_NODES=${OPGETH_P2P_TRUSTED_NODES:-}
+      - GENESIS_URL=${GENESIS_URL:-}
+      - NETWORK=${NETWORK}
+      - SEQUENCER=${SEQUENCER:-}
+      - ROLLUP_HALT=${ROLLUP_HALT:-}
+      - OPRETH_CHAIN=${OPRETH_CHAIN}
+    volumes:
+      - opreth-data:/var/lib/op-reth
+      - jwtsecret:/var/lib/op-reth/ee-secret
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/tcp
+      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/udp
+    networks:
+      default:
+        aliases:
+          - ${NETWORK}
+    depends_on:
+      op-reth-init:
+        condition: service_completed_successfully
+    <<: *logging
+    entrypoint:
+      - docker-entrypoint.sh
+      - op-reth
+      - node
+      - --datadir
+      - /var/lib/op-reth
+      - --chain
+      - ${OPRETH_CHAIN}
+      - --http
+      - --http.addr
+      - 0.0.0.0
+      - --http.port
+      - ${RPC_PORT:-8545}
+      - --ws
+      - --ws.addr
+      - 0.0.0.0
+      - --ws.port
+      - ${WS_PORT:-8546}
+      - --authrpc.addr
+      - 0.0.0.0
+      - --authrpc.port
+      - "8551"
+      - --authrpc.jwtsecret
+      - /var/lib/op-reth/ee-secret/jwtsecret
+      - --port
+      - ${OPGETH_P2P_PORT:-30303}
+      - --rollup.sequencer-http=${SEQUENCER:-}
+      - --metrics
+      - 0.0.0.0:6060
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${RPC_HOST:-op}.service=${RPC_HOST:-op}
+      - traefik.http.routers.${RPC_HOST:-op}.entrypoints=websecure
+      - traefik.http.routers.${RPC_HOST:-op}.rule=Host(`${RPC_HOST:-op}.${DOMAIN}`)
+      - traefik.http.routers.${RPC_HOST:-op}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${RPC_HOST:-op}lb.service=${RPC_HOST:-op}
+      - traefik.http.routers.${RPC_HOST:-op}lb.entrypoints=websecure
+      - traefik.http.routers.${RPC_HOST:-op}lb.rule=Host(`${RPC_LB:-op-lb}.${DOMAIN}`)
+      - traefik.http.routers.${RPC_HOST:-op}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${RPC_HOST:-op}.loadbalancer.server.port=${RPC_PORT:-8545}
+      - traefik.http.routers.${WS_HOST:-opws}.service=${WS_HOST:-opws}
+      - traefik.http.routers.${WS_HOST:-opws}.entrypoints=websecure
+      - traefik.http.routers.${WS_HOST:-opws}.rule=Host(`${WS_HOST:-opws}.${DOMAIN}`)
+      - traefik.http.routers.${WS_HOST:-opws}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${WS_HOST:-opws}lb.service=${WS_HOST:-opws}
+      - traefik.http.routers.${WS_HOST:-opws}lb.entrypoints=websecure
+      - traefik.http.routers.${WS_HOST:-opws}lb.rule=Host(`${WS_LB:-opws-lb}.${DOMAIN}`)
+      - traefik.http.routers.${WS_HOST:-opws}lb.tls.certresolver=letsencrypt
+      - traefik.http.services.${WS_HOST:-opws}.loadbalancer.server.port=${WS_PORT:-8546}
+      - metrics.scrape=true
+      - metrics.path=/metrics
+      - metrics.port=6060
+      - metrics.network=${NETWORK:-}
+
+volumes:
+  opreth-data:
+  jwtsecret:

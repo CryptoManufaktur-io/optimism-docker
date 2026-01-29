@@ -1,0 +1,6 @@
+# To be used with op-geth.yml
+services:
+  op-reth:
+    ports:
+      - ${RPC_PORT:-8545}:${RPC_PORT:-8545}/tcp
+      - ${WS_PORT:-8546}:${WS_PORT:-8546}/tcp

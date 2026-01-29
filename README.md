@@ -8,7 +8,21 @@ set a snapshot; on other networks, optionally set a snapshot.
 Meant to be used with [central-proxy-docker](https://github.com/CryptoManufaktur-io/central-proxy-docker) for traefik
 and Prometheus remote write; use `:ext-network.yml` in `COMPOSE_FILE` inside `.env` in that case.
 
-If you want the op-geth RPC ports exposed locally, use `op-shared.yml` in `COMPOSE_FILE` inside `.env`.
+## Support for Reth and Geth as EL
+
+Note, this new version supports both geth and reth as EL to be used exclusively one or the other. For backward compatibility, add `op-geth.yml` to `COMPOSE_FILE` to continue using geth.
+
+### Sample using geth
+```bash
+COMPOSE_FILE=optimism.yml:op-geth.yml:op-shared.yml:op-geth-shared.yml
+```
+
+### Sample using reth
+```bash
+COMPOSE_FILE=optimism.yml:op-reth.yml:op-shared.yml:op-reth-shared.yml
+```
+
+If you want the execution client RPC ports exposed locally, use `op-geth-shared.yml` or `op-reth-shared.yml` in `COMPOSE_FILE` inside `.env` depending on your choice of the EL.
 
 `legacy.yml` runs the legacy l2geth on Optimism, set `LEGACY=true` in `.env` for that. You probably
 [don't need it](https://community.optimism.io/docs/developers/bedrock/node-operator-guide/#historical-execution-vs-historical-data-routing).

@@ -10,7 +10,7 @@ block_timestamp_metric = Gauge('block_timestamp', 'Current block timestamp')
 block_hash_metric = Gauge('block_hash', 'Current block hash')
 
 # URL for the API
-api_url = f'http://{os.environ["NETWORK"]}-geth:8545'
+api_url = f'http://{os.environ["NETWORK"]}:8545'
 
 # Function to update metrics from JSON data
 def update_metrics():

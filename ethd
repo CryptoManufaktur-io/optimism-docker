@@ -8,25 +8,29 @@ __docker_exe="docker"
 __compose_exe="docker compose"
 __compose_upgraded=0
 
-
 version() {
 # script version
   grep "^This is" README.md
   echo
   __var="COMPOSE_FILE"
   __get_value_from_env "${__var}" "${__env_file}" "__value"
+
 # Client versions
   case "${__value}" in
     *optimism.yml* )
-      echo "OPGETH_DOCKER_TAG: $(grep -E '^OPGETH_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
-      __docompose exec op-geth geth version
-      echo
       echo "OPNODE_DOCKER_TAG: $(grep -E '^OPNODE_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
       __docompose exec op-node "$(grep -E '^OPNODE_BIN_PATH=' "${__env_file}" | cut -d '=' -f2 || echo "op-node")" --version
       ;;&
+    *op-geth.yml* )
+      echo "OPGETH_DOCKER_TAG: $(grep -E '^OPGETH_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
+      __docompose exec op-geth geth version
+      ;;&
+    *op-reth.yml* )
+        echo "OPRETH_DOCKER_TAG: $(grep -E '^OPRETH_DOCKER_TAG=' "${__env_file}" | cut -d '=' -f2)"
+        __docompose exec op-reth op-reth --version || __docompose exec op-reth reth --version || true
+      ;;&
   esac
 }
-
 
 __prep_conffiles() {
   return
@@ -864,6 +868,7 @@ start() {
   __get_value_from_env "${__var}" "${__env_file}" "__screen_id"
 # shellcheck disable=SC2154
   rm -f "/tmp/${__screen_id}-compose-screen.log"
+
 # shellcheck disable=SC2086
   screen -dmS "${__screen_id}-compose-session" -L -Logfile "/tmp/${__screen_id}-compose-screen.log" ${__compose_exe} up -d --remove-orphans "$@"
   echo "Running \"docker compose up -d\" in screen because of the init container."
