@@ -16,6 +16,7 @@ if [ -n "$EIGENDA_LOCAL_ARCHIVE_BLOBS" ]; then
   --storage.fallback-targets=s3"
 fi
 
+# shellcheck disable=SC2086
 exec ./eigenda-proxy --addr=0.0.0.0 \
   --port=4242 \
   --eigenda.disperser-rpc="$EIGENDA_LOCAL_DISPERSER_RPC" \
