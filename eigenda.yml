@@ -16,6 +16,8 @@ services:
       - EIGENDA_LOCAL_DISPERSER_RPC=${EIGENDA_LOCAL_DISPERSER_RPC}
       - EIGENDA_LOCAL_SVC_MANAGER_ADDR=${EIGENDA_LOCAL_SVC_MANAGER_ADDR}
       - OP_NODE__RPC_ENDPOINT=${L1_RPC}
+      - EIGENDA_V2_LOCAL_NETWORK=${EIGENDA_V2_LOCAL_NETWORK}
+      - EIGENDA_V2_LOCAL_CERT_VERIFIER_ROUTER_ADDR=${EIGENDA_V2_LOCAL_CERT_VERIFIER_ROUTER_ADDR}
     volumes:
       - eigenda-data:/data
       - ./eigenda/docker-entrypoint.sh/:/scripts/start-eigenda-proxy.sh
