@@ -37,6 +37,5 @@ exec ./eigenda-proxy --addr=0.0.0.0 \
   --eigenda.svc-manager-addr="$EIGENDA_LOCAL_SVC_MANAGER_ADDR" \
   --eigenda.disable-tls=false \
   --eigenda.max-blob-length="16MiB" \
-  --apis.enabled="op-generic,op-keccak,standard,metrics" \
   $EIGENDA_V2_PARAMETERS \
   $EXTENDED_EIGENDA_PARAMETERS
