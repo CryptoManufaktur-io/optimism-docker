@@ -16,6 +16,19 @@ if [ -n "$EIGENDA_LOCAL_ARCHIVE_BLOBS" ]; then
   --storage.fallback-targets=s3"
 fi
 
+EIGENDA_V2_PARAMETERS=""
+if [ -n "$EIGENDA_V2_LOCAL_CERT_VERIFIER_ROUTER_ADDR" ]; then
+  EIGENDA_V2_PARAMETERS="--storage.backends-to-enable=V1,V2 \
+  --eigenda.v2.eth-rpc=$OP_NODE__RPC_ENDPOINT \
+  --eigenda.v2.disable-tls=false \
+  --eigenda.v2.blob-certified-timeout=2m \
+  --eigenda.v2.contract-call-timeout=5s \
+  --eigenda.v2.relay-timeout=5s \
+  --eigenda.v2.max-blob-length=16MiB \
+  --eigenda.v2.network=$EIGENDA_V2_LOCAL_NETWORK \
+  --eigenda.v2.cert-verifier-router-or-immutable-verifier-addr=$EIGENDA_V2_LOCAL_CERT_VERIFIER_ROUTER_ADDR"
+fi
+
 # shellcheck disable=SC2086
 exec ./eigenda-proxy --addr=0.0.0.0 \
   --port=4242 \
@@ -24,14 +37,6 @@ exec ./eigenda-proxy --addr=0.0.0.0 \
   --eigenda.svc-manager-addr="$EIGENDA_LOCAL_SVC_MANAGER_ADDR" \
   --eigenda.disable-tls=false \
   --eigenda.max-blob-length="16MiB" \
-  --storage.backends-to-enable="V1,V2" \
-  --eigenda.v2.eth-rpc="$OP_NODE__RPC_ENDPOINT" \
-  --eigenda.v2.disable-tls=false \
-  --eigenda.v2.blob-certified-timeout="2m" \
-  --eigenda.v2.contract-call-timeout="5s" \
-  --eigenda.v2.relay-timeout="5s" \
-  --eigenda.v2.max-blob-length="16MiB" \
-  --eigenda.v2.network="$EIGENDA_V2_LOCAL_NETWORK" \
-  --eigenda.v2.cert-verifier-router-or-immutable-verifier-addr="$EIGENDA_V2_LOCAL_CERT_VERIFIER_ROUTER_ADDR" \
   --apis.enabled="op-generic,op-keccak,standard,metrics" \
+  $EIGENDA_V2_PARAMETERS \
   $EXTENDED_EIGENDA_PARAMETERS
