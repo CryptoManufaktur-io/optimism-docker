@@ -16,7 +16,7 @@ __public_ip="--p2p.advertise.ip $(wget -qO- https://ifconfig.me/ip)"
 
 if [ -n "${ROLLUP_URL}" ]; then
   mkdir -p /var/lib/op-node/config
-# We use Notion links and this may fail
+
   set +e
   curl \
     --fail \
@@ -27,13 +27,20 @@ if [ -n "${ROLLUP_URL}" ]; then
     --retry 5 \
     --retry-delay 5 \
     "${ROLLUP_URL}" \
-    -o /var/lib/op-node/config/rollup.json
+    -o /var/lib/op-node/config/rollup.json.tmp
+  __curl_exit=$?
   set -e
 
-
-  if [ ! -f /var/lib/op-node/config/rollup.json ]; then
-    echo "No rollup.json found, this is fatal. Please check your download link for it in .env"
-    exit 1
+  if [ $__curl_exit -eq 0 ]; then
+    mv /var/lib/op-node/config/rollup.json.tmp /var/lib/op-node/config/rollup.json
+  else
+    rm -f /var/lib/op-node/config/rollup.json.tmp
+    if [ -f /var/lib/op-node/config/rollup.json ]; then
+      echo "WARN: Failed to fetch rollup.json from ${ROLLUP_URL}, using cached copy"
+    else
+      echo "No rollup.json found, this is fatal. Please check your download link for it in .env"
+      exit 1
+    fi
   fi
   __network="--rollup.config=/var/lib/op-node/config/rollup.json"
 else
