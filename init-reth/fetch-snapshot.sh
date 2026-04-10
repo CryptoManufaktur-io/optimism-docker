@@ -87,36 +87,17 @@ __get_snapshot() {
 
   echo "Found db at ${__found_path}, normalizing full datadir from ${__parent_dir} into ${__base_dir}"
 
-  # Safety: if db already exists at the target, refuse to continue
+  # If the found db is nested (e.g. /var/lib/op-reth/op-reth/db), move it up
   if [ -d "${__base_dir}db" ]; then
     echo "WARNING: ${__base_dir}db already exists, not overwriting."
     echo "Please clear the datadir and try again."
     exit 1
   fi
 
-  # Move everything from the extracted parent dir into the base dir
-  # This preserves db + static_files + any other sibling content together.
   find "${__parent_dir}" -mindepth 1 -maxdepth 1 -exec mv -t "${__base_dir}" {} +
 
-  # Try to cleanup empty parent dirs
+  # try to cleanup empty parent dirs
   rmdir "${__parent_dir}" 2>/dev/null || true
-
-  # # Otherwise, move the directory that contains db/ into the base dir
-  # __parent_dir=$(dirname "${__found_path}")
-
-  # echo "Found db at ${__found_path}, normalizing into ${__base_dir}db"
-
-  # # If the found db is nested (e.g. /var/lib/op-reth/op-reth/db), move it up
-  # if [ -d "${__base_dir}db" ]; then
-  #   echo "WARNING: ${__base_dir}db already exists, not overwriting."
-  #   echo "Please clear the datadir and try again."
-  #   exit 1
-  # fi
-
-  # mv "${__found_path}" "${__base_dir}db"
-
-  # # Try to cleanup empty parent dirs
-  # rmdir "${__parent_dir}" 2>/dev/null || true
 }
 
 # Prep datadir:
