@@ -96,7 +96,7 @@ __get_snapshot() {
 
   find "${__parent_dir}" -mindepth 1 -maxdepth 1 -exec mv -t "${__base_dir}" {} +
 
-  # try to cleanup empty parent dirs
+  # Try to cleanup empty parent dirs
   rmdir "${__parent_dir}" 2>/dev/null || true
 }
 
