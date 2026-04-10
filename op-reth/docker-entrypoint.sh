@@ -155,7 +155,7 @@ fi
 # Append extras last
 if [ -n "${EL_EXTRAS:-}" ]; then
   # shellcheck disable=SC2086
-  ARGS+=( "${EL_EXTRAS}" )
+  ARGS+=( ${EL_EXTRAS} )
 fi
 
 echo "Launching op-reth with:"
