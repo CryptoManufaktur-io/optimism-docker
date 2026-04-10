@@ -82,12 +82,6 @@ __get_snapshot() {
     return 0
   fi
 
-  # # If db is already at /var/lib/op-reth/db, good.
-  # if [ "${__found_path}" = "${__base_dir}db" ]; then
-  #   echo "Found db in expected location: ${__found_path}"
-  #   return 0
-  # fi
-
 # Otherwise, move the full extracted datadir contents into /var/lib/op-reth
   __parent_dir=$(dirname "${__found_path}")
 
@@ -134,11 +128,3 @@ if [ -n "${SNAPSHOT:-}" ] && { [ ! -d "/var/lib/op-reth/db" ] || [ ! -d "/var/li
 else
   echo "No snapshot fetch necessary"
 fi
-# if [ -n "${SNAPSHOT:-}" ] && [ ! -d "/var/lib/op-reth/db" ]; then
-#   __get_snapshot "${SNAPSHOT}"
-#   if [ -n "${SNAPSHOT_PART:-}" ]; then
-#     __get_snapshot "${SNAPSHOT_PART}"
-#   fi
-# else
-#   echo "No snapshot fetch necessary"
-# fi
