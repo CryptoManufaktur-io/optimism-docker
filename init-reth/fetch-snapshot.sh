@@ -70,16 +70,22 @@ __get_snapshot() {
     exit 1
   fi
 
-  # If db is already at /var/lib/op-reth/db, good.
+  # If db is already at /var/lib/op-reth/db, validate static_files too.
   if [ "${__found_path}" = "${__base_dir}db" ]; then
     echo "Found db in expected location: ${__found_path}"
+
+    if [ ! -d "${__base_dir}static_files" ]; then
+      echo "ERROR: db exists, but static_files is missing from ${__base_dir}"
+      exit 1
+    fi
+
     return 0
   fi
 
-  # Otherwise, move the directory that contains db/ into the base dir
+# Otherwise, move the full extracted datadir contents into /var/lib/op-reth
   __parent_dir=$(dirname "${__found_path}")
 
-  echo "Found db at ${__found_path}, normalizing into ${__base_dir}db"
+  echo "Found db at ${__found_path}, normalizing full datadir from ${__parent_dir} into ${__base_dir}"
 
   # If the found db is nested (e.g. /var/lib/op-reth/op-reth/db), move it up
   if [ -d "${__base_dir}db" ]; then
@@ -88,14 +94,14 @@ __get_snapshot() {
     exit 1
   fi
 
-  mv "${__found_path}" "${__base_dir}db"
+  find "${__parent_dir}" -mindepth 1 -maxdepth 1 -exec mv -t "${__base_dir}" {} +
 
   # Try to cleanup empty parent dirs
   rmdir "${__parent_dir}" 2>/dev/null || true
 }
 
 # Prep datadir:
-if [ -n "${SNAPSHOT:-}" ] && [ ! -d "/var/lib/op-reth/db" ]; then
+if [ -n "${SNAPSHOT:-}" ] && { [ ! -d "/var/lib/op-reth/db" ] || [ ! -d "/var/lib/op-reth/static_files" ]; }; then
   __get_snapshot "${SNAPSHOT}"
   if [ -n "${SNAPSHOT_PART:-}" ]; then
     __get_snapshot "${SNAPSHOT_PART}"

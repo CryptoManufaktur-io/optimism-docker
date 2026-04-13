@@ -89,6 +89,8 @@ services:
       - --rollup.sequencer-http=${SEQUENCER:-}
       - --metrics
       - 0.0.0.0:6060
+      - --http.api
+      - eth,net,web3,debug,txpool
     labels:
       - traefik.enable=true
       - traefik.http.routers.${RPC_HOST:-op}.service=${RPC_HOST:-op}
