@@ -154,7 +154,7 @@ fi
 
 # Append extras last
 if [ -n "${EL_EXTRAS:-}" ]; then
-  # shellcheck disable=SC2086
+  # shellcheck disable=SC2086,SC2206
   ARGS+=( ${EL_EXTRAS} )
 fi
 
