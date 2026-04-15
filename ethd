@@ -677,8 +677,9 @@ check-sync() {
         ;;&
     esac
 
-    if [[ "$__rpc" = "" ]]; then
+    if [[ "$__rpc" = "gg" ]]; then
       echo "Unknown network, pass necessary arguments for check sync"
+      bash scripts/check_sync.sh --help
       exit 1
     fi
 
