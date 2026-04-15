@@ -649,7 +649,109 @@ space() {
 }
 
 check-sync() {
-  bash scripts/check_sync.sh "$@" || true
+  if [[ $# -eq 0 ]]; then
+    __var="RPC_PORT"
+    __get_value_from_env "${__var}" "${__env_file}" "__RPC_PORT"
+
+    __compose_service=""
+    __var="COMPOSE_FILE"
+    __get_value_from_env "${__var}" "${__env_file}" "__value"
+    case "${__value}" in
+      *op-geth.yml* )
+        __compose_service="op-geth"
+        ;;&
+      *op-reth.yml* )
+        __compose_service="op-reth"
+        ;;&
+    esac
+
+    __rpc=""
+    __var="NETWORK"
+    __get_value_from_env "${__var}" "${__env_file}" "__value"
+    case "${__value}" in
+      *lisk* )
+        __rpc="https://lisk.drpc.org"
+        ;;&
+      *optimism* )
+        __rpc="https://optimism.drpc.org"
+        ;;&
+      *celo* )
+        __rpc="https://celo.drpc.org"
+        ;;&
+      *b2* )
+        __rpc="https://rpc.bsquared.network"
+        ;;&
+      *blast* )
+        __rpc="https://blast.drpc.org"
+        ;;&
+      *mantle* )
+        __rpc="https://mantle.drpc.org"
+        ;;&
+      *mode* )
+        __rpc="https://mode.drpc.org"
+        ;;&
+      *bob* )
+        __rpc="https://bob.drpc.org"
+        ;;&
+      *ink* )
+        __rpc="https://ink.drpc.org"
+        ;;&
+      *hashkeychain* )
+        __rpc="https://hashkey.drpc.org"
+        ;;&
+      *sseed* )
+        __rpc="https://superseed.drpc.org"
+        ;;&
+      *fraxtal* )
+        __rpc="https://fraxtal.drpc.org"
+        ;;&
+      *unichain* )
+        __rpc="https://unichain.drpc.org"
+        ;;&
+      *base* )
+        __rpc="https://base.drpc.org"
+        ;;&
+      *soneium* )
+        __rpc="https://soneium.drpc.org"
+        ;;&
+      *xlayer* )
+        __rpc="https://xlayer.drpc.org"
+        ;;&
+      *katana* )
+        __rpc="https://katana.drpc.org"
+        ;;&
+      *zora* )
+        __rpc="https://zora.drpc.org"
+        ;;&
+      *metal* )
+        __rpc="https://metall2.drpc.org"
+        ;;&
+      *mint* )
+        __rpc="https://mint.mintchain.io"
+        ;;&
+      *opbnb* )
+        __rpc="https://opbnb.drpc.org"
+        ;;&
+      *hemi* )
+        __rpc="https://hemi.drpc.org"
+        ;;&
+      *worldchain* )
+        __rpc="https://worldchain.drpc.org"
+        ;;&
+    esac
+
+    if [[ "$__rpc" = "" ]]; then
+      echo "Unknown network, pass necessary arguments for check sync"
+      bash scripts/check_sync.sh --help
+      exit 1
+    fi
+
+    echo "Using RPC_PORT: ${__RPC_PORT} publicRPC: ${__rpc} composeService: ${__compose_service}"
+
+    bash scripts/check_sync.sh --public-rpc "${__rpc}" --compose-service "${__compose_service}" --local-rpc "http://127.0.0.1:${__RPC_PORT}" || true
+  else
+    bash scripts/check_sync.sh "$@" || true
+  fi
 }
 
 

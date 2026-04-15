@@ -39,8 +39,8 @@ services:
       - LEGACY=${LEGACY:-false}
       - EL_EXTRAS=${EL_EXTRAS:-}
       - EL_INIT_EXTRAS=${EL_INIT_EXTRAS:-}
-      - OPGETH_P2P_BOOTNODES=${OPGETH_P2P_BOOTNODES:-}
-      - OPGETH_P2P_TRUSTED_NODES=${OPGETH_P2P_TRUSTED_NODES:-}
+      - RPC_P2P_BOOTNODES=${RPC_P2P_BOOTNODES:-}
+      - RPC_P2P_TRUSTED_NODES=${RPC_P2P_TRUSTED_NODES:-}
       - GENESIS_URL=${GENESIS_URL:-}
       - NETWORK=${NETWORK}
       - SEQUENCER=${SEQUENCER:-}
@@ -52,8 +52,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./private-config:/tmp/private-config:ro
     ports:
-      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/tcp
-      - ${OPGETH_P2P_PORT:-30303}:${OPGETH_P2P_PORT:-30303}/udp
+      - ${RPC_P2P_PORT:-30303}:${RPC_P2P_PORT:-30303}/tcp
+      - ${RPC_P2P_PORT:-30303}:${RPC_P2P_PORT:-30303}/udp
     networks:
       default:
         aliases:
@@ -69,7 +69,7 @@ services:
       - /var/lib/op-geth
       - --rollup.disabletxpoolgossip=${DISABLE_TXPOOL_GOSSIP:-true}
       - --port
-      - ${OPGETH_P2P_PORT:-30303}
+      - ${RPC_P2P_PORT:-30303}
       - --authrpc.addr
       - 0.0.0.0
       - --authrpc.port

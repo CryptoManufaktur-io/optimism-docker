@@ -27,8 +27,8 @@ esac
 : "${AUTHRPC_PORT:=8551}"
 : "${EL_EXTRAS:=}"
 : "${EL_INIT_EXTRAS:=}"
-: "${OPGETH_P2P_BOOTNODES:=}"
-: "${OPGETH_P2P_TRUSTED_NODES:=}"
+: "${RPC_P2P_BOOTNODES:=}"
+: "${RPC_P2P_TRUSTED_NODES:=}"
 : "${DISABLE_TXPOOL_GOSSIP:=false}"
 : "${SEQUENCER:=}"
 : "${ROLLUP_HALT:=}"
@@ -62,17 +62,17 @@ if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib
   fi
 fi
 
-# Trusted/static nodes: if OPGETH_P2P_TRUSTED_NODES defined (JSON array), attempt to produce a static-nodes file
-if [ -n "${OPGETH_P2P_TRUSTED_NODES:-}" ]; then
+# Trusted/static nodes: if RPC_P2P_TRUSTED_NODES defined (JSON array), attempt to produce a static-nodes file
+if [ -n "${RPC_P2P_TRUSTED_NODES:-}" ]; then
   echo "Writing trusted/static nodes to /var/lib/op-reth/static-nodes.json"
-  # Expect OPGETH_P2P_TRUSTED_NODES as JSON array like ["enode://...","enode://..."]
-  echo "${OPGETH_P2P_TRUSTED_NODES}" | jq -c '.' > /var/lib/op-reth/static-nodes.json || true
+  # Expect RPC_P2P_TRUSTED_NODES as JSON array like ["enode://...","enode://..."]
+  echo "${RPC_P2P_TRUSTED_NODES}" | jq -c '.' > /var/lib/op-reth/static-nodes.json || true
 fi
 
 # Bootnodes forwarded to flags if set
 __bootnodes=""
-if [ -n "${OPGETH_P2P_BOOTNODES:-}" ]; then
-  __bootnodes="--bootnodes=${OPGETH_P2P_BOOTNODES}"
+if [ -n "${RPC_P2P_BOOTNODES:-}" ]; then
+  __bootnodes="--bootnodes=${RPC_P2P_BOOTNODES}"
 fi
 
 # Sequencer forwarding if set
@@ -126,7 +126,7 @@ if [[ ! " ${ARGS[*]} " =~  --authrpc\.port  ]]; then
   ARGS+=( --authrpc.port "${AUTHRPC_PORT}" )
 fi
 if [[ ! " ${ARGS[*]} " =~  --port  ]]; then
-  ARGS+=( --port "${OPGETH_P2P_PORT}" )
+  ARGS+=( --port "${RPC_P2P_PORT}" )
 fi
 
 # authrpc jwt secret path
