@@ -649,7 +649,45 @@ space() {
 }
 
 check-sync() {
-  bash scripts/check_sync.sh "$@" || true
+  if [[ $# -eq 0 ]]; then
+    __var="RPC_PORT"
+    __get_value_from_env "${__var}" "${__env_file}" "__RPC_PORT"
+
+    __compose_service=""
+    __var="COMPOSE_FILE"
+    __get_value_from_env "${__var}" "${__env_file}" "__value"
+    case "${__value}" in
+      *op-geth.yml* )
+        __compose_service="op-geth"
+        ;;&
+      *op-reth.yml* )
+        __compose_service="op-reth"
+        ;;&
+    esac
+
+    __rpc=""
+    __var="NETWORK"
+    __get_value_from_env "${__var}" "${__env_file}" "__value"
+    case "${__value}" in
+      *lisk-mainnet* )
+        __rpc="https://lisk.drpc.org"
+        ;;&
+      *op-mainnet* )
+        __rpc="https://optimism.drpc.org"
+        ;;&
+    esac
+
+    if [[ "$__rpc" = "" ]]; then
+      echo "Unknown network, pass necessary arguments for check sync"
+      exit 1
+    fi
+
+    echo "Using RPC_PORT: ${__RPC_PORT} publicRPC: ${__rpc} composeService: ${__compose_service}"
+
+    bash scripts/check_sync.sh --public-rpc "${__rpc}" --compose-service "${__compose_service}" --local-rpc "http://127.0.0.1:${__RPC_PORT}" || true
+  else
+    bash scripts/check_sync.sh "$@" || true
+  fi
 }
 
 

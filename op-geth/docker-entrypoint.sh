@@ -68,8 +68,8 @@ else
   __legacy=""
 fi
 
-if [ -n "${OPGETH_P2P_BOOTNODES}" ]; then
-  __bootnodes="--bootnodes=${OPGETH_P2P_BOOTNODES}"
+if [ -n "${EXECUTION_P2P_BOOTNODES}" ]; then
+  __bootnodes="--bootnodes=${EXECUTION_P2P_BOOTNODES}"
 else
   __bootnodes=""
 fi
@@ -86,10 +86,10 @@ else
   __rolluphalt=""
 fi
 
-if [ -n "${OPGETH_P2P_TRUSTED_NODES}" ]; then
+if [ -n "${EXECUTION_P2P_TRUSTED_NODES}" ]; then
   geth dumpconfig >/var/lib/op-geth/config.toml  # Empty config, just for trusted and static. Rest comes from params
   # Set user-supplied trusted nodes, also as static
-  for string in $(jq -r .[] <<< "${OPGETH_P2P_TRUSTED_NODES}"); do
+  for string in $(jq -r .[] <<< "${EXECUTION_P2P_TRUSTED_NODES}"); do
 # shellcheck disable=SC2116
     dasel put -v "$(echo "$string")" -f /var/lib/op-geth/config.toml 'Node.P2P.TrustedNodes.[]'
 # shellcheck disable=SC2116
