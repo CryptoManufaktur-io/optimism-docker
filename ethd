@@ -672,7 +672,7 @@ check-sync() {
       *lisk* )
         __rpc="https://lisk.drpc.org"
         ;;&
-      *optimism* )
+      *op-mainnet* )
         __rpc="https://optimism.drpc.org"
         ;;&
       *celo* )
