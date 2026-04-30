@@ -67,8 +67,6 @@ services:
       - node
       - --datadir
       - /var/lib/op-reth
-      - --chain
-      - ${OPRETH_CHAIN}
       - --http
       - --http.addr
       - 0.0.0.0
