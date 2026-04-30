@@ -111,8 +111,19 @@ if [[ ! " ${ARGS[*]} " =~ " --datadir " ]]; then
 fi
 
 # Default chain argument if not provided; prefer OPRETH_CHAIN env var
+# If OPRETH_CHAIN is a URL, download and use local path
 if [[ ! " ${ARGS[*]} " =~ " --chain " ]] && [ -n "${OPRETH_CHAIN}" ]; then
-  ARGS+=( --chain "${OPRETH_CHAIN}" )
+  case "${OPRETH_CHAIN}" in
+    http://*|https://*)
+      echo "OPRETH_CHAIN is a URL, downloading genesis file..."
+      mkdir -p /data
+      curl -sSL -o /data/genesis.json "${OPRETH_CHAIN}"
+      ARGS+=( --chain /data/genesis.json )
+      ;;
+    *)
+      ARGS+=( --chain "${OPRETH_CHAIN}" )
+      ;;
+  esac
 fi
 
 # RPC/WS/authrpc default ports unless overridden in ARGS
