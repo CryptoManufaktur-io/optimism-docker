@@ -49,7 +49,6 @@ services:
       - opreth-data:/var/lib/op-reth
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
-      - ./op-reth/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
     ports:
       - ${RPC_P2P_PORT:-30303}:${RPC_P2P_PORT:-30303}/tcp
       - ${RPC_P2P_PORT:-30303}:${RPC_P2P_PORT:-30303}/udp
