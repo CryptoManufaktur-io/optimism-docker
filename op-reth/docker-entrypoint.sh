@@ -169,6 +169,10 @@ if [ -n "${EL_EXTRAS:-}" ]; then
   ARGS+=( ${EL_EXTRAS} )
 fi
 
+if [[ ! " ${ARGS[*]} " =~  --nat  ]]; then
+  ARGS+=( "--nat=extip:$(wget -qO- https://ifconfig.me/ip)" )
+fi
+
 echo "Launching op-reth with:"
 echo "  ENTRYPOINT: $0"
 echo "  CMD args: ${ARGS[*]}"
