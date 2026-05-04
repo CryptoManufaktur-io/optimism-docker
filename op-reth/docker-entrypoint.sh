@@ -141,7 +141,9 @@ if [ -n "${ROLLUP_HALT}" ]; then
 fi
 
 # shellcheck disable=SC2086
-echo "Launching op-reth with: $* ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}"
+echo "Launching op-reth with:"
+echo "  ENTRYPOINT: $0"
+echo "  CMD args: $* ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}"
 
 # shellcheck disable=SC2086
 exec "$@" ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}
