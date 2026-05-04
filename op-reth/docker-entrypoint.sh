@@ -25,6 +25,7 @@ esac
 : "${RPC_PORT:=8545}"
 : "${WS_PORT:=8546}"
 : "${AUTHRPC_PORT:=8551}"
+: "${RPC_P2P_PORT:=30303}"
 : "${EL_EXTRAS:=}"
 : "${EL_INIT_EXTRAS:=}"
 : "${RPC_P2P_BOOTNODES:=}"
@@ -62,34 +63,76 @@ if [ -n "${GENESIS_URL}" ] && [ ! -d "/var/lib/op-reth/db" ] && [ ! -d "/var/lib
   fi
 fi
 
-# Trusted/static nodes: if RPC_P2P_TRUSTED_NODES defined (JSON array), attempt to produce a static-nodes file
-if [ -n "${RPC_P2P_TRUSTED_NODES:-}" ]; then
-  echo "Writing trusted/static nodes to /var/lib/op-reth/static-nodes.json"
-  # Expect RPC_P2P_TRUSTED_NODES as JSON array like ["enode://...","enode://..."]
-  echo "${RPC_P2P_TRUSTED_NODES}" | jq -c '.' > /var/lib/op-reth/static-nodes.json || true
+# Public IP for NAT
+__public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
+
+# Datadir
+__datadir="--datadir /var/lib/op-reth"
+
+# Chain argument
+__chain=""
+if [ -n "${OPRETH_CHAIN}" ]; then
+  case "${OPRETH_CHAIN}" in
+    http://*|https://*)
+      echo "OPRETH_CHAIN is a URL, downloading genesis file..."
+      mkdir -p /data
+      curl -sSL -o /data/genesis.json "${OPRETH_CHAIN}"
+      __chain="--chain /data/genesis.json"
+      ;;
+    *)
+      __chain="--chain ${OPRETH_CHAIN}"
+      ;;
+  esac
 fi
 
-# Bootnodes forwarded to flags if set
-__bootnodes=""
-if [ -n "${RPC_P2P_BOOTNODES:-}" ]; then
+# JWT secret
+__authrpc_jwt="--authrpc.jwtsecret /var/lib/op-reth/ee-secret/jwtsecret"
+
+# Ensure jwtsecret file exists (mounted by compose); warn if not present
+if [ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]; then
+  echo "WARNING: JWT secret not found at /var/lib/op-reth/ee-secret/jwtsecret - op-node and op-reth require matching JWT secret for engine API."
+fi
+
+# Trusted/static nodes: if RPC_P2P_TRUSTED_NODES defined (JSON array), set --trusted-peers
+__trusted_peers=""
+if [ -n "${RPC_P2P_TRUSTED_NODES}" ]; then
+  __peers_csv=""
+  for enode in $(jq -r '.[]' <<< "${RPC_P2P_TRUSTED_NODES}"); do
+    if [ -z "${__peers_csv}" ]; then
+      __peers_csv="${enode}"
+    else
+      __peers_csv="${__peers_csv},${enode}"
+    fi
+  done
+  if [ -n "${__peers_csv}" ]; then
+    __trusted_peers="--trusted-peers=${__peers_csv}"
+  fi
+fi
+
+# Bootnodes
+if [ -n "${RPC_P2P_BOOTNODES}" ]; then
   __bootnodes="--bootnodes=${RPC_P2P_BOOTNODES}"
+else
+  __bootnodes=""
 fi
 
-# Sequencer forwarding if set
-__sequencer=""
-if [ -n "${SEQUENCER:-}" ]; then
+# Sequencer
+if [ -n "${SEQUENCER}" ]; then
   __sequencer="--rollup.sequencer-http=${SEQUENCER}"
+else
+  __sequencer=""
 fi
 
-# Disable txpool gossip mapping
-if [ "${DISABLE_TXPOOL_GOSSIP:-false}" = "true" ]; then
-  # append both syntaxes safely in the extras variable (version-tolerant)
-  EL_EXTRAS="${EL_EXTRAS} --rollup.disable-tx-pool-gossip --rollup.disabletxpoolgossip"
+# Disable txpool gossip
+if [ "${DISABLE_TXPOOL_GOSSIP}" = "true" ]; then
+  __disable_txpool_gossip="--rollup.disable-tx-pool-gossip --rollup.disabletxpoolgossip"
+else
+  __disable_txpool_gossip=""
 fi
 
-# Implement ROLLUP_HALT: add --rollup.halt=<value> unless user already supplied it
+# Rollup halt
 __rolluphalt=""
-if [ -n "${ROLLUP_HALT:-}" ]; then
+if [ -n "${ROLLUP_HALT}" ]; then
   if op-reth node --help 2>&1 | grep -q -- '--rollup.halt'; then
     __rolluphalt="--rollup.halt=${ROLLUP_HALT}"
   else
@@ -97,84 +140,8 @@ if [ -n "${ROLLUP_HALT:-}" ]; then
   fi
 fi
 
-# Ensure jwtsecret file exists (mounted by compose); warn if not present
-if [ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]; then
-  echo "WARNING: JWT secret not found at /var/lib/op-reth/ee-secret/jwtsecret - op-node and op-reth require matching JWT secret for engine API."
-fi
+# shellcheck disable=SC2086
+echo "Launching op-reth with: $* ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}"
 
-# Build final argv list (starting from compose-provided args)
-ARGS=( "$@" )
-
-# If user didn't provide --datadir, prefer /var/lib/op-reth
-if [[ ! " ${ARGS[*]} " =~ " --datadir " ]]; then
-  ARGS+=( --datadir /var/lib/op-reth )
-fi
-
-# Default chain argument if not provided; prefer OPRETH_CHAIN env var
-# If OPRETH_CHAIN is a URL, download and use local path
-if [[ ! " ${ARGS[*]} " =~ " --chain " ]] && [ -n "${OPRETH_CHAIN}" ]; then
-  case "${OPRETH_CHAIN}" in
-    http://*|https://*)
-      echo "OPRETH_CHAIN is a URL, downloading genesis file..."
-      mkdir -p /data
-      curl -sSL -o /data/genesis.json "${OPRETH_CHAIN}"
-      ARGS+=( --chain /data/genesis.json )
-      ;;
-    *)
-      ARGS+=( --chain "${OPRETH_CHAIN}" )
-      ;;
-  esac
-fi
-
-# RPC/WS/authrpc default ports unless overridden in ARGS
-if [[ ! " ${ARGS[*]} " =~  --http\.port  ]]; then
-  ARGS+=( --http.port "${RPC_PORT}" )
-fi
-if [[ ! " ${ARGS[*]} " =~  --ws\.port  ]]; then
-  ARGS+=( --ws.port "${WS_PORT}" )
-fi
-if [[ ! " ${ARGS[*]} " =~  --authrpc\.port  ]]; then
-  ARGS+=( --authrpc.port "${AUTHRPC_PORT}" )
-fi
-if [[ ! " ${ARGS[*]} " =~  --port  ]]; then
-  ARGS+=( --port "${RPC_P2P_PORT}" )
-fi
-
-# authrpc jwt secret path
-if [[ ! " ${ARGS[*]} " =~  --authrpc\.jwtsecret  ]]; then
-  ARGS+=( --authrpc.jwtsecret /var/lib/op-reth/ee-secret/jwtsecret )
-fi
-
-# Add bootnodes & sequencer flags if not already present
-if [ -n "${__bootnodes}" ] && [[ ! " ${ARGS[*]} " =~  --bootnodes  ]]; then
-  # shellcheck disable=SC2086
-  ARGS+=( "${__bootnodes}" )
-fi
-if [ -n "${__sequencer}" ] && [[ ! " ${ARGS[*]} " =~  --rollup\.sequencer ]]; then
-  # shellcheck disable=SC2086
-  ARGS+=( "${__sequencer}" )
-fi
-
-# Add rollup halt if supported and not already present
-if [ -n "${__rolluphalt}" ]; then
-  if [[ ! " ${ARGS[*]} " =~  --rollup\.halt ]] && [[ "${EL_EXTRAS}" != *"--rollup.halt"* ]]; then
-    # shellcheck disable=SC2086
-    ARGS+=( "${__rolluphalt}" )
-  fi
-fi
-
-# Append extras last
-if [ -n "${EL_EXTRAS:-}" ]; then
-  # shellcheck disable=SC2086,SC2206
-  ARGS+=( ${EL_EXTRAS} )
-fi
-
-if [[ ! " ${ARGS[*]} " =~  --nat  ]]; then
-  ARGS+=( "--nat=extip:$(wget -qO- https://ifconfig.me/ip)" )
-fi
-
-echo "Launching op-reth with:"
-echo "  ENTRYPOINT: $0"
-echo "  CMD args: ${ARGS[*]}"
-
-exec "${ARGS[@]}"
+# shellcheck disable=SC2086
+exec "$@" ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}
