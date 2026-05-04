@@ -26,6 +26,9 @@ COMPOSE_FILE=optimism.yml:op-reth.yml:op-shared.yml:op-reth-shared.yml
 Built-in chains:
 optimism, optimism_sepolia, optimism-sepolia, base, base_sepolia, base-sepolia, arena-z, arena-z-sepolia, automata, base-devnet-0-sepolia-dev-0, bob, boba-sepolia, boba, camp-sepolia, celo, creator-chain-testnet-sepolia, cyber, cyber-sepolia, ethernity, ethernity-sepolia, fraxtal, funki, funki-sepolia, hashkeychain, ink, ink-sepolia, lisk, lisk-sepolia, lyra, metal, metal-sepolia, mint, mode, mode-sepolia, oplabs-devnet-0-sepolia-dev-0, orderly, ozean-sepolia, pivotal-sepolia, polynomial, race, race-sepolia, radius_testnet-sepolia, redstone, rehearsal-0-bn-0-rehearsal-0-bn, rehearsal-0-bn-1-rehearsal-0-bn, settlus-mainnet, settlus-sepolia-sepolia, shape, shape-sepolia, silent-data-mainnet, snax, soneium, soneium-minato-sepolia, sseed, swan, swell, tbn, tbn-sepolia, unichain, unichain-sepolia, worldchain, worldchain-sepolia, xterio-eth, zora, zora-sepolia, dev
 
+### Configuring OPRETH_CHAIN
+You can also set OPRETH_CHAIN=http(s):URL_TO_DOWNLOAD_GENESIS or OPRETH_CHAIN=/tmp/private-config/genesis.json. for a pre downloaded genesis.json in the ptivate-config folder
+
 If you want the execution client RPC ports exposed locally, use `op-geth-shared.yml` or `op-reth-shared.yml` in `COMPOSE_FILE` inside `.env` depending on your choice of the EL.
 
 `legacy.yml` runs the legacy l2geth on Optimism, set `LEGACY=true` in `.env` for that. You probably
