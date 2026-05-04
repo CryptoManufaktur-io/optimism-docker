@@ -66,9 +66,6 @@ fi
 # Public IP for NAT
 __public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
 
-# Datadir
-__datadir="--datadir /var/lib/op-reth"
-
 # Chain argument
 __chain=""
 if [ -n "${OPRETH_CHAIN}" ]; then
@@ -84,9 +81,6 @@ if [ -n "${OPRETH_CHAIN}" ]; then
       ;;
   esac
 fi
-
-# JWT secret
-__authrpc_jwt="--authrpc.jwtsecret /var/lib/op-reth/ee-secret/jwtsecret"
 
 # Ensure jwtsecret file exists (mounted by compose); warn if not present
 if [ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]; then
@@ -116,13 +110,6 @@ else
   __bootnodes=""
 fi
 
-# Sequencer
-if [ -n "${SEQUENCER}" ]; then
-  __sequencer="--rollup.sequencer-http=${SEQUENCER}"
-else
-  __sequencer=""
-fi
-
 # Disable txpool gossip
 if [ "${DISABLE_TXPOOL_GOSSIP}" = "true" ]; then
   __disable_txpool_gossip="--rollup.disable-tx-pool-gossip --rollup.disabletxpoolgossip"
@@ -143,7 +130,7 @@ fi
 # shellcheck disable=SC2086
 echo "Launching op-reth with:"
 echo "  ENTRYPOINT: $0"
-echo "  CMD args: $* ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}"
+echo "  CMD args: $* ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}"
 
 # shellcheck disable=SC2086
-exec "$@" ${__datadir} ${__chain} ${__authrpc_jwt} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__sequencer} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}
+exec "$@" ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}
