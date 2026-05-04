@@ -670,61 +670,61 @@ check-sync() {
     __get_value_from_env "${__var}" "${__env_file}" "__value"
     case "${__value}" in
       *lisk* )
-        __rpc="https://lisk.drpc.org"
+        __rpc="https://rpc.api.lisk.com"
         ;;&
       *op-mainnet* )
-        __rpc="https://optimism.drpc.org"
+        __rpc="https://mainnet.optimism.io"
         ;;&
       *celo* )
-        __rpc="https://celo.drpc.org"
+        __rpc="https://rpc.ankr.com/celo"
         ;;&
       *b2* )
         __rpc="https://rpc.bsquared.network"
         ;;&
       *blast* )
-        __rpc="https://blast.drpc.org"
+        __rpc="https://rpc.blast.io"
         ;;&
       *mantle* )
-        __rpc="https://mantle.drpc.org"
+        __rpc="https://rpc.mantle.xyz"
         ;;&
       *mode* )
-        __rpc="https://mode.drpc.org"
+        __rpc="https://mainnet.mode.network"
         ;;&
       *bob* )
-        __rpc="https://bob.drpc.org"
+        __rpc="wss://rpc.gobob.xyz"
         ;;&
       *ink* )
-        __rpc="https://ink.drpc.org"
+        __rpc="https://rpc-qnd.inkonchain.com"
         ;;&
       *hashkeychain* )
-        __rpc="https://hashkey.drpc.org"
+        __rpc="https://mainnet.hsk.xyz"
         ;;&
       *sseed* )
-        __rpc="https://superseed.drpc.org"
+        __rpc="https://mainnet.superseed.xyz"
         ;;&
       *fraxtal* )
-        __rpc="https://fraxtal.drpc.org"
+        __rpc="https://rpc.frax.com"
         ;;&
       *unichain* )
-        __rpc="https://unichain.drpc.org"
+        __rpc="https://unichain.api.onfinality.io/public"
         ;;&
       *base* )
-        __rpc="https://base.drpc.org"
+        __rpc="https://mainnet.base.org"
         ;;&
       *soneium* )
-        __rpc="https://soneium.drpc.org"
+        __rpc="https://rpc.soneium.org"
         ;;&
       *xlayer* )
-        __rpc="https://xlayer.drpc.org"
+        __rpc="https://rpc.sentio.xyz/xlayer-mainnet"
         ;;&
       *katana* )
-        __rpc="https://katana.drpc.org"
+        __rpc="https://rpc.katana.network"
         ;;&
       *zora* )
-        __rpc="https://zora.drpc.org"
+        __rpc="https://rpc.zora.energy"
         ;;&
       *metal* )
-        __rpc="https://metall2.drpc.org"
+        __rpc="https://rpc.metall2.com"
         ;;&
       *mint* )
         __rpc="https://mint.mintchain.io"
@@ -733,10 +733,10 @@ check-sync() {
         __rpc="https://opbnb.drpc.org"
         ;;&
       *hemi* )
-        __rpc="https://hemi.drpc.org"
+        __rpc="https://rpc.hemi.network/rpc"
         ;;&
       *worldchain* )
-        __rpc="https://worldchain.drpc.org"
+        __rpc="https://worldchain-mainnet.g.alchemy.com/public"
         ;;&
     esac
 
