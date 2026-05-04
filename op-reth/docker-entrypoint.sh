@@ -87,20 +87,11 @@ if [ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]; then
   echo "WARNING: JWT secret not found at /var/lib/op-reth/ee-secret/jwtsecret - op-node and op-reth require matching JWT secret for engine API."
 fi
 
-# Trusted/static nodes: if RPC_P2P_TRUSTED_NODES defined (JSON array), set --trusted-peers
-__trusted_peers=""
+# Trusted/static nodes: if RPC_P2P_TRUSTED_NODES, set --trusted-peers
 if [ -n "${RPC_P2P_TRUSTED_NODES}" ]; then
-  __peers_csv=""
-  for enode in $(jq -r '.[]' <<< "${RPC_P2P_TRUSTED_NODES}"); do
-    if [ -z "${__peers_csv}" ]; then
-      __peers_csv="${enode}"
-    else
-      __peers_csv="${__peers_csv},${enode}"
-    fi
-  done
-  if [ -n "${__peers_csv}" ]; then
-    __trusted_peers="--trusted-peers=${__peers_csv}"
-  fi
+  __trusted_peers="--trusted-peers=${RPC_P2P_TRUSTED_NODES}"
+else
+  __trusted_peers=""
 fi
 
 # Bootnodes

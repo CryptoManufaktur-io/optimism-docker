@@ -87,19 +87,19 @@ else
 fi
 
 if [ -n "${RPC_P2P_TRUSTED_NODES}" ]; then
-  geth dumpconfig >/var/lib/op-geth/config.toml  # Empty config, just for trusted and static. Rest comes from params
-  # Set user-supplied trusted nodes, also as static
-  for string in $(jq -r .[] <<< "${RPC_P2P_TRUSTED_NODES}"); do
-# shellcheck disable=SC2116
-    dasel put -v "$(echo "$string")" -f /var/lib/op-geth/config.toml 'Node.P2P.TrustedNodes.[]'
-# shellcheck disable=SC2116
-    dasel put -v "$(echo "$string")" -f /var/lib/op-geth/config.toml 'Node.P2P.StaticNodes.[]'
+  geth dumpconfig >/var/lib/op-geth/config.toml
+  # Set user-supplied trusted nodes (comma-separated), also as static
+  IFS=',' read -ra NODES <<< "${RPC_P2P_TRUSTED_NODES}"
+  for enode in "${NODES[@]}"; do
+    dasel put -v "${enode}" -f /var/lib/op-geth/config.toml 'Node.P2P.TrustedNodes.[]'
+    dasel put -v "${enode}" -f /var/lib/op-geth/config.toml 'Node.P2P.StaticNodes.[]'
   done
   __config="--config /var/lib/op-geth/config.toml"
 else
   rm -f /var/lib/op-geth/config.toml
   __config=""
 fi
+
 # Word splitting is desired for the command line parameters
 # shellcheck disable=SC2086
 exec "$@" ${__config} ${__verbosity} ${__network} ${__public_ip} ${__pbss} ${__bootnodes} ${__rolluphalt} ${__legacy} ${__sequencer} ${EL_EXTRAS}
