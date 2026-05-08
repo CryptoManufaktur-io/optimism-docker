@@ -75,7 +75,7 @@ else
 fi
 
 if [ -n "${SEQUENCER}" ]; then
-  __sequencer="--rollup.sequencerhttp=${SEQUENCER}"
+  __sequencer="--rollup.sequencer-http=${SEQUENCER}"
 else
   __sequencer=""
 fi
