@@ -89,7 +89,7 @@ if [ -n "${ROLLUP_HALT}" ]; then
 fi
 
 if [ -n "${SEQUENCER}" ]; then
-  __sequencer="--rollup.sequencerhttp=${SEQUENCER}"
+  __sequencer="--rollup.sequencer-http=${SEQUENCER}"
 else
   __sequencer=""
 fi
@@ -97,7 +97,7 @@ fi
 # shellcheck disable=SC2086
 echo "Launching op-reth with:"
 echo "  ENTRYPOINT: $0"
-echo "  CMD args: $* ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${EL_EXTRAS}"
+echo "  CMD args: $* ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${__sequencer} ${EL_EXTRAS}"
 
 # shellcheck disable=SC2086
 exec "$@" ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${__sequencer} ${EL_EXTRAS}
