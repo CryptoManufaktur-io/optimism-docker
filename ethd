@@ -691,7 +691,7 @@ check-sync() {
         __rpc="https://mainnet.mode.network"
         ;;&
       *bob* )
-        __rpc="wss://rpc.gobob.xyz"
+        __rpc="https://rpc.gobob.xyz"
         ;;&
       *ink* )
         __rpc="https://rpc-qnd.inkonchain.com"
