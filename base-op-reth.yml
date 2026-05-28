@@ -63,7 +63,7 @@ services:
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
-      - ${OPNODE_BIN_PATH:-op-reth}
+      - ${OPRETH_BIN_PATH:-op-reth}
       - node
       - --datadir
       - /var/lib/op-reth

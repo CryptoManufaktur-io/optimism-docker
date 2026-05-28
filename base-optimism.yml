@@ -43,8 +43,6 @@ services:
       - docker-entrypoint.sh
       - ${OPNODE_BIN_PATH:-op-node}
       - node
-      - --log.level
-      - ${LOG_LEVEL}
       - --l2
       - ${L2_CONNECTION_KIND:-http}://${NETWORK}:8551
       - --l2.jwt-secret
