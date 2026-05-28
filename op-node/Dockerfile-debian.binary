@@ -3,7 +3,7 @@ ARG DOCKER_REPO=us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
 
 FROM ${DOCKER_REPO}:${DOCKER_TAG}
 
-RUN apt update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y ca-certificates tzdata bash curl gosu && rm -rf /var/lib/apt/lists/*
+RUN apt update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y ca-certificates tzdata bash curl wget gosu && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/lib/op-node/ee-secret
 
