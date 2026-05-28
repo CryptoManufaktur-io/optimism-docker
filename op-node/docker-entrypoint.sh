@@ -46,6 +46,8 @@ if [ -n "${ROLLUP_URL}" ]; then
 else
   if [ "${NETWORK}" != "base-mainnet" ]; then
     __network="--network=${NETWORK}"
+  else
+     __network=""
   fi
 fi
 
