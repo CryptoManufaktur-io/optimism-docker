@@ -44,7 +44,7 @@ if [ -n "${ROLLUP_URL}" ]; then
   fi
   __network="--rollup.config=/var/lib/op-node/config/rollup.json"
 else
-  if [ "${NETWORK}" != "base" ]; then
+  if [ "${NETWORK}" != "base-mainnet" ]; then
     __network="--network=${NETWORK}"
   fi
 fi
