@@ -1,13 +1,19 @@
 ARG DOCKER_TAG=latest
 ARG DOCKER_REPO=us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
-ARG ORIGINAL_USER=root
 
-FROM ${DOCKER_REPO}:${DOCKER_TAG}
+# The upstream op-node image is distroless as of v1.19.x (no shell / package
+# manager), so we cannot install packages or run the bash entrypoint in it.
+# Copy the op-node binary out and run it on a Wolfi base (glibc, matches the
+# op-node image) that carries the tools docker-entrypoint.sh needs.
+FROM ${DOCKER_REPO}:${DOCKER_TAG} AS opnode
 
-# Switch to root temporary
+FROM cgr.dev/chainguard/wolfi-base:latest
+
 USER root
 
-RUN apk update && apk add --no-cache ca-certificates tzdata bash curl su-exec
+RUN apk add --no-cache ca-certificates tzdata bash curl wget su-exec
+
+COPY --from=opnode /usr/local/bin/op-node /usr/local/bin/op-node
 
 RUN mkdir -p /var/lib/op-node/ee-secret
 
@@ -15,8 +21,5 @@ RUN mkdir -p /var/lib/op-node/ee-secret
 COPY ./docker-entrypoint.sh /usr/local/bin/
 # Belt and suspenders
 RUN chmod -R 755 /usr/local/bin/*
-
-# Restore the user
-USER ${ORIGINAL_USER}
 
 ENTRYPOINT ["op-node"]
