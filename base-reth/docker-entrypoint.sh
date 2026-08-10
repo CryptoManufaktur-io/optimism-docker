@@ -32,6 +32,7 @@ esac
 : "${DISABLE_TXPOOL_GOSSIP:=false}"
 : "${SEQUENCER:=}"
 : "${ROLLUP_HALT:=}"
+: "${OP_NODE:=false}"
 
 # Public IP for NAT
 __public_ip=""
