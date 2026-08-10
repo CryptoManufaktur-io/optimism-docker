@@ -23,6 +23,7 @@ services:
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
     entrypoint:
+      - snapshot-entrypoint.sh
       - ${OPRETH_BIN_PATH:-/app/base-reth-node}
       - download
       - --full

@@ -18,6 +18,7 @@ RUN if command -v apk >/dev/null 2>&1; then \
 RUN mkdir -p /var/lib/op-reth/ee-secret && mkdir -p /var/lib/op-reth/snapshot
 
 COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./snapshot-entrypoint.sh /usr/local/bin/snapshot-entrypoint.sh
 RUN chmod -R 755 /usr/local/bin/docker-entrypoint.sh
 
 # Keep default ENTRYPOINT as the op-reth binary so that:
