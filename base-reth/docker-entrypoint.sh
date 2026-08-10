@@ -34,7 +34,10 @@ esac
 : "${ROLLUP_HALT:=}"
 
 # Public IP for NAT
-__public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
+__public_ip=""
+if [ "${OP_NODE}" != "true" ]; then
+  __public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
+fi
 
 # Chain argument
 __chain=""
