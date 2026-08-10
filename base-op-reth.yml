@@ -16,7 +16,7 @@ services:
       args:
         - DOCKER_TAG=${OPRETH_DOCKER_TAG}
         - DOCKER_REPO=${OPRETH_DOCKER_REPO}
-        - ENTRYPOINT=${OPRETH_BIN_PATH
+        - ENTRYPOINT=${OPRETH_BIN_PATH}
     image: op-reth:${NETWORK}
     pull_policy: never
     volumes:
@@ -40,7 +40,7 @@ services:
       args:
         - DOCKER_TAG=${OPRETH_DOCKER_TAG}
         - DOCKER_REPO=${OPRETH_DOCKER_REPO}
-        - ENTRYPOINT=${OPRETH_BIN_PATH
+        - ENTRYPOINT=${OPRETH_BIN_PATH}
     image: op-reth:${NETWORK}
     pull_policy: never
     stop_grace_period: 5m

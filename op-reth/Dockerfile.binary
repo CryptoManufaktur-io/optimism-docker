@@ -22,4 +22,4 @@ RUN chmod -R 755 /usr/local/bin/docker-entrypoint.sh
 
 # Keep default ENTRYPOINT as the op-reth binary so that:
 # command: "node ..." works (because it becomes: op-reth node ...)
-ENTRYPOINT [$${ENTRYPOINT}]
+ENTRYPOINT [${ENTRYPOINT}]
