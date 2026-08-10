@@ -1,9 +1,13 @@
 ARG DOCKER_TAG=latest
 ARG DOCKER_REPO=ghcr.io/paradigmxyz/op-reth
 
-FROM ${DOCKER_REPO}:${DOCKER_TAG}
+FROM ${DOCKER_REPO}:${DOCKER_TAG} as opreth
+FROM alpine:latest
 
 USER root
+
+COPY --from=opreth /app /app
+
 # op-reth base image switched to Wolfi (apk) as of v2.3.x; older builds are Debian (apt-get).
 RUN if command -v apk >/dev/null 2>&1; then \
       apk add --no-cache bash ca-certificates tzdata wget curl jq su-exec; \
@@ -21,4 +25,4 @@ RUN chmod -R 755 /usr/local/bin/docker-entrypoint.sh
 
 # Keep default ENTRYPOINT as the op-reth binary so that:
 # command: "node ..." works (because it becomes: op-reth node ...)
-ENTRYPOINT ["op-reth"]
+ENTRYPOINT ["/app/base-reth-node"]
