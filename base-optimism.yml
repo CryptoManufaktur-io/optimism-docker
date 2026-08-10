@@ -11,13 +11,12 @@ services:
   op-node:
     restart: "unless-stopped"
     build:
-      context: ./op-node
+      context: ./base-node
       dockerfile: ${OPNODE_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
         - DOCKER_REPO=${OPNODE_DOCKER_REPO}
         - ORIGINAL_USER=${OPNODE_ORIGINAL_USER:-root}
-        - ENTRYPOINT=${OPRETH_BIN_PATH}
     image: op-node:${NETWORK}
     pull_policy: never
     stop_grace_period: 1m
@@ -45,7 +44,7 @@ services:
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
-      - ${OPNODE_BIN_PATH:-op-node}
+      - ${OPNODE_BIN_PATH:-/app/base-consensus}
       - node
       - --l2
       - ${L2_CONNECTION_KIND:-http}://${NETWORK}:8551

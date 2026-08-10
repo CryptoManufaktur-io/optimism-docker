@@ -11,12 +11,11 @@ services:
   init-base-reth:
     restart: "no"
     build:
-      context: ./op-reth
+      context: ./base-reth
       dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPRETH_DOCKER_TAG}
         - DOCKER_REPO=${OPRETH_DOCKER_REPO}
-        - ENTRYPOINT=${OPRETH_BIN_PATH}
     image: op-reth:${NETWORK}
     pull_policy: never
     volumes:
@@ -24,7 +23,7 @@ services:
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
     entrypoint:
-      - ${OPRETH_BIN_PATH:-op-reth}
+      - ${OPRETH_BIN_PATH:-/app/base-reth-node}
       - download
       - --full
       - --datadir=/var/lib/op-reth
@@ -35,12 +34,11 @@ services:
   op-reth:
     restart: unless-stopped
     build:
-      context: ./op-reth
+      context: ./base-reth
       dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPRETH_DOCKER_TAG}
         - DOCKER_REPO=${OPRETH_DOCKER_REPO}
-        - ENTRYPOINT=${OPRETH_BIN_PATH}
     image: op-reth:${NETWORK}
     pull_policy: never
     stop_grace_period: 5m
@@ -74,7 +72,7 @@ services:
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh
-      - ${OPRETH_BIN_PATH:-op-reth}
+      - ${OPRETH_BIN_PATH:-/app/base-reth-node}
       - node
       - --datadir
       - /var/lib/op-reth

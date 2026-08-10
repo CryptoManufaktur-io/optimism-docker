@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# ./op-reth/docker-entrypoint.sh
+set -euo pipefail
+shopt -s nocasematch
+
+# Debug toggle
+if [ "${DEBUG:-false}" = "true" ]; then
+  set -x
+fi
+
+# --- Logging level mapping (Rust)
+case "${LOG_LEVEL:-info}" in
+  error) export RUST_LOG="${RUST_LOG:-error}" ;;
+  warn)  export RUST_LOG="${RUST_LOG:-warn}" ;;
+  info)  export RUST_LOG="${RUST_LOG:-info}" ;;
+  debug) export RUST_LOG="${RUST_LOG:-debug}" ;;
+  trace) export RUST_LOG="${RUST_LOG:-trace}" ;;
+  *)     export RUST_LOG="${RUST_LOG:-info}" ;;
+esac
+
+# Default env var fallbacks
+: "${NETWORK:=}"
+: "${OPRETH_CHAIN:=}"
+: "${RPC_PORT:=8545}"
+: "${WS_PORT:=8546}"
+: "${AUTHRPC_PORT:=8551}"
+: "${RPC_P2P_PORT:=30303}"
+: "${EL_EXTRAS:=}"
+: "${EL_INIT_EXTRAS:=}"
+: "${RPC_P2P_BOOTNODES:=}"
+: "${RPC_P2P_TRUSTED_NODES:=}"
+: "${DISABLE_TXPOOL_GOSSIP:=false}"
+: "${SEQUENCER:=}"
+: "${ROLLUP_HALT:=}"
+
+# Public IP for NAT
+__public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
+
+# Chain argument
+__chain=""
+if [ -n "${OPRETH_CHAIN}" ]; then
+  case "${OPRETH_CHAIN}" in
+    http://*|https://*)
+      echo "OPRETH_CHAIN is a URL, downloading genesis file..."
+      mkdir -p /data
+      curl -sSL -o /data/genesis.json "${OPRETH_CHAIN}"
+      __chain="--chain /data/genesis.json"
+      ;;
+    *)
+      __chain="--chain ${OPRETH_CHAIN}"
+      ;;
+  esac
+fi
+
+# Ensure jwtsecret file exists (mounted by compose); warn if not present
+if [ ! -f /var/lib/op-reth/ee-secret/jwtsecret ]; then
+  echo "WARNING: JWT secret not found at /var/lib/op-reth/ee-secret/jwtsecret - op-node and op-reth require matching JWT secret for engine API."
+fi
+
+# Trusted/static nodes: if RPC_P2P_TRUSTED_NODES, set --trusted-peers
+if [ -n "${RPC_P2P_TRUSTED_NODES}" ]; then
+  __trusted_peers="--trusted-peers=${RPC_P2P_TRUSTED_NODES}"
+else
+  __trusted_peers=""
+fi
+
+# Bootnodes
+if [ -n "${RPC_P2P_BOOTNODES}" ]; then
+  __bootnodes="--bootnodes=${RPC_P2P_BOOTNODES}"
+else
+  __bootnodes=""
+fi
+
+# Disable txpool gossip
+if [ "${DISABLE_TXPOOL_GOSSIP}" = "true" ]; then
+  __disable_txpool_gossip="--rollup.disable-tx-pool-gossip --rollup.disabletxpoolgossip"
+else
+  __disable_txpool_gossip=""
+fi
+
+# Rollup halt
+__rolluphalt=""
+if [ -n "${ROLLUP_HALT}" ]; then
+  if op-reth node --help 2>&1 | grep -q -- '--rollup.halt'; then
+    __rolluphalt="--rollup.halt=${ROLLUP_HALT}"
+  else
+    echo "NOTE: This op-reth build does not support --rollup.halt; ignoring ROLLUP_HALT='${ROLLUP_HALT}'"
+  fi
+fi
+
+if [ -n "${SEQUENCER}" ]; then
+  __sequencer="--rollup.sequencer-http=${SEQUENCER}"
+else
+  __sequencer=""
+fi
+
+# shellcheck disable=SC2086
+echo "Launching op-reth with:"
+echo "  ENTRYPOINT: $0"
+echo "  CMD args: $* ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${__sequencer} ${EL_EXTRAS}"
+
+# shellcheck disable=SC2086
+exec "$@" ${__chain} ${__public_ip} ${__bootnodes} ${__trusted_peers} ${__rolluphalt} ${__disable_txpool_gossip} ${__sequencer} ${EL_EXTRAS}
