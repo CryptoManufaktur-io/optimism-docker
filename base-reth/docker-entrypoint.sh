@@ -32,13 +32,9 @@ esac
 : "${DISABLE_TXPOOL_GOSSIP:=false}"
 : "${SEQUENCER:=}"
 : "${ROLLUP_HALT:=}"
-: "${OP_NODE:=false}"
 
 # Public IP for NAT
-__public_ip=""
-if [ "${OP_NODE}" != "true" ]; then
-  __public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
-fi
+__public_ip="--nat=extip:$(wget -qO- https://ifconfig.me/ip)"
 
 # Chain argument
 __chain=""

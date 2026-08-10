@@ -30,7 +30,6 @@ services:
       - ROLLUP_HALT=${ROLLUP_HALT:-}
       - OPNODE_SYNC_MODE=${OPNODE_SYNC_MODE:-}
       - L1_BEACON=${L1_BEACON:-}
-      - OP_NODE=true
     volumes:
       - jwtsecret:/var/lib/op-node/ee-secret
       - opnode-data:/var/lib/op-node
@@ -44,7 +43,7 @@ services:
         condition: service_healthy
     <<: *logging
     entrypoint:
-      - docker-entrypoint.sh
+      - docker-entrypoint-opnode.sh
       - ${OPNODE_BIN_PATH:-/app/base-consensus}
       - node
       - --l2
