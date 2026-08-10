@@ -24,7 +24,7 @@ if [[ -O "/var/lib/op-reth/ee-secret/jwtsecret" ]]; then
 fi
 
 
-if [[ -f /var/lib/op-reth/done-snapshot.txt ]]; then
+if [[ -f /var/lib/op-reth/reth.toml ]]; then
   echo "No snapshot fetch necessary"
   exit 0
 else
@@ -33,5 +33,3 @@ fi
 
 # shellcheck disable=SC2086
 exec "$@"
-
-touch /var/lib/op-reth/done-snapshot.txt
