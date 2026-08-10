@@ -11,7 +11,7 @@ services:
   op-node:
     restart: "unless-stopped"
     build:
-      context: ./base-node
+      context: ./base-reth
       dockerfile: ${OPNODE_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
