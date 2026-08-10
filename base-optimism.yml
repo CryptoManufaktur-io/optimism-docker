@@ -17,6 +17,7 @@ services:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
         - DOCKER_REPO=${OPNODE_DOCKER_REPO}
         - ORIGINAL_USER=${OPNODE_ORIGINAL_USER:-root}
+        - ENTRYPOINT=${OPRETH_BIN_PATH}
     image: op-node:${NETWORK}
     pull_policy: never
     stop_grace_period: 1m
@@ -38,6 +39,9 @@ services:
     ports:
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/tcp
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/udp
+    depends_on:
+      op-reth:
+        condition: service_healthy
     <<: *logging
     entrypoint:
       - docker-entrypoint.sh

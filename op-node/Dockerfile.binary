@@ -1,5 +1,6 @@
 ARG DOCKER_TAG=latest
 ARG DOCKER_REPO=us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
+ARG ENTRYPOINT=op-node
 
 # The upstream op-node image is distroless as of v1.19.x (no shell / package
 # manager), so we cannot install packages or run the bash entrypoint in it.
@@ -22,4 +23,4 @@ COPY ./docker-entrypoint.sh /usr/local/bin/
 # Belt and suspenders
 RUN chmod -R 755 /usr/local/bin/*
 
-ENTRYPOINT ["op-node"]
+ENTRYPOINT [${ENTRYPOINT}]

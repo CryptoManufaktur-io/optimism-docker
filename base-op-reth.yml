@@ -8,20 +8,30 @@ x-logging: &logging
       tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
 
 services:
-  op-reth-init:
+  init-base-reth:
     restart: "no"
     build:
-      context: ./init-reth
-      dockerfile: Dockerfile
-    image: init:optimism-reth
+      context: ./op-reth
+      dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
+      args:
+        - DOCKER_TAG=${OPRETH_DOCKER_TAG}
+        - DOCKER_REPO=${OPRETH_DOCKER_REPO}
+        - ENTRYPOINT=${OPRETH_BIN_PATH
+    image: op-reth:${NETWORK}
     pull_policy: never
-    environment:
-      - SNAPSHOT=${SNAPSHOT:-}
-      - SNAPSHOT_PART=${SNAPSHOT_PART:-}
     volumes:
       - opreth-data:/var/lib/op-reth
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
+    entrypoint:
+      - ${OPRETH_BIN_PATH:-op-reth}
+      - download
+      - --full
+      - --datadir=/var/lib/op-reth
+      - --chain=${OPRETH_CHAIN}
+      - --resumable
+    <<: *logging
+
   op-reth:
     restart: unless-stopped
     build:
@@ -30,6 +40,7 @@ services:
       args:
         - DOCKER_TAG=${OPRETH_DOCKER_TAG}
         - DOCKER_REPO=${OPRETH_DOCKER_REPO}
+        - ENTRYPOINT=${OPRETH_BIN_PATH
     image: op-reth:${NETWORK}
     pull_policy: never
     stop_grace_period: 5m
@@ -58,7 +69,7 @@ services:
         aliases:
           - ${NETWORK}
     depends_on:
-      op-reth-init:
+      init-base-reth:
         condition: service_completed_successfully
     <<: *logging
     entrypoint:
