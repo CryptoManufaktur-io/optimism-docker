@@ -40,7 +40,7 @@ services:
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/udp
     depends_on:
       op-reth:
-        condition: service_healthy
+        condition: service_started
     <<: *logging
     entrypoint:
       - docker-entrypoint-opnode.sh
