@@ -11,7 +11,7 @@ services:
   op-node:
     restart: "unless-stopped"
     build:
-      context: ./op-node
+      context: ./base-reth
       dockerfile: ${OPNODE_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPNODE_DOCKER_TAG}
@@ -38,10 +38,13 @@ services:
     ports:
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/tcp
       - ${OPNODE_P2P_PORT:-9222}:${OPNODE_P2P_PORT:-9222}/udp
+    depends_on:
+      op-reth:
+        condition: service_started
     <<: *logging
     entrypoint:
-      - docker-entrypoint.sh
-      - ${OPNODE_BIN_PATH:-op-node}
+      - docker-entrypoint-opnode.sh
+      - ${OPNODE_BIN_PATH:-/app/base-consensus}
       - node
       - --l2
       - ${L2_CONNECTION_KIND:-http}://${NETWORK}:8551

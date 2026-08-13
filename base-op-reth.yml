@@ -8,24 +8,34 @@ x-logging: &logging
       tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
 
 services:
-  op-reth-init:
+  init-base-reth:
     restart: "no"
     build:
-      context: ./init-reth
-      dockerfile: Dockerfile
-    image: init:optimism-reth
+      context: ./base-reth
+      dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
+      args:
+        - DOCKER_TAG=${OPRETH_DOCKER_TAG}
+        - DOCKER_REPO=${OPRETH_DOCKER_REPO}
+    image: op-reth:${NETWORK}
     pull_policy: never
-    environment:
-      - SNAPSHOT=${SNAPSHOT:-}
-      - SNAPSHOT_PART=${SNAPSHOT_PART:-}
     volumes:
       - opreth-data:/var/lib/op-reth
       - jwtsecret:/var/lib/op-reth/ee-secret
       - /etc/localtime:/etc/localtime:ro
+    entrypoint:
+      - snapshot-entrypoint.sh
+      - ${OPRETH_BIN_PATH:-/app/base-reth-node}
+      - download
+      - --full
+      - --datadir=/var/lib/op-reth
+      - --chain=${OPRETH_CHAIN}
+      - --resumable
+    <<: *logging
+
   op-reth:
     restart: unless-stopped
     build:
-      context: ./op-reth
+      context: ./base-reth
       dockerfile: ${OPRETH_DOCKERFILE:-Dockerfile.binary}
       args:
         - DOCKER_TAG=${OPRETH_DOCKER_TAG}
@@ -58,12 +68,18 @@ services:
         aliases:
           - ${NETWORK}
     depends_on:
-      op-reth-init:
+      init-base-reth:
         condition: service_completed_successfully
     <<: *logging
+    # healthcheck:
+    #   test: ["CMD", "curl", "-sf", "-X", "POST", "-H", "Content-Type: application/json", "--data", "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}", "http://localhost:${RPC_PORT:-8545}"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 30
+    #   start_period: 30s
     entrypoint:
       - docker-entrypoint.sh
-      - ${OPRETH_BIN_PATH:-op-reth}
+      - ${OPRETH_BIN_PATH:-/app/base-reth-node}
       - node
       - --datadir
       - /var/lib/op-reth
