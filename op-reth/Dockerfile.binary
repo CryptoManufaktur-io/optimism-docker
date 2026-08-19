@@ -6,7 +6,10 @@ FROM ${DOCKER_REPO}:${DOCKER_TAG}
 USER root
 # op-reth base image switched to Wolfi (apk) as of v2.3.x; older builds are Debian (apt-get).
 RUN if command -v apk >/dev/null 2>&1; then \
+      mkdir -p /tmp/op-reth-bin && cp /usr/local/bin/op-reth /tmp/op-reth-bin/op-reth && \
       apk add --no-cache bash ca-certificates tzdata wget curl jq su-exec; \
+      mkdir -p /usr/local/bin && cp /tmp/op-reth-bin/op-reth /usr/local/bin/op-reth && \
+      chmod 755 /usr/local/bin/op-reth && rm -rf /tmp/op-reth-bin; \
     elif command -v apt-get >/dev/null 2>&1; then \
       apt-get update \
         && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
