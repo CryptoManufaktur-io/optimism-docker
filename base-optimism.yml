@@ -57,6 +57,8 @@ services:
       - --port
       - ${OPNODE_RPC_PORT:-9545}
       - --metrics.enabled
+      - --metrics.port
+      - ${OPNODE_METRICS_PORT:-7300}
       - --p2p.listen.tcp
       - ${OPNODE_P2P_PORT:-9222}
     labels:
@@ -72,7 +74,7 @@ services:
       - traefik.http.services.${OPNODE_HOST:-opnode}.loadbalancer.server.port=${OPNODE_RPC_PORT:-9545}
       - metrics.scrape=true
       - metrics.path=/metrics
-      - metrics.port=7300
+      - metrics.port=${OPNODE_METRICS_PORT:-7300}
       - metrics.network=${NETWORK:-}
 
 volumes:
