@@ -68,6 +68,15 @@ need additional parameters.
 You'll want to set `NETWORK` to something unique (it cannot be empty), then set `GENESIS_URL`, `ROLLUP_URL`,
 `SEQUENCER`, as well as `EL_EXTRAS`, `CL_EXTRAS`, `SYNC_MODE`, `RPC_P2P_BOOTNODES` and `OPNODE_P2P_BOOTNODES` as needed.
 
+## op-node image variants
+
+`OPNODE_DOCKERFILE` selects how the op-node image is wrapped. The default `Dockerfile.binary` copies the `op-node`
+binary from `/usr/local/bin/op-node` of the source image into a Wolfi base, which is what the distroless OP Labs
+images need. Chains that publish their own op-node image should pick the variant that matches it:
+
+- `Dockerfile-alpine.binary`: extends an Alpine based op-node image directly (installs the entrypoint tooling with `apk`).
+- `Dockerfile-debian.binary`: extends a Debian based op-node image directly (installs the entrypoint tooling with `apt`).
+
 Some example values by chain are below
 
 ## Xlayer
