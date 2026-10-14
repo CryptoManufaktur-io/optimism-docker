@@ -31,6 +31,8 @@ You can also set OPRETH_CHAIN=http(s):URL_TO_DOWNLOAD_GENESIS or OPRETH_CHAIN=/t
 
 If you want the execution client RPC ports exposed locally, use `op-geth-shared.yml` or `op-reth-shared.yml` in `COMPOSE_FILE` inside `.env` depending on your choice of the EL.
 
+To publish reth's discv5 discovery port (`OPRETH_DISCV5_PORT`, default 9200/udp) so that peers can reach an op-reth node, add `op-reth-discv5.yml` to `COMPOSE_FILE`.
+
 `legacy.yml` runs the legacy l2geth on Optimism, set `LEGACY=true` in `.env` for that. You probably
 [don't need it](https://community.optimism.io/docs/developers/bedrock/node-operator-guide/#historical-execution-vs-historical-data-routing).
 
