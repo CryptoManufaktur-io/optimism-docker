@@ -1,0 +1,15 @@
+# To be used with op-reth.yml, listed after it in COMPOSE_FILE
+# Runs celo-reth: bootstraps from the Celo snapshots when the datadir is empty, then starts celo-reth
+# with its own flag set instead of the generic op-reth command line.
+services:
+  op-reth:
+    environment:
+      - NODE_TYPE=${NODE_TYPE:-archive}
+      - OP_RETH_SNAPSHOT=${OP_RETH_SNAPSHOT:-true}
+      - RPC_PORT=${RPC_PORT:-8545}
+      - WS_PORT=${WS_PORT:-8546}
+      - RPC_P2P_PORT=${RPC_P2P_PORT:-30303}
+    volumes:
+      - ./op-reth/celo-docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
+    entrypoint:
+      - docker-entrypoint.sh
