@@ -33,6 +33,8 @@ If you want the execution client RPC ports exposed locally, use `op-geth-shared.
 
 To publish reth's discv5 discovery port (`OPRETH_DISCV5_PORT`, default 9200/udp) so that peers can reach an op-reth node, add `op-reth-discv5.yml` to `COMPOSE_FILE`.
 
+To run celo-reth (Celo), set `OPRETH_CHAIN=celo`, point `OPRETH_DOCKER_REPO`/`OPRETH_DOCKER_TAG` at the Celo op-reth image and add `op-reth-celo.yml` to `COMPOSE_FILE` after `op-reth.yml`. With an empty datadir it downloads a snapshot first (`OP_RETH_SNAPSHOT=true`, `NODE_TYPE=minimal|full|archive`).
+
 `legacy.yml` runs the legacy l2geth on Optimism, set `LEGACY=true` in `.env` for that. You probably
 [don't need it](https://community.optimism.io/docs/developers/bedrock/node-operator-guide/#historical-execution-vs-historical-data-routing).
 
