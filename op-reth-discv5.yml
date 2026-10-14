@@ -1,0 +1,6 @@
+# To be used with op-reth.yml
+# Publishes reth's discv5 discovery port (UDP) so that peers can reach the node.
+services:
+  op-reth:
+    ports:
+      - ${OPRETH_DISCV5_PORT:-9200}:${OPRETH_DISCV5_PORT:-9200}/udp
