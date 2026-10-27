@@ -14,6 +14,8 @@ JWT=/var/lib/op-reth/ee-secret/jwtsecret
 : "${WS_PORT:=8546}"
 : "${RPC_P2P_PORT:=30303}"
 : "${EL_EXTRAS:=}"
+: "${EL_HTTP_API:=web3,eth,txpool,net}"  # public HTTP RPC namespaces
+: "${EL_WS_API:=eth,txpool,net,web3}"        # public WebSocket RPC namespaces
 
 if [ -d "${DATADIR}/geth" ]; then
   echo "ERROR: ${DATADIR} contains op-geth data. celo-reth needs an empty datadir." >&2
@@ -47,9 +49,9 @@ exec celo-reth node \
   --datadir="${DATADIR}" \
   --storage.v2=true \
   --http --http.addr=0.0.0.0 --http.port="${RPC_PORT}" --http.corsdomain="*" \
-  --http.api=web3,debug,eth,txpool,net \
+  --http.api="${EL_HTTP_API}" \
   --ws --ws.addr=0.0.0.0 --ws.port="${WS_PORT}" --ws.origins="*" \
-  --ws.api=debug,eth,txpool,net,web3 \
+  --ws.api="${EL_WS_API}" \
   --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.jwtsecret="${JWT}" \
   --metrics=0.0.0.0:6060 \
   --port="${RPC_P2P_PORT}" --discovery.port="${RPC_P2P_PORT}" --discovery.v5.port="${RPC_P2P_PORT}" \
