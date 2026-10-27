@@ -47,9 +47,9 @@ exec celo-reth node \
   --datadir="${DATADIR}" \
   --storage.v2=true \
   --http --http.addr=0.0.0.0 --http.port="${RPC_PORT}" --http.corsdomain="*" \
-  --http.api=web3,debug,eth,txpool,net \
+  --http.api=web3,eth,txpool,net \
   --ws --ws.addr=0.0.0.0 --ws.port="${WS_PORT}" --ws.origins="*" \
-  --ws.api=debug,eth,txpool,net,web3 \
+  --ws.api=eth,txpool,net,web3 \
   --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.jwtsecret="${JWT}" \
   --metrics=0.0.0.0:6060 \
   --port="${RPC_P2P_PORT}" --discovery.port="${RPC_P2P_PORT}" --discovery.v5.port="${RPC_P2P_PORT}" \

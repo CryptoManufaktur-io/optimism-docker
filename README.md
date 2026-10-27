@@ -33,6 +33,8 @@ If you want the execution client RPC ports exposed locally, use `op-geth-shared.
 
 > **Security:** the `*-shared.yml` files (and `op-shared.yml` for the op-node RPC) publish the ports on **all host interfaces**, and host firewalls such as `ufw` do not filter Docker-published ports. Do not enable them on a host reachable from the internet unless you restrict access yourself (for example with `DOCKER-USER` rules). Never put `admin`, `debug`, `miner` or `personal` in `--http.api` / `--ws.api` (or `engine` in the HTTP/WS APIs): they allow file writes (`admin_exportChain`, `debug_*` profiling), chain rewinds (`debug_setHead`) and stopping the RPC server. The same applies to op-node's `--rpc.enable-admin`.
 
+The op-reth compose files and the Celo entrypoint no longer enable the `debug` namespace on the public HTTP/WS APIs. If you really need it (for example for tracing on a private node), edit the `--http.api` / `--ws.api` list in your local compose file or entrypoint and keep that endpoint off the public internet.
+
 To publish reth's discv5 discovery port (`OPRETH_DISCV5_PORT`, default 9200/udp) so that peers can reach an op-reth node, add `op-reth-discv5.yml` to `COMPOSE_FILE`.
 
 To run celo-reth (Celo), set `OPRETH_CHAIN=celo`, point `OPRETH_DOCKER_REPO`/`OPRETH_DOCKER_TAG` at the Celo op-reth image and add `op-reth-celo.yml` to `COMPOSE_FILE` after `op-reth.yml`. With an empty datadir it downloads a snapshot first (`OP_RETH_SNAPSHOT=true`, `NODE_TYPE=minimal|full|archive`).
@@ -107,7 +109,7 @@ OPNODE_P2P_STATIC_PEERS=/ip4/47.242.38.0/tcp/9223/p2p/16Uiu2HAmH1AVhKWR29mb5s8Cu
 OPNODE_P2P_BOOTNODES=enode://c67d7f63c5483ab8311123d2997bfe6a8aac2b117a40167cf71682f8a3e37d3b86547c786559355c4c05ae0b1a7e7a1b8fde55050b183f96728d62e276467ce1@8.210.177.150:9223,enode://28e3e305b266e01226a7cc979ab692b22507784095157453ee0e34607bb3beac9a5b00f3e3d7d3ac36164612ca25108e6b79f75e3a9ecb54a0b3e7eb3e097d37@8.210.15.172:9223,enode://b5aa43622aad25c619650a0b7f8bb030161dfbfd5664233f92d841a33b404cea3ffffdc5bc8d6667c7dc212242a52f0702825c1e51612047f75c847ab96ef7a6@8.210.69.97:9223
 SNAPSHOT=""
 EL_EXTRAS="--http.api=web3,eth,txpool,net --ws.api=eth,txpool,net --db.engine=pebble --gcmode=archive --rollup.enabletxpooladmission --discovery.v5=true --maxpeers=30 --networkid=1952 --syncmode=full --gpo.blocks=20 --gpo.percentile=60 --gpo.maxprice=5000000000000000000 --gpo.ignoreprice=2000000000000000 --gpo.default-l1-coin-price=2000.0 --gpo.l1-coin-id=15756 --gpo.default-l2-coin-price=0.5 --gpo.l2-coin-id=7184 --gpo.type=follower --gpo.factor=0.1 --gpo.update-period=100000000000 --gpo.default=100000000 --gpo.kafka-url=localhost:9092 --gpo.topic=middle_coinPrice_push --gpo.group-id=geth-consumer"
-CL_EXTRAS="--log.level=info --sequencer.enabled=false --verifier.l1-confs=1 --rpc.enable-admin=true --conductor.enabled=false --safedb.path=/var/lib/op-node/safedb"
+CL_EXTRAS="--log.level=info --sequencer.enabled=false --verifier.l1-confs=1 --conductor.enabled=false --safedb.path=/var/lib/op-node/safedb"
 OPNODE_SYNC_MODE=""
 RPC_P2P_BOOTNODES=""
 RPC_P2P_TRUSTED_NODES=enode://2104d54a7fbd58a408590035a3628f1e162833c901400d490ccc94de416baf13639ce2dad388b7a5fd43c535468c106b660d42d94451e39b08912005aa4e4195@8.210.181.50:30303
