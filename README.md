@@ -33,7 +33,7 @@ If you want the execution client RPC ports exposed locally, use `op-geth-shared.
 
 > **Security:** the `*-shared.yml` files (and `op-shared.yml` for the op-node RPC) publish the ports on **all host interfaces**, and host firewalls such as `ufw` do not filter Docker-published ports. Do not enable them on a host reachable from the internet unless you restrict access yourself (for example with `DOCKER-USER` rules). Never put `admin`, `debug`, `miner` or `personal` in `--http.api` / `--ws.api` (or `engine` in the HTTP/WS APIs): they allow file writes (`admin_exportChain`, `debug_*` profiling), chain rewinds (`debug_setHead`) and stopping the RPC server. The same applies to op-node's `--rpc.enable-admin`.
 
-The op-reth compose files and the Celo entrypoint no longer enable the `debug` namespace on the public HTTP/WS APIs. If you really need it (for example for tracing on a private node), edit the `--http.api` / `--ws.api` list in your local compose file or entrypoint and keep that endpoint off the public internet.
+The op-reth compose files and the Celo entrypoint no longer enable the `debug` namespace on the public HTTP/WS APIs. To re-enable it (for example for tracing on a private node), set `EL_HTTP_API=eth,net,web3,txpool,debug` in your `.env` (for `op-reth-celo.yml` use `web3,eth,txpool,net,debug`, and `EL_WS_API` for the WebSocket list); the value replaces the whole default list. Do not add a second `--http.api` through `EL_EXTRAS`, reth refuses to start with a repeated flag. Keep that endpoint off the public internet.
 
 To publish reth's discv5 discovery port (`OPRETH_DISCV5_PORT`, default 9200/udp) so that peers can reach an op-reth node, add `op-reth-discv5.yml` to `COMPOSE_FILE`.
 

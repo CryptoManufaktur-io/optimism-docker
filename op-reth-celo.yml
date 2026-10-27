@@ -9,6 +9,8 @@ services:
       - RPC_PORT=${RPC_PORT:-8545}
       - WS_PORT=${WS_PORT:-8546}
       - RPC_P2P_PORT=${RPC_P2P_PORT:-30303}
+      - EL_HTTP_API=${EL_HTTP_API:-}
+      - EL_WS_API=${EL_WS_API:-}
     volumes:
       - ./op-reth/celo-docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
     entrypoint:
